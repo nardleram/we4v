@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 210 297"
+   height="297mm"
+   width="210mm">
+  <defs
+     id="defs2">
+    <marker
+       style="overflow:visible;"
+       id="Arrow1Lend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path870" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow2Lend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto">
+      <path
+         transform="scale(1.1) rotate(180) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         id="path888" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       id="path863"
+       d="m 126.02389,48.817845 c -23.75737,0.02533 -37.059563,-7.200256 -57.438009,1.485653 2.875438,18.232644 -3.601134,49.403215 2.102567,59.553902 17.727647,-0.53793 40.061662,-1.85445 55.335432,-0.50718"
+       style="fill:none;stroke:#000000;stroke-width:10.491;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 96.819661,80.265497 c 4.204929,-0.205939 8.416929,-0.149207 12.625319,-0.179113 5.54374,-0.05476 11.08737,-0.01566 16.63103,0.02101 2.84981,-0.01281 5.69636,0.09175 8.53992,0.268552 0.52243,0.03757 1.04494,0.07369 1.56719,0.113509 0,0 3.17021,-2.280946 3.17021,-2.280946 v 0 c -0.55731,-0.01035 -1.11452,-0.02442 -1.67174,-0.03891 -2.95486,-0.0844 -5.90897,-0.131434 -8.86489,-0.05343 -5.56294,0.03615 -11.12585,0.07605 -16.68886,0.02101 -4.04391,-0.02931 -8.09236,0.03444 -12.132269,-0.179109 0,0 -3.17591,2.307434 -3.17591,2.307434 z"
+       id="path1195"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:5.491;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       id="path1197"
+       d="m 150.74002,79.384422 c 2.85087,0 5.70175,0 8.55262,0"
+       style="fill:none;stroke:#000000;stroke-width:2.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Lend)" />
+  </g>
+</svg>
