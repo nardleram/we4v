@@ -1,0 +1,50 @@
+<template>
+    <app-layout>
+        <template #centre>
+            <div class="w-1/2 p-3 max-h-screen overflow-x-hidden">
+                <NewPost v-on:UpdatePosts="addPost($event)" />
+                <p v-if="posts_status != 'success'">Retrieving posts...</p>
+                <Post v-else v-for="(post, postKey) in posts" :key="postKey" :post="post" />
+            </div>
+        </template>
+    </app-layout>
+</template>
+ 
+<script>
+    import AppLayout from '@/Layouts/AppLayout'
+    import NewPost from './Components/NewPost';
+    import Post from './Components/Post'
+
+    export default {
+        name: 'Talkboard',
+
+        props: [
+            'posts',
+            'posts_status',
+        ],
+ 
+        components: {
+            AppLayout,
+            Post,
+            NewPost,
+        },
+
+        methods: {
+            addPost: function(data) {
+                let addedPost = {
+                    'body': data.body,
+                    'image': data.image,
+                    'posted_by': this.$page.props.authUser.username,
+                    'posted_at': data.posted_at,
+                    'num_approvals': 0,
+                    'num_comments': 0,
+                    'user_profile_pic': this.$page.props.userProfileImages.profile,
+                    'post_id': data.id,
+                    'user_id': this.$page.props.authUser.id,
+                }
+                console.log('Content of data object after adding post in Talkboard.vue: '+addedPost.body)
+                this.posts.unshift(addedPost);
+            }
+        }
+    }
+</script>
