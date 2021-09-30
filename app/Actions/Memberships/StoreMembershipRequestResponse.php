@@ -5,7 +5,7 @@ namespace App\Actions\Memberships;
 use App\Models\User;
 use App\Models\Membership;
 
-class StoreMembershipRequestResponses
+class StoreMembershipRequestResponse
 {
     public function handle($request)
     {

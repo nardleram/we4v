@@ -17,6 +17,7 @@ class CreateGroupsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreignUuid('owner')->references('id')->on('users');

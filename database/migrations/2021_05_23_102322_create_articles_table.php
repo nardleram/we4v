@@ -18,6 +18,7 @@ class CreateArticlesTable extends Migration
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->string('title');
             $table->text('body');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

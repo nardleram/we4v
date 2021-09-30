@@ -12,6 +12,7 @@ class CreateTeamsTable extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('function')->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreignUuid('owner')->references('id')->on('users');

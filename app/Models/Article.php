@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     use Uuids;
 
     protected $fillable = ['title', 'body', 'user_id'];
