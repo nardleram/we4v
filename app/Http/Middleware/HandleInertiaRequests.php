@@ -10,6 +10,7 @@ use Inertia\Middleware;
 use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
+use App\Actions\Users\GetUsers;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -82,7 +83,7 @@ class HandleInertiaRequests extends Middleware
                 }
             },
             
-            'myAssociates' => function ()
+            'myAssociates' => function (GetUsers $getUserData)
                 {
                     if (!auth()->id()) {
                         return [];
@@ -91,7 +92,7 @@ class HandleInertiaRequests extends Middleware
                     $allAssociates = Association::getAssociations();
                     $myAssociatesIds = array_diff($allAssociates, array(auth()->id()));
 
-                    $myAssociates = User::getUsersData($myAssociatesIds);
+                    $myAssociates = $getUserData->getUsers($myAssociatesIds);
 
                     return $myAssociates;
                 },

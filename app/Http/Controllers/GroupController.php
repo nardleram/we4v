@@ -9,6 +9,12 @@ use App\Http\Requests\StoreGroupRequest;
 
 class GroupController extends Controller
 {
+    public function __construct(StoreGroup $storeGroup, GetGroups $getGroups)
+    {
+        $this->storeGroup = $storeGroup;
+        $this->getGroups = $getGroups;
+    }
+
     public function index(GetGroups $action) : object
     {
         return Inertia::render('MyGroups', [
@@ -16,14 +22,14 @@ class GroupController extends Controller
         ]);
     }
 
-    public function store(StoreGroupRequest $request, StoreGroup $action, GetGroups $getGroups) : object
+    public function store(StoreGroupRequest $request) : object
     {
-        $group = $action->storeGroup($request);
+        $group = $this->storeGroup->storeGroup($request);
 
-        $action->storeAssocMembers($request, $group->id);
+        $this->storeGroup->storeAssocMembers($request, $group->id);
 
         return Inertia::render('MyGroups', [
-            'mygroups' => $getGroups->handle(auth()->id())
+            'mygroups' => $this->getGroups->handle(auth()->id())
         ]);
     }
 }

@@ -2,24 +2,25 @@
 
 namespace App\Actions\Posts;
 
-use App\Models\Post;
 use App\Models\User;
 use App\Models\Image;
+use App\Actions\Users\GetUsers;
+use App\Actions\Posts\GetTalkboardPosts;
 
 class GetUserPosts
 {
-    public function handlePosts(User $user) : array
+    public function handlePosts(User $user, GetTalkboardPosts $getPostData, GetUsers $getUserData) : array
     {
-        $rawPosts = Post::getAllPostData([$user->id]);
+        $rawPosts = $getPostData->getPosts([$user->id]);
 
         $user_ids = [$user->id];
         foreach ($rawPosts as $post) {
             array_push($user_ids, $post->comment_posted_by);
         }
         $ids = array_unique($user_ids);
-        $users = User::getUsersData($ids);
+        $users = $getUserData->getUsers($ids);
 
-        return Post::compilePostsArray($rawPosts, $users);
+        return $getPostData->compilePostsArray($rawPosts, $users);
     }
 
     public function handleUser(User $user) : object
