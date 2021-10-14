@@ -53,6 +53,7 @@
 import PendingAssocReqs from '../Pages/Components/PendingAssocReqs'
 import PendingMembReqs from '../Pages/Components/PendingMembReqs'
 import Associates from '../Pages/Components/MyAssociates'
+
 export default {
     name: 'SidebarRight',
 

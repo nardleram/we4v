@@ -4,30 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Models\Team;
 use Inertia\Inertia;
-use App\Actions\Teams\GetTeams;
 use App\Actions\Teams\StoreTeam;
 use App\Actions\Groups\GetGroups;
+use App\Actions\Memberships\StoreMemberships;
 use App\Http\Requests\StoreTeamRequest;
 use App\Actions\Teams\DestroyTeamCascade;
 
 class TeamController extends Controller
 {
-    public function index(GetTeams $action) : object
+    public function __construct(StoreTeam $storeTeam, GetGroups $getGroups, StoreMemberships $storeMembers)
     {
-        return Inertia::render('MyTeams', [
-            'myteams' => $action->handle(auth()->id())
-            ]
-        );
+        $this->storeTeam = $storeTeam;
+        $this->getGroups = $getGroups;
+        $this->storeMemberships = $storeMembers;
     }
 
-    public function store(StoreTeamRequest $request, StoreTeam $action, GetGroups $getGroups) : object
+    public function store(StoreTeamRequest $request) : object
     {
-        $team = $action->storeTeam($request);
+        $team = $this->storeTeam->handle($request);
         
-        $action->storeMembers($request, $team->id);
+        $this->storeMemberships->handle($request, $team->id);
 
         return Inertia::render('MyGroups', [
-            'mygroups' => $getGroups->handle(auth()->id())
+            'mygroups' => $this->getGroups->handle(auth()->id())
         ]);
     }
 
@@ -36,13 +35,12 @@ class TeamController extends Controller
 
     }
 
-    public function destroy(Team $team, DestroyTeamCascade $destroyTeamCasc, GetTeams $action) : object
+    public function destroy(Team $team, DestroyTeamCascade $destroyTeamCasc) : object
     {
         $destroyTeamCasc->handle($team->id);
 
-        return Inertia::render('MyTeams', [
-            'myteams' => $action->handle(auth()->id())
-            ]
-        );
+        return Inertia::render('MyGroups', [
+            'mygroups' => $this->getGroups->handle(auth()->id())
+        ]);
     }
 }

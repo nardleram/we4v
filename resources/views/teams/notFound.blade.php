@@ -6,10 +6,10 @@
     <div class="mx-auto w-40">
         <img src="{{ asset('images/confusedRobot.jpeg') }}" alt="" width="150" class="text-center">
     </div>
-    <h2 class="text-we4vGrey-500 text-3xl font-bold">Object not found</h2>
-    <h3 class="text-we4vGrey-500 text-lg">We couldn’t locate the team you requested.</h3>
+    <h2 class="text-we4vGrey-500 text-3xl font-bold">Team not found</h2>
+    <h3 class="text-we4vGrey-500 text-lg">Apologies. We couldn’t locate the team you requested.</h3>
     <h3 class="font-bold text-2xl text-we4vGrey-500 text-center mt-10">
-        Return to <a href="{{route('talkboard')}}" class="hover:text-we4vGrey-700">Talkboard</a>
+        Return to <a href="{{route('mygroups')}}" class="hover:text-we4vGrey-700">Groups</a>
     </h3>
 </div>
 @endsection

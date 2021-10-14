@@ -13,7 +13,7 @@ class Team extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['name', 'function', 'owner', 'group_id', 'function'];
+    protected $fillable = ['name', 'function', 'owner', 'group_id'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';

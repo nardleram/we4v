@@ -159,7 +159,9 @@ class HandleInertiaRequests extends Middleware
                     $memberships = Membership::getPendingMemberships();
 
                     if (count($memberships) > 0) {
+                        $groupMembers = [];
                         $groupIds = [];
+                        $teamMembers = [];
                         $teamIds = [];
 
                         foreach ($memberships as $member) {
@@ -173,29 +175,40 @@ class HandleInertiaRequests extends Middleware
                         };
 
                         $rawGroups = Group::whereIn('groups.id', $groupIds)
-                            ->leftJoin('users', function ($join) {
+                            ->join('users', function ($join) {
                                 $join->on('users.id', '=', 'groups.owner');
+                            })
+                            ->join('memberships', function ($join) {
+                                $join->on('memberships.membershipable_id', '=', 'groups.id')
+                                ->where('memberships.user_id', auth()->id());
                             })
                             ->select([
                                 'groups.name as group_name',
                                 'groups.id as group_id',
                                 'groups.description as group_description',
+                                'groups.geog_area as geog_area',
                                 'users.username as username',
-                                'users.id as g_user_id'
+                                'users.id as g_user_id',
+                                'memberships.role as g_role'
                             ])
                             ->orderBy('groups.name')
                             ->get();
                         
                         $rawTeams = Team::whereIn('teams.id', $teamIds)
-                            ->leftJoin('users', function ($join) {
+                            ->join('users', function ($join) {
                                 $join->on('users.id', '=', 'teams.owner');
+                            })
+                            ->join('memberships', function ($join) {
+                                $join->on('memberships.membershipable_id', '=', 'teams.id')
+                                ->where('memberships.user_id', auth()->id());
                             })
                             ->select([
                                 'teams.name as team_name',
                                 'teams.id as team_id',
                                 'teams.function as team_function',
                                 'users.username as username',
-                                'users.id as t_user_id'
+                                'users.id as t_user_id',
+                                'memberships.role as t_role'
                             ])
                             ->orderBy('teams.name')
                             ->get();
@@ -207,8 +220,10 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['groupName'] = $rawGroup->group_name;
                             $membReqs[$membCount]['groupId'] = $rawGroup->group_id;
                             $membReqs[$membCount]['groupDesc'] = $rawGroup->group_description;
+                            $membReqs[$membCount]['geogArea'] = $rawGroup->geog_area;
                             $membReqs[$membCount]['groupRequester'] = $rawGroup->username;
                             $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_user_id;
+                            $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
                             ++$membCount;
                         }
@@ -219,6 +234,7 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['teamFunc'] = $rawTeam->team_function;
                             $membReqs[$membCount]['teamRequester'] = $rawTeam->username;
                             $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_user_id;
+                            $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
                             ++$membCount;
                         }

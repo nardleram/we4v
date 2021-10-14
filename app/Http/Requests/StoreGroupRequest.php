@@ -31,8 +31,9 @@ class StoreGroupRequest extends FormRequest
             'owner' => 'required|uuid',
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'assocs' => 'required',
-            'membership_type' => 'required|string|max:20'
+            'geog_area' => 'nullable|string|max:255',
+            'members' => 'nullable|array',
+            'membershipable_type' => 'required|string|max:20'
         ];
     }
 }

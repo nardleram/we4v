@@ -13,7 +13,7 @@ class Group extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['name', 'owner', 'description'];
+    protected $fillable = ['name', 'owner', 'description', 'geog_area'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';

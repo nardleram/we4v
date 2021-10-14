@@ -16,7 +16,7 @@ class CreateMembershipsTable extends Migration
         Schema::create('memberships', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('role')->nullable();
-            $table->boolean('isAdmin')->default(false);
+            $table->boolean('is_admin')->default(false);
             $table->boolean('confirmed')->default(false);
             $table->uuid('membershipable_id');
             $table->string('membershipable_type');

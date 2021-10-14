@@ -27,6 +27,8 @@
         "vue-loader": "^16.1.2"
     },
     "dependencies": {
-        "dropzone": "^5.8.1"
+        "click-outside-vue3": "^4.0.1",
+        "dropzone": "^5.8.1",
+        "vuex": "^4.0.2"
     }
 }

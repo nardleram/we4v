@@ -6,14 +6,15 @@ use App\Models\Membership;
 
 class StoreMemberships
 {
-    public function handle($request)
+    public function storeMembers($request, $parentId)
     {
-        foreach ($request->assocs as $assoc) {
+        foreach ($request->members as $member) {
             Membership::create([
-                'membershipable_id' => $request->team_id,
-                'membershipable_type' => $request->type,
-                'user_id' => $assoc->user_id,
-                'role' => 'boss'
+                'membershipable_id' => $parentId,
+                'membershipable_type' => $request->membershipable_type,
+                'user_id' => $member['user_id'],
+                'role' => $member['role'],
+                'is_admin' => $member['admin']
             ]);
         }
     }

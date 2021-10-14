@@ -28,6 +28,7 @@ module.exports = {
                 },
                 we4vOrange: '#FF9300',
                 we4vBlue: '#51A8BA',
+                we4vDarkBlue: '#33838E',
                 we4vModalBg: 'rgba(0,0,0,0.75)',
                 we4vGrey: {
                     100: '#f7f7f4',
@@ -78,7 +79,10 @@ module.exports = {
             },
             animation: {
                 'spin': 'spin 5s linear infinite'
-            }
+            },
+            gridTemplateRows: {
+               'groupBox': 'minmax(40px, 40px) auto',
+              }
         },
     },
 

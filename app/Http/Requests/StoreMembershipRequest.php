@@ -28,10 +28,9 @@ class StoreMembershipRequest extends FormRequest
     public function rules()
     {
         return [
-            'assocs' => 'required|array:user_id',
-            'team_id' => 'required|uuid',
+            'parent_id' => 'required|uuid',
             'type' => 'required|string|max:20',
-            'role' => 'required|string|max:50'
+            'members' => 'required'
         ];
     }
 }

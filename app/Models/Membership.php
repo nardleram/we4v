@@ -13,7 +13,7 @@ class Membership extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['membershipable_id', 'membershipable_type', 'user_id', 'group_id', 'role', 'confirmed'];
+    protected $fillable = ['membershipable_id', 'membershipable_type', 'user_id', 'group_id', 'role', 'confirmed', 'is_admin'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
@@ -23,6 +23,6 @@ class Membership extends Model
         return (new static())
             ->where('confirmed', false)
             ->where('user_id', auth()->id())
-            ->get(['membershipable_id', 'membershipable_type']);
+            ->get(['membershipable_id', 'membershipable_type', 'role']);
     }
 }

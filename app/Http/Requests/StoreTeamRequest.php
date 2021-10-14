@@ -20,10 +20,10 @@ class StoreTeamRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'owner' => 'required|uuid',
+            'group_id' => 'required|uuid',
             'function' => 'required|string|max:255',
-            'assocs' => 'required',
-            'membership_type' => 'required|string|max:20',
-            'role' => 'required|string|max:50'
+            'membershipable_type' => 'required|string|max:20',
+            'members' => 'required',
         ];
     }
 }

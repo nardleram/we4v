@@ -85,6 +85,6 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     Route::post('/myteams/store', [TeamController::class, 'store'])
         ->name('storeTeam')->middleware(['auth']);
     
-    Route::post('/memberships/confirm-reject', [MembershipRequestResponseController::class, 'store'])
-        ->name('confirmRejectMembership')->middleware(['auth']);
+    Route::post('/memberships/accept-reject', [MembershipRequestResponseController::class, 'store'])
+        ->name('acceptRejectMembership')->middleware(['auth']);
 });
