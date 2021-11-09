@@ -77,9 +77,9 @@
                         Cancel
                     </jet-secondary-button>
 
-                    <jet-button class="ml-2" @click="logoutOtherBrowserSessions" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <jet-button-blue class="ml-2" @click="logoutOtherBrowserSessions" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Log Out Other Browser Sessions
-                    </jet-button>
+                    </jet-button-blue>
                 </template>
             </jet-dialog-modal>
         </template>
@@ -89,7 +89,7 @@
 <script>
     import JetActionMessage from '@/Jetstream/ActionMessage'
     import JetActionSection from '@/Jetstream/ActionSection'
-    import JetButton from '@/Jetstream/Button'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetDialogModal from '@/Jetstream/DialogModal'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
@@ -101,7 +101,7 @@
         components: {
             JetActionMessage,
             JetActionSection,
-            JetButton,
+            JetButtonBlue,
             JetDialogModal,
             JetInput,
             JetInputError,

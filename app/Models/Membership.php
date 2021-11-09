@@ -13,7 +13,16 @@ class Membership extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['membershipable_id', 'membershipable_type', 'user_id', 'group_id', 'role', 'confirmed', 'is_admin'];
+    protected $fillable = [
+        'membershipable_id', 
+        'membershipable_type', 
+        'user_id', 
+        'group_id', 
+        'role', 
+        'confirmed', 
+        'is_admin'
+    ];
+    protected $casts = ['is_admin' => 'boolean'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';

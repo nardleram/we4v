@@ -1,11 +1,11 @@
 <template>
-    <jet-authentication-card>
-        <template #logo>
-            <jet-authentication-card-logo />
-        </template>
+    <div class="m-auto w-96 mt-24">
+        <jet-application-mark class="block w-96" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+        <jet-validation-errors class="mb-4" />
+
+        <div class="my-4 text-sm text-gray-600 text-center">
+            Forgot your password? No problem. Enter your email below and we’ll send you a password-reset link.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -21,27 +21,25 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </jet-button>
+                <jet-button-blue class="ml-4 text-we4vBg bg-we4vBlue" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Email password-reset link
+                </jet-button-blue>
             </div>
         </form>
-    </jet-authentication-card>
+    </div>
 </template>
 
 <script>
-    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
-    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
-    import JetButton from '@/Jetstream/Button'
+    import JetApplicationMark from '@/Jetstream/ApplicationMark'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetInput from '@/Jetstream/Input'
     import JetLabel from '@/Jetstream/Label'
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
     export default {
         components: {
-            JetAuthenticationCard,
-            JetAuthenticationCardLogo,
-            JetButton,
+            JetApplicationMark,
+            JetButtonBlue,
             JetInput,
             JetLabel,
             JetValidationErrors

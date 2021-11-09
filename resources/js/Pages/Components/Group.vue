@@ -1,17 +1,17 @@
 <template>
-    <div id="groupBoxGrid" class="grid gap-1 grid-cols-12 grid-rows-groupBox text-we4vBg bg-we4vGrey-800 p-2 w-full rounded shadow-md mb-1 tracking-tight">
+    <div class="grid gap-1 grid-cols-12 grid-rows-groupBox text-we4vBg bg-we4vGrey-800 p-2 w-full rounded shadow-md mb-1 tracking-tight">
         <div @click="$emit('activateTeamModal', group)" class="col-start-1 col-end-11 text-sm font-semibold text-we4vBlue content-center items-center cursor-pointer pt-1 max-h-10">
             <p>{{ group.group_name }} <span v-if="group.geog_area" class="text-we4vGrey-200 font-light text-xs italic">({{ group.geog_area }})</span></p>
             <p class="text-xs font-light text-we4vGrey-200 italic mt-1">{{ group.group_description }}</p>
         </div>
         <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-10">
-            <div>
-                <img @click="updateGroup(group.group_id)" src="/images/pencil.svg" alt="" class="h-5 object-cover cursor-pointer">
+            <div @click="updateGroup(group.group_id)">
+                <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
             </div>
-            <div>
-                <img @click="deleteGroup(group.group_id)" src="/images/bin.svg" alt="" class="h-5 object-cover cursor-pointer">
+            <div @click="deleteGroup(group.group_id)">
+                <i class="fas fa-trash h-5 cursor-pointer text-lg"></i>
             </div>
-            <div class="h-5 rounded-full bg-we4vBg">
+            <div class="h-5 rounded-full bg-we4vGrey-200">
                 <img v-if="!displayDetails" @click="displayDetails = !displayDetails" class="h-5 object-cover cursor-pointer" src="/images/openGlyph.svg" alt="">
                 <img v-if="displayDetails" @click="displayDetails = !displayDetails" class="h-5 object-cover cursor-pointer" src="/images/closeGlyph.svg" alt="">
             </div>
@@ -92,7 +92,13 @@ export default {
 
     methods: {
         async deleteGroup(id) {
-            await Inertia.delete(`/mygroups/${id}/destroy`, { method: 'delete' })
+            let deleteOk = true
+            if (this.group.members || this.group.teams) {
+                deleteOk = false
+            }
+            deleteOk
+            ? await Inertia.delete(`/mygroups/${id}/destroy`, { method: 'delete' })
+            : alert('force election')
         },
 
         async updateGroup(id) {

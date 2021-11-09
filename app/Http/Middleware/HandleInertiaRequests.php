@@ -34,13 +34,6 @@ class HandleInertiaRequests extends Middleware
         return parent::version($request);
     }
 
-    /**
-     * Defines the props that are shared by default.
-     *
-     * @see https://inertiajs.com/shared-data
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     public function share(Request $request)
     {
         $request->user()
@@ -159,9 +152,7 @@ class HandleInertiaRequests extends Middleware
                     $memberships = Membership::getPendingMemberships();
 
                     if (count($memberships) > 0) {
-                        $groupMembers = [];
                         $groupIds = [];
-                        $teamMembers = [];
                         $teamIds = [];
 
                         foreach ($memberships as $member) {
@@ -225,6 +216,7 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_user_id;
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
+                            $membReqs[$membCount]['count'] = $membCount;
                             ++$membCount;
                         }
 
@@ -236,6 +228,7 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_user_id;
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
+                            $membReqs[$membCount]['count'] = $membCount;
                             ++$membCount;
                         }
 

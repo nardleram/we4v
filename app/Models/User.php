@@ -47,9 +47,11 @@ class User extends Authenticatable
         'email',
         'created_at',
         'updated_at',
+        'deleted_at',
         'email_verified_at',
         'password',
         'remember_token',
+        'two_factor_enabled',
         'two_factor_recovery_codes',
         'two_factor_secret',
     ];
@@ -105,5 +107,10 @@ class User extends Authenticatable
     public function associations() : object
     {
         return $this->belongsToMany(User::class, 'associations', 'requested_of', 'requested_by');
+    }
+
+    public function notes() : object
+    {
+        return $this->hasMany(Note::class);
     }
 }

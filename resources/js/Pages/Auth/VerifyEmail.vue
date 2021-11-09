@@ -14,9 +14,9 @@
 
         <form @submit.prevent="submit">
             <div class="mt-4 flex items-center justify-between">
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <jet-button-blue :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Resend Verification Email
-                </jet-button>
+                </jet-button-blue>
 
                 <inertia-link :href="route('logout')" method="post" as="button" class="underline text-sm text-gray-600 hover:text-gray-900">Log Out</inertia-link>
             </div>
@@ -27,13 +27,13 @@
 <script>
     import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
-    import JetButton from '@/Jetstream/Button'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
 
     export default {
         components: {
             JetAuthenticationCard,
             JetAuthenticationCardLogo,
-            JetButton,
+            JetButtonBlue,
         },
 
         props: {

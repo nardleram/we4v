@@ -8,7 +8,9 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
@@ -51,6 +53,9 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
 
     Route::post('/images/store', [ImagesController::class, 'store'])
         ->name('storeImage')->middleware(['auth']);
+
+    Route::get('myarticles', [ArticleController::class, 'index'])
+        ->name('myarticles')->middleware(['auth']);
     
     Route::post('/approvals/store', [ApprovalController::class, 'store'])
         ->name('storeApproval')->middleware(['auth']);
@@ -87,4 +92,10 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     
     Route::post('/memberships/accept-reject', [MembershipRequestResponseController::class, 'store'])
         ->name('acceptRejectMembership')->middleware(['auth']);
+
+    Route::get('/myprojects', [ProjectController::class, 'index'])
+        ->name('myprojects')->middleware(['auth']);
+
+    Route::post('/myprojects/store', [ProjectController::class, 'store'])
+        ->name('storeProject')->middleware(['auth']);
 });

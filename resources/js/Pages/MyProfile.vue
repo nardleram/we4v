@@ -121,6 +121,13 @@
     export default {
         name: 'MyProfile',
 
+        components: {
+            AppLayout,
+            Title,
+            Subtitle,
+            Form
+        },
+
         props: [
             'user',
             'errors',
@@ -146,13 +153,6 @@
                     'error': false,
                 }
             }
-        },
- 
-        components: {
-            AppLayout,
-            Title,
-            Subtitle,
-            Form
         },
 
         methods: {

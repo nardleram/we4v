@@ -1,17 +1,18 @@
 <template>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
     <app-layout>
         <template #centre>
             <div class="w-1/2 p-3 max-h-screen overflow-x-hidden tracking-tight">
                 <!-- Modal forms -->
                 <teleport to="#groupModals">
                     <Modal :show="showGroupModal">
-                        <div v-click-outside="onClickOutside" v-if="showGroupModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'group'" @mouseenter="nowInside(); mode = 'over'" v-if="showGroupModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
                                         <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                            <div @click="closeModal('group')" class="rounded-full hover:shadow-md">
-                                                <circle-x class="z-50 w-8 h-8 animate-pulse text-we4vOrange"/>
+                                            <div @click="showGroupModal = false, showBackdrop = false">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
                                             </div>   
                                         </div>
                                     </div>
@@ -28,7 +29,7 @@
                                     </div>
 
                                     <div>
-                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="groupName">geographic area</label>
+                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="geogArea">geographic area</label>
                                         <input v-model="geogArea" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="geogArea" placeholder="Enter group’s geagraphic area">
                                     </div>
 
@@ -62,14 +63,14 @@
 
                 <teleport to="#groupModals">
                     <Modal :show="showTeamModal" :name="groupName" :id="groupId" :description="groupDescription">
-                        <div v-click-outside="onClickOutside" v-if="showTeamModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'team'" @mouseenter="nowInside(); mode = ''" v-if="showTeamModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
                                         <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                            <div @click="closeModal('team')" class="rounded-full hover:shadow-md">
-                                                <circle-x class="z-50 w-8 h-8 animate-pulse text-we4vOrange"/>
-                                            </div>   
+                                            <div @click="showTeamModal = false, showBackdrop = false">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                            </div>  
                                         </div>
                                     </div>
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Add team to <span class="italic text-we4vGrey-600">{{ groupName }}</span></h4>
@@ -123,7 +124,7 @@
                 </Title>
 
                 <button class="text-we4vGrey-100 bg-we4vBlue hover:bg-we4vDarkBlue hover:shadow-sm font-bold text-sm tracking-tight flex justify-center rounded-lg w-full focus:outline-none py-2 mr-1 my-4"
-                @click="showGroupModal = true">
+                @click="showGroupModal = true; showBackdrop = true">
                     Create a new group
                 </button>
 
@@ -153,10 +154,11 @@ import AppLayout from '@/Layouts/AppLayout'
 import Form from '@/Jetstream/FormSection'
 import Group from './Components/Group'
 import Modal from './Components/Modal'
+import ModalBackdrop from './Components/ModalBackdrop'
 import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
-import CircleX from '../Jetstream/CircleX'
-import vClickOutside from 'click-outside-vue3'
+import manageModals from '../Pages/Composables/manageModals'
+import { watch, ref } from 'vue'
 
 export default {
     name: 'MyGroups',
@@ -165,10 +167,10 @@ export default {
         AppLayout,
         Form,
         Modal,
+        ModalBackdrop,
         Group,
         Title,
         Subtitle,
-        CircleX
     },
 
     props: [
@@ -177,41 +179,68 @@ export default {
         'user'
     ],
 
-    directives: {
-      clickOutside: vClickOutside.directive
-    },
+    setup() {
+        const {
+            amOutside, 
+            amInside,
+            clearInviteModals,
+            groupId,
+            groupName,
+            groupDescription,
+            geogArea,
+            mode,
+            nowInside, 
+            nowOutside,
+            onActivateTeamModal,
+            onClickOutside,
+            showBackdrop,
+            showGroupModal,
+            showTeamModal,
+            teamFunction,
+            teamName,
+        } = manageModals()
+        
+        let selectedGroupAssociates = ref([])
+        let groupMemberRoles = ref([])
+        let groupAdmins = ref([])
+        let selectedTeamAssociates = ref([])
+        let teamMemberRoles = ref([])
+        let teamAdmins = ref([])
 
-    data: () => {
+        watch(amOutside, () => {
+            if (amOutside.value && !amInside.value) {
+                document.body.addEventListener('click', onClickOutside, true)
+            }
+        })
+
         return {
-            showGroupModal: false,
-            showTeamModal: false,
-            groupId: '',
-            groupDescription: '',
-            groupName: '',
-            groupDescription: '',
-            geogArea: '',
-            teamName: '',
-            teamFunction: '',
-            selectedGroupAssociates: [],
-            groupMemberRoles: [],
-            groupAdmins: [],
-            selectedTeamAssociates: [],
-            teamMemberRoles: [],
-            teamAdmins: [],
+            amOutside,
+            amInside,
+            clearInviteModals,
+            groupAdmins,
+            groupDescription,
+            groupId,
+            groupName,
+            groupMemberRoles,
+            geogArea,
+            mode,
+            nowInside, 
+            nowOutside,
+            onActivateTeamModal,
+            onClickOutside,
+            selectedGroupAssociates,
+            selectedTeamAssociates,
+            showBackdrop,
+            showGroupModal,
+            showTeamModal,
+            teamAdmins,
+            teamFunction,
+            teamMemberRoles,
+            teamName
         }
     },
 
     methods: {
-        closeModal: function (mode) {
-            mode === 'group'? this.showGroupModal = false : this.showTeamModal = false
-            this.groupName = ''
-            this.groupId = ''
-            this.groupDescription = ''
-            this.teamName = ''
-            this.teamId = ''
-            this.teamFunction = ''
-        },
-
         submitGroupData: async function () {
             let members = []
             let role
@@ -272,18 +301,6 @@ export default {
             this.teamMemberRoles = []
             this.teamAdmins = []
             this.showTeamModal = false
-        },
-
-        onActivateTeamModal(group) {
-            this.groupId = group.group_id
-            this.groupName = group.group_name
-            this.groupDescription = group.group_description
-            this.showTeamModal = true
-        },
-
-        onClickOutside() {
-            this.showTeamModal = false
-            this.showGroupModal = false
         },
 
         addRemoveAssociate(mode) {

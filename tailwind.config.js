@@ -12,9 +12,11 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Quicksand', ...defaultTheme.fontFamily.sans],
+                serif: ['Nattyla', ...defaultTheme.fontFamily.serif]
             },
             colors: {
-                we4vBg: '#F7F9F0',
+                we4vBg: 'rgba(250, 251, 246)',
+                vellum: '#fefde7',
                 we4vGreen: {
                     100: '#dcfcec',
                     200: '#c0fade',
@@ -49,6 +51,7 @@ module.exports = {
             width: {
                 'we4vCommentPic': '5%',
                 'we4vCommentText': '95%',
+                'justUnderHalf': '49%',
             },
             maxWidth: {
                 '1/3': '32.5%',
@@ -62,6 +65,7 @@ module.exports = {
                 '1/4': '25%',
                 '1/2': '50%',
                 '3/4': '75%',
+                '4/12': '31.5%',
                 '5/12': '49%'
             },
             padding: {
@@ -82,6 +86,7 @@ module.exports = {
             },
             gridTemplateRows: {
                'groupBox': 'minmax(40px, 40px) auto',
+               'projectBox': 'minmax(64px, 64px) auto',
               }
         },
     },

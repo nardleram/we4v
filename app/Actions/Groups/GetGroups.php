@@ -14,7 +14,7 @@ class GetGroups
                 ->leftJoin('teams', function ($join) {
                     $join->on('groups.id', '=', 'teams.group_id');
                 })
-                ->join('memberships', function ($join) {
+                ->leftJoin('memberships', function ($join) {
                     $join->on('groups.id', '=', 'memberships.membershipable_id')
                     ->orOn('teams.id', '=', 'memberships.membershipable_id');
                 })
@@ -80,20 +80,22 @@ class GetGroups
             if (($currentGroupId !== $rawGroup->group_id) && $loop > 0) {
                 ++$groupCount;
                 $teamCount = 0;
+                $groupMemberCount = 0;
             }
-            if ($rawGroup->team_id && ($currentTeamId !== $rawGroup->team_id) && $loop > 0) {
+            if ($rawGroup->membership_type === 'App\Models\Team' && ($currentTeamId !== $rawGroup->team_id) && $loop > 0) {
                 ++$teamCount;
+                $teamMemberCount = 0;
             }
 
-            // Don't gather team data more than once
-            if ($rawGroup->team_id !== $currentGroupId) {
+            // Don't gather group data more than once
+            if ($rawGroup->group_id !== $currentGroupId) {
                 $groups[$groupCount]['group_name'] = $rawGroup->group_name;
                 $groups[$groupCount]['group_description'] = $rawGroup->group_description;
                 $groups[$groupCount]['group_id'] = $rawGroup->group_id;
                 $groups[$groupCount]['geog_area'] = $rawGroup->geog_area;
             }
 
-            if ($rawGroup->team_id) { // Got teams
+            if ($rawGroup->team_id && $rawGroup->membership_type === 'App\Models\Team') { // Got a team
                 $groups[$groupCount]['teams'][$teamCount]['team_id'] = $rawGroup->team_id;
                 $groups[$groupCount]['teams'][$teamCount]['team_name'] = $rawGroup->team_name;
                 $groups[$groupCount]['teams'][$teamCount]['team_function'] = $rawGroup->team_function;

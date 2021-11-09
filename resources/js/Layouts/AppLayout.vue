@@ -22,7 +22,7 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link href="#">
+                            <jet-nav-link :href="route('myarticles', $page.props.authUser.id)" :active="route().current('myarticles')">
                                 Articles
                             </jet-nav-link>
                         </div>
@@ -32,7 +32,7 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link href="#">
+                            <jet-nav-link :href="route('myprojects', $page.props.authUser.id)" :active="route().current('myprojects')">
                                 Projects
                             </jet-nav-link>
                         </div>

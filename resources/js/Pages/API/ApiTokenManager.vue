@@ -38,9 +38,9 @@
                     Created.
                 </jet-action-message>
 
-                <jet-button :class="{ 'opacity-25': createApiTokenForm.processing }" :disabled="createApiTokenForm.processing">
+                <jet-button-blue :class="{ 'opacity-25': createApiTokenForm.processing }" :disabled="createApiTokenForm.processing">
                     Create
-                </jet-button>
+                </jet-button-blue>
             </template>
         </jet-form-section>
 
@@ -134,9 +134,9 @@
                     Cancel
                 </jet-secondary-button>
 
-                <jet-button class="ml-2" @click="updateApiToken" :class="{ 'opacity-25': updateApiTokenForm.processing }" :disabled="updateApiTokenForm.processing">
+                <jet-button-blue class="ml-2" @click="updateApiToken" :class="{ 'opacity-25': updateApiTokenForm.processing }" :disabled="updateApiTokenForm.processing">
                     Save
-                </jet-button>
+                </jet-button-blue>
             </template>
         </jet-dialog-modal>
 
@@ -166,7 +166,7 @@
 <script>
     import JetActionMessage from '@/Jetstream/ActionMessage'
     import JetActionSection from '@/Jetstream/ActionSection'
-    import JetButton from '@/Jetstream/Button'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetConfirmationModal from '@/Jetstream/ConfirmationModal'
     import JetDangerButton from '@/Jetstream/DangerButton'
     import JetDialogModal from '@/Jetstream/DialogModal'
@@ -182,7 +182,7 @@
         components: {
             JetActionMessage,
             JetActionSection,
-            JetButton,
+            JetButtonBlue,
             JetConfirmationModal,
             JetDangerButton,
             JetDialogModal,

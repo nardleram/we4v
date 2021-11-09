@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'we4v') }}</title>
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@200;300;400;500;600;700&display=swap">
+        {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@200;300;400;500;600;700&display=swap"> --}}
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -21,3 +21,4 @@
         @yield('content')
     </body>
 </html>
+{{-- Me thinks this is not even being used. Will change name... --}}

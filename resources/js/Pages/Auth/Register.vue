@@ -1,8 +1,6 @@
 <template>
-    <jet-authentication-card>
-        <template #logo>
-            <jet-authentication-card-logo />
-        </template>
+    <div class="m-auto w-96 mt-24">
+        <jet-application-mark class="block w-96" />
 
         <jet-validation-errors class="mb-4" />
 
@@ -22,22 +20,22 @@
                 <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus autocomplete="username" />
             </div>
 
-            <div class="mt-4">
+            <div>
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
             </div>
 
-            <div class="mt-4">
+            <div>
                 <jet-label for="password" value="Password" />
                 <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="new-password" />
             </div>
 
-            <div class="mt-4">
+            <div>
                 <jet-label for="password_confirmation" value="Confirm Password" />
                 <jet-input id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required autocomplete="new-password" />
             </div>
 
-            <div class="mt-4" v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature">
+            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature">
                 <jet-label for="terms">
                     <div class="flex items-center">
                         <jet-checkbox name="terms" id="terms" v-model:checked="form.terms" />
@@ -49,23 +47,20 @@
                 </jet-label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <inertia-link :href="route('login')" class="underline text-sm text-we4vGrey-700 hover:text-we4vGrey-800">
-                    Already registered?
-                </inertia-link>
+            <jet-button-blue class="w-full mt-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Sign up
+            </jet-button-blue>
 
-                <jet-button class="ml-4 text-we4vBg bg-we4vBlue" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </jet-button>
+            <div class="font-semibold text-sm text-center text-we4vDarkBlue mt-6 hover:text-we4vBlue hover:border-we4vGrey-300 justify-center min-w-5/12 cursor-pointer rounded-lg border-b border-we4vGrey-200 pb-1 transition ease-in-out duration-150">
+                <inertia-link :href="route('login')">Already registered?</inertia-link>
             </div>
         </form>
-    </jet-authentication-card>
+    </div>
 </template>
 
 <script>
-    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
-    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
-    import JetButton from '@/Jetstream/Button'
+    import JetApplicationMark from '@/Jetstream/ApplicationMark'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetInput from '@/Jetstream/Input'
     import JetCheckbox from "@/Jetstream/Checkbox";
     import JetLabel from '@/Jetstream/Label'
@@ -73,9 +68,8 @@
 
     export default {
         components: {
-            JetAuthenticationCard,
-            JetAuthenticationCardLogo,
-            JetButton,
+            JetApplicationMark,
+            JetButtonBlue,
             JetInput,
             JetCheckbox,
             JetLabel,

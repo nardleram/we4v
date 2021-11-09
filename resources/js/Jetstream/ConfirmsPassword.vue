@@ -27,16 +27,16 @@
                     Cancel
                 </jet-secondary-button>
 
-                <jet-button class="ml-2" @click="confirmPassword" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <jet-button-blue class="ml-2" @click="confirmPassword" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     {{ button }}
-                </jet-button>
+                </jet-button-blue>
             </template>
         </jet-dialog-modal>
     </span>
 </template>
 
 <script>
-    import JetButton from './Button'
+    import JetButtonBlue from './ButtonBlue'
     import JetDialogModal from './DialogModal'
     import JetInput from './Input'
     import JetInputError from './InputError'
@@ -58,7 +58,7 @@
         },
 
         components: {
-            JetButton,
+            JetButtonBlue,
             JetDialogModal,
             JetInput,
             JetInputError,

@@ -61,15 +61,15 @@
                 Saved.
             </jet-action-message>
 
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <jet-button-blue :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Save
-            </jet-button>
+            </jet-button-blue>
         </template>
     </jet-form-section>
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetFormSection from '@/Jetstream/FormSection'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
@@ -80,7 +80,7 @@
     export default {
         components: {
             JetActionMessage,
-            JetButton,
+            JetButtonBlue,
             JetFormSection,
             JetInput,
             JetInputError,

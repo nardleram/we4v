@@ -38,9 +38,9 @@
                     </template>
                 </button>
 
-                <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <jet-button-blue class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Log in
-                </jet-button>
+                </jet-button-blue>
             </div>
         </form>
     </jet-authentication-card>
@@ -49,7 +49,7 @@
 <script>
     import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
-    import JetButton from '@/Jetstream/Button'
+    import JetButtonBlue from '@/Jetstream/ButtonBlue'
     import JetInput from '@/Jetstream/Input'
     import JetLabel from '@/Jetstream/Label'
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
@@ -58,7 +58,7 @@
         components: {
             JetAuthenticationCard,
             JetAuthenticationCardLogo,
-            JetButton,
+            JetButtonBlue,
             JetInput,
             JetLabel,
             JetValidationErrors,

@@ -1,5 +1,5 @@
 <template>
-    <label class="block font-medium text-sm text-we4vGrey-600">
+    <label class="block font-medium text-xs text-we4vGrey-600">
         <span v-if="value">{{ value }}</span>
         <span v-else><slot></slot></span>
     </label>
