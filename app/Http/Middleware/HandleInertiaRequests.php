@@ -11,6 +11,7 @@ use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
+use Illuminate\Support\Facades\Session;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -21,6 +22,7 @@ class HandleInertiaRequests extends Middleware
      * @var string
      */
     protected $rootView = 'app';
+    private $myImages;
 
     /**
      * Determines the current asset version.
@@ -180,7 +182,10 @@ class HandleInertiaRequests extends Middleware
                                 'groups.geog_area as geog_area',
                                 'users.username as username',
                                 'users.id as g_user_id',
-                                'memberships.role as g_role'
+                                'memberships.role as g_role',
+                                'memberships.is_admin as g_admin',
+                                'memberships.created_at as g_created',
+                                'memberships.updated_at as g_updated',
                             ])
                             ->orderBy('groups.name')
                             ->get();
@@ -199,7 +204,10 @@ class HandleInertiaRequests extends Middleware
                                 'teams.function as team_function',
                                 'users.username as username',
                                 'users.id as t_user_id',
-                                'memberships.role as t_role'
+                                'memberships.role as t_role',
+                                'memberships.is_admin as t_admin',
+                                'memberships.created_at as t_created',
+                                'memberships.updated_at as t_updated',
                             ])
                             ->orderBy('teams.name')
                             ->get();
@@ -216,7 +224,10 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_user_id;
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
-                            $membReqs[$membCount]['count'] = $membCount;
+                            $membReqs[$membCount]['gAdmin'] = $rawGroup->g_admin;
+                            $rawGroup['g_updated'] > $rawGroup['g_created']
+                            ? $membReqs[$membCount]['updated'] = true
+                            : $membReqs[$membCount]['updated'] = false;
                             ++$membCount;
                         }
 
@@ -228,7 +239,10 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_user_id;
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
-                            $membReqs[$membCount]['count'] = $membCount;
+                            $membReqs[$membCount]['tAdmin'] = $rawTeam->t_admin;
+                            $rawTeam['t_updated'] > $rawTeam['t_created']
+                            ? $membReqs[$membCount]['updated'] = true
+                            : $membReqs[$membCount]['updated'] = false;
                             ++$membCount;
                         }
 

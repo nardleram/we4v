@@ -1,7 +1,7 @@
 <template>
     <teleport to="#membRequestModals">
         <Modal :show="showInviteModal" >
-            <div @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside(); mode = ''" v-if="showInviteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+            <div v-if="showInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
                 <div class="flex justify-end">
                     <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
                         <div @click="showInviteModal = false; clearModal()">
@@ -10,19 +10,21 @@
                     </div>
                 </div>
 
-                <h4 class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} cordially invites you to join the {{ type }} </h4> 
+                <h4 v-if="!updated" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} cordially invites you to join the {{ type }} </h4>
+                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} has updated the details of your membership of the {{ type }} </h4>
                 <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
 
                 <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
                 <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
                 <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
+                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupRequester ? groupRequester : teamRequester }} invites you to be the {{ type }}’s administrator.</h5>
                 
                 <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-                @click="storeInviteResponse(req, true)">
+                @click="storeInviteResponse(inviteData, true)">
                     Accept
                 </button>
                 <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
-                @click="storeInviteResponse(req, false)">
+                @click="storeInviteResponse(inviteData, false)">
                     Reject
                 </button>
             </div>
@@ -43,7 +45,7 @@
             <pending-assoc-reqs v-for="(req, reqKey) in $page.props.myPendingAssocReqs" :key="reqKey" :req="req" />
         </div>
 
-        <div class="text-l tracking-tight mb-1 text-right text-sm">Membership requests: 
+        <div class="text-l tracking-tight mb-1 text-right text-sm">Group & team invitations: 
             <span 
             v-if="$page.props.myPendingMembReqs.length > 0" class="text-xl font-extrabold text-we4vOrange cursor-pointer"
             @click="showMembReqs = !showMembReqs">
@@ -66,14 +68,24 @@
             </tbody>
         </table>
 
-        <h4 @click="showAssocs = !showAssocs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">My associates</h4>
+        <h4 @click="showAssocs = !showAssocs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Associates</h4>
         <div v-if="showAssocs">
             <Associates/>
         </div>
 
-        <h4 @click="showMembs = !showMembs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">My memberships</h4>
+        <h4 @click="showMembs = !showMembs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Memberships</h4>
         <div v-if="showMembs">
-            Stuff here
+            <small>To be completed</small>
+        </div>
+
+        <h4 @click="showUnansweredInvites = !showUnansweredInvites" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Unanswered invitations</h4>
+        <div v-if="showUnansweredInvites">
+            <small>To be completed</small>
+        </div>
+
+        <h4 @click="showTasks = !showTasks" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Tasks</h4>
+        <div v-if="showTasks">
+            <small>My tasks</small>
         </div>
     </div>
 </template>
@@ -100,17 +112,22 @@ export default {
     data: () => {
         return {
             showAssocReqs: false,
-            showMembReqs: false,
             showAssocs: false,
-            showMembs: false
+            showMembs: false,
+            showTasks: false,
         }
     },
+
+    props: [
+        'success'
+    ],
 
     setup() {
         const {
             amOutside, 
             amInside,
             clearModal,
+            gAdmin,
             geogArea,
             groupDescription,
             groupId,
@@ -118,39 +135,53 @@ export default {
             groupRequester,
             groupRole,
             hydrateInviteModal,
+            inviteData,
             mode,
             nowInside, 
             nowOutside, 
             onClickOutside,
             showInviteModal,
+            tAdmin,
             teamFunction,
             teamName,
             teamId,
             teamRequester,
             teamRole,
-            type
+            type,
+            updated
         } = manageModals()
 
-        const storeInviteResponse = async (req, res) => {
-            if (req.type === 'group') {
+        const showUnansweredInvites = ref(false)
+        const showMembReqs = ref(false)
+        const error = ref(null)
+
+        const storeInviteResponse = async (inviteData, res) => {
+            if (inviteData[0].type === 'group') {
                 var payload = {
-                    'membershipable_id': req.groupId,
-                    'requester': req.groupRequesterId,
+                    'membershipable_id': inviteData[0].groupId,
+                    'requester': inviteData[0].groupRequesterId,
                     'membershipable_type': 'App\\Models\\Group',
                     'confirmed': res
                 }
             }
-            if (req.type === 'team') {
+            if (inviteData[0].type === 'team') {
                 var payload = {
-                    'membershipable_id': req.teamId,
-                    'requester': req.teamRequesterId,
+                    'membershipable_id': inviteData[0].teamId,
+                    'requester': inviteData[0].teamRequesterId,
                     'membershipable_type': 'App\\Models\\Team',
                     'confirmed': res
                 }
             }
-            await Inertia.post('/memberships/accept-reject', payload)
-            .catch(e => console.log(e))
-            showInviteModal.value = false
+
+            try {
+                await Inertia.post('/memberships/accept-reject', payload)
+                error.value = null
+            } catch(err) {
+                error.value = err
+            }
+
+            showMembReqs.value = false
+            clearModal()
         }
 
         watch(amOutside, () => {
@@ -163,6 +194,8 @@ export default {
             amOutside, 
             amInside,
             clearModal,
+            error,
+            gAdmin,
             geogArea,
             groupId,
             groupName,
@@ -170,18 +203,23 @@ export default {
             groupRequester,
             groupRole,
             hydrateInviteModal,
+            inviteData,
             nowInside, 
             nowOutside, 
             onClickOutside,
             storeInviteResponse,
             mode,
             showInviteModal,
+            showMembReqs,
+            showUnansweredInvites,
+            tAdmin,
             teamFunction,
             teamId,
             teamName,
             teamRequester,
             teamRole,
-            type
+            type,
+            updated
         }
     },
 

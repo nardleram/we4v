@@ -1,4 +1,5 @@
 <template>
+    <flash-message></flash-message>
     <div class="flex flex-col flex-1 bg-we4vBg min-h-screen overflow-y-hidden" >
         
         <nav class="bg-we4vGrey-900 border-b border-we4vGrey-700 shadow-md fixed top-0 left-0 w-screen z-50">
@@ -162,6 +163,7 @@
     import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink'
     import SidebarLeft from '@/Jetstream/SidebarLeft'
     import SidebarRight from '@/Jetstream/SidebarRight'
+    import FlashMessage from '../Pages/Components/FlashMessage'
 
     export default {
         components: {
@@ -173,6 +175,7 @@
             JetResponsiveNavLink,
             SidebarLeft,
             SidebarRight,
+            FlashMessage
         },
 
         data() {

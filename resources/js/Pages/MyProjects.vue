@@ -1,4 +1,5 @@
 <template>
+    <error-message></error-message>
     <modal-backdrop :show="showBackdrop"></modal-backdrop>
     <app-layout>
         <template #centre>
@@ -12,7 +13,7 @@
                                 <template #form>
                                     <div class="flex justify-end">
                                         <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                            <div @click="showProjectModal = false, showBackdrop = false">
+                                            <div @click="showProjectModal = false; clearModal()">
                                                 <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
                                             </div>   
                                         </div>
@@ -32,11 +33,11 @@
                                     <div class="flex flex-row justify-between">
                                         <div class="w-justUnderHalf">
                                             <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date</label>
-                                            <input v-model="startDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" id="startDate" placeholder="select start date">
+                                            <input v-model="projectStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
                                         </div>
                                         <div class="w-justUnderHalf">
                                             <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date</label>
-                                            <input v-model="endDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" id="endDate" placeholder="select end date">
+                                            <input v-model="projectEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
                                         </div>
                                     </div>
 
@@ -62,7 +63,7 @@
                                 <template #form>
                                     <div class="flex justify-end">
                                         <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                            <div @click="showTaskModal = false, showBackdrop = false">
+                                            <div @click="showTaskModal = false; clearModal()">
                                                 <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
                                             </div>   
                                         </div>
@@ -82,45 +83,49 @@
                                     <div class="flex flex-row justify-between">
                                         <div class="w-justUnderHalf">
                                             <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date</label>
-                                            <input v-model="startDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" id="startDate" placeholder="select start date">
+                                            <input v-model="taskStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
                                         </div>
                                         <div class="w-justUnderHalf">
                                             <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date</label>
-                                            <input v-model="endDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" id="endDate" placeholder="select end date">
+                                            <input v-model="taskEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
                                         </div>
                                     </div>
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member / whole team / team member</h4>
 
                                     <div v-if="projectGroupData[0].groupMembers" class="w-full m-0">
-                                        <h4 class="text-sm font-regular text-we4vGrey-700 mt-2">Group members</h4>
+                                        <h4 class="text-sm font-regular text-we4vGrey-700 mt-2">Group members (of {{ projectGroupData[0].group_name }})</h4>
                                         <div v-for="(groupMember, groupMemberKey) in projectGroupData[0].groupMembers" :key="groupMemberKey">
                                             <div v-if="groupMember.confirmed" class="text-xs mt-1">
                                                 <label class="text-we4vGrey-500 text-xs mr-2 w-full text-center" for="groupMember">{{ groupMember.username }}</label>
-                                                <input type="radio" :value="projectGroupData[0].group_id">
+                                                <input @click="taskableId = projectGroupData[0].group_id; taskableType = 'App\\Models\\Group'; userId = groupMember.user_id" type="radio" name="task" :value="groupMember.user_id">
                                             </div>
                                             <div v-if="!groupMember.confirmed && projectGroupData[0].groupMembers.length === 1" class="text-xs mt-1">
-                                                <p class="text-we4vGrey-600 text-xs mt-1">There are no confirmed members in {{ projectGroupData[0].group_name }}</p>
+                                                <p class="text-we4vGrey-600 text-xs mt-1">There are no (confirmed) group members in {{ projectGroupData[0].group_name }}. <span v-if="!projectGroupData[0].teams">Nor are there any teams. Please first add group members or teams with members to this group to be able to assign tasks.</span></p>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div v-if="projectGroupData[0].teams" class="w-full m-0">
-                                        <h4 class="text-sm font-regular text-we4vGrey-700 mt-2">Team</h4>
-                                        <div v-for="(team, teamKey) in projectGroupData[0].teams" :key="teamKey">
-                                            <div class="text-xs mt-1">
-                                                <label class="text-we4vGrey-500 text-xs mr-2 w-full text-center" for="groupMember">{{ team.team_name }}</label>
-                                                <input type="radio" :value="team.team_id">
+                                        <div v-for="(team, teamKey) in projectGroupData[0].teams" :key="teamKey" class="grid gap-1 grid-cols-12 mt-2">
+                                            <div class="row-span-1 row-end-1 col-start-1 col-end-3">
+                                                <h4 class="text-sm font-regular text-we4vGrey-700">Teams</h4>
                                             </div>
-                                            <div v-if="team.teamMembers">
-                                                <div v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey">
-                                                    <div v-if="teamMember.confirmed" class="text-xs mt-1">
-                                                        <h4 class="text-sm font-regular text-we4vGrey-700 mt-2">Team members</h4>
-                                                        <label class="text-we4vGrey-500 text-xs mr-2 w-full text-center" for="teamMember">{{ teamMember.username }}</label>
-                                                        <input type="radio" :value="team.team_id">
+                                            <div class="row-span-1 row-end-1 col-start-4 col-end-12">
+                                                <h4 class="text-sm font-regular text-we4vGrey-700 m-0 p-0">Team members</h4>
+                                            </div>
+                                            <div class="row-start-2 -row-end-1 col-start-1 col-end-3 items-center">
+                                                <label class="text-we4vDarkBlue font-medium text-xs mr-2 w-full p-0 text-center" for="team">{{ team.team_name }}</label>
+                                                <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'" type="radio" name="task" :value="team.team_id">
+                                            </div>
+                                            <div v-if="team.teamMembers" class="row-span-1 col-start-4 col-span-3 m-0 p-0">
+                                                <div v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey" class="p-0 m-0">
+                                                    <div v-if="teamMember.confirmed" class="p-0 m-0">
+                                                        <label class="text-we4vGrey-600 text-xs mr-2 p-0 w-full text-center" for="teamMember">{{ teamMember.username }}</label>
+                                                        <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'; userId = teamMember.user_id" type="radio" name="task" :value="teamMember.user_id">
                                                     </div>
                                                     <div v-if="!teamMember.confirmed && team.teamMembers.length === 1" class="text-xs mt-1">
-                                                        <p class="text-we4vGrey-600 text-xs mt-1">There are no confirmed members in {{ team.team_name }}</p>
+                                                        <p class="text-we4vGrey-600 text-xs mt-1">{{ team.team_name }} contains no confirmed members.</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -175,9 +180,10 @@ import Modal from './Components/Modal'
 import ModalBackdrop from './Components/ModalBackdrop'
 import Project from './Components/Project'
 import manageModals from '../Pages/Composables/manageModals'
-import { watch, computed } from 'vue'
+import { watch, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-vue3'
+import ErrorMessage from '../Pages/Components/ErrorMessage'
 
 export default {
     name: 'MyProjects',
@@ -192,6 +198,7 @@ export default {
         Modal,
         ModalBackdrop,
         Project,
+        ErrorMessage,
     },
 
     props: [
@@ -200,11 +207,11 @@ export default {
         'errors'
     ],
 
-    setup() {
+    setup(props) {
         const {
             amOutside, 
             amInside,
-            clearInviteModals,
+            clearModal,
             mode,
             nowInside, 
             nowOutside,
@@ -219,26 +226,58 @@ export default {
             showBackdrop,
             showProjectModal,
             showTaskModal,
+            taskableId,
+            taskableType,
             taskDescription,
             taskEndDate,
             taskId,
             taskName,
-            taskStartDate
+            taskStartDate,
+            userId
         } = manageModals()
 
         const submitProjectData = async function () {
             let selectedGroup = document.querySelector('input[name="group"]:checked').value
             let payload = {
-                'owner': usePage.props.authUser.id,
+                'owner': usePage().props.value.authUser.id,
                 'name': projectName.value,
                 'description': projectDescription.value,
                 'start_date': projectStartDate.value,
                 'end_date': projectEndDate.value,
-                'group_id': 'some id',
+                'group_id': selectedGroup,
             }
-            await Inertia.post('/myprojects/store', payload)
             
-            onClickOutside()
+            try {
+                await Inertia.post('/myprojects/store', payload)
+                props.errors = null
+            } catch (err) {
+                props.errors = err
+            }
+            
+            clearModal()
+        }
+
+        const submitTaskData = async function () {
+            let payload = {
+                'owner': usePage().props.value.authUser.id,
+                'name': taskName.value,
+                'description': taskDescription.value,
+                'start_date': taskStartDate.value,
+                'end_date': taskEndDate.value,
+                'taskable_id': taskableId.value,
+                'taskable_type': taskableType.value,
+                'project_id': projectId.value,
+                'user_id': userId.value
+            }
+            
+            try {
+                await Inertia.post('/mytasks/store', payload)
+                props.errors = null
+            } catch (err) {
+                props.errors = err
+            }
+            
+            clearModal()
         }
 
         watch(amOutside, () => {
@@ -250,7 +289,7 @@ export default {
         return {
             amOutside,
             amInside,
-            clearInviteModals,
+            clearModal,
             mode,
             nowInside, 
             nowOutside,
@@ -266,11 +305,15 @@ export default {
             showProjectModal,
             showTaskModal,
             submitProjectData,
+            submitTaskData,
+            taskableId,
+            taskableType,
             taskDescription,
             taskEndDate,
             taskId,
             taskName,
-            taskStartDate
+            taskStartDate,
+            userId
         }
     }
 }

@@ -16,6 +16,7 @@ class CreateTasksTable extends Migration
             $table->date('end_date');
             $table->uuid('taskable_id');
             $table->string('taskable_type');
+            $table->boolean('completed')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

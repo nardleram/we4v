@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GroupController;
@@ -83,12 +84,18 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     
     Route::post('/mygroups/store', [GroupController::class, 'store'])
         ->name('storeGroup')->middleware(['auth']);
+    
+    Route::patch('/mygroups/update', [GroupController::class, 'update'])
+        ->name('updateGroup')->middleware(['auth']);
         
     Route::delete('/mygroups/{group}/destroy', [GroupController::class, 'destroy'])
         ->name('deleteGroup')->middleware(['auth']);
 
     Route::post('/myteams/store', [TeamController::class, 'store'])
         ->name('storeTeam')->middleware(['auth']);
+        
+    Route::patch('/myteams/update', [TeamController::class, 'update'])
+        ->name('updateTeam')->middleware(['auth']);
     
     Route::post('/memberships/accept-reject', [MembershipRequestResponseController::class, 'store'])
         ->name('acceptRejectMembership')->middleware(['auth']);
@@ -98,4 +105,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
 
     Route::post('/myprojects/store', [ProjectController::class, 'store'])
         ->name('storeProject')->middleware(['auth']);
+
+    Route::post('/mytasks/store', [TaskController::class, 'store'])
+        ->name('storeTask')->middleware(['auth']);
 });

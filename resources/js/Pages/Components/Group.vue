@@ -5,7 +5,7 @@
             <p class="text-xs font-light text-we4vGrey-200 italic mt-1">{{ group.group_description }}</p>
         </div>
         <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-10">
-            <div @click="updateGroup(group.group_id)">
+            <div @click="$emit('activateEditGroupModal', group)">
                 <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
             </div>
             <div @click="deleteGroup(group.group_id)">
@@ -17,10 +17,10 @@
             </div>
         </div>
 
-        <div id="groupBoxDetails" v-if="displayDetails" class="col-start-1 col-end-13 mt-3">
+        <div v-if="displayDetails" class="col-start-1 col-end-13 mt-3">
             <div v-if="group.groupMembers">
                 <h4 class="text-sm font-regular text-we4vGrey-200">Members</h4>
-                <div class="bg-we4vBg text-sm font-normal rounded my-2 p-2 flex flex-col flex-wrap items-start justify-between">
+                <div class="bg-we4vBg text-sm font-normal rounded my-2 px-2 pt-2 flex flex-col flex-wrap items-start justify-between">
                     <div v-for="(member, memberKey) in group.groupMembers" :key="memberKey">
                         <div class="flex flex-row mb-2 items-center">
                             <div class="font-bold text-xs text-we4vBlue mr-2">
@@ -29,8 +29,11 @@
                             <div class="font-regular text-we4vGrey-600 text-xs mr-3">
                                 <p>Role: {{ member.role }}</p>
                             </div>
-                            <div v-if="!member.confirmed" class="text-red-600 text-xs">
+                            <div v-if="!member.confirmed && !member.declined" class="text-red-600 text-xs">
                                 <p class="font-bold">(TBC)</p>
+                            </div>
+                            <div v-if="member.declined" class="text-red-600 text-xs">
+                                <p class="font-bold">Invitation declined</p>
                             </div>
                         </div>
                     </div>
@@ -39,7 +42,7 @@
 
             <div v-if="group.teams">
                 <h4 class="text-sm font-regular text-we4vGrey-200 mt-2">Teams</h4>
-                <div v-for="(team, teamKey) in group.teams" :key="teamKey" class="bg-we4vBg text-sm font-normal text-we4vGrey-800 rounded my-2 p-2">
+                <div v-for="(team, teamKey) in group.teams" :key="teamKey" class="bg-we4vBg text-sm font-normal text-we4vGrey-800 rounded my-2 px-2 pt-2">
                     <div class="font-semibold">
                         {{ team.team_name }}
                     </div>
@@ -55,8 +58,11 @@
                                 <div class="font-regular text-we4vGrey-600 text-xs mr-3">
                                     <p>Role: {{ teamMember.role }}</p>
                                 </div>
-                                <div v-if="!teamMember.confirmed" class="font-bold text-red-600 text-xs">
+                                <div v-if="!teamMember.confirmed && !teamMember.declined" class="font-bold text-red-600 text-xs">
                                     <p>(TBC)</p>
+                                </div>
+                                <div v-if="teamMember.declined" class="text-red-600 text-xs">
+                                    <p class="font-bold">Invitation declined</p>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +93,8 @@ export default {
     },
 
     emits: [
-        'activateTeamModal'
+        'activateTeamModal',
+        'activateEditGroupModal'
     ],
 
     methods: {
@@ -100,10 +107,6 @@ export default {
             ? await Inertia.delete(`/mygroups/${id}/destroy`, { method: 'delete' })
             : alert('force election')
         },
-
-        async updateGroup(id) {
-            await Inertia.update(`/mygroups/${id}/update`)
-        }
     }
 }
 </script>

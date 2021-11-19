@@ -175,6 +175,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
+        App\Providers\InertiaServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 

@@ -82,12 +82,15 @@ module.exports = {
                 'indent-10': '0 0 0 20rem',
             },
             animation: {
-                'spin': 'spin 5s linear infinite'
+                'spin': 'spin 2s linear infinite'
             },
             gridTemplateRows: {
                'groupBox': 'minmax(40px, 40px) auto',
                'projectBox': 'minmax(64px, 64px) auto',
-              }
+            },
+            gridRowEnd: {
+                '-1': '-1'
+            }
         },
     },
 

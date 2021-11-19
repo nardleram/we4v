@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,6 +29,16 @@ class Project extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+
+    public function getStartDateAttribute($date)
+    {
+        return Carbon::parse($date)->format('d M Y');
+    }
+
+    public function getEndDateAttribute($date)
+    {
+        return Carbon::parse($date)->format('d M Y');
+    }
 
     public function user() : object
     {

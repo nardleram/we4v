@@ -6,12 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreGroupRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+   public function authorize() : bool
     {
         if (auth()->id()) {
             return true;
@@ -20,12 +15,7 @@ class StoreGroupRequest extends FormRequest
         return false;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function rules() : array
     {
         return [
             'owner' => 'required|uuid',

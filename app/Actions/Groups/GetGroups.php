@@ -9,8 +9,7 @@ class GetGroups
 {
     public function handle($userId)
     {
-        try {
-            $rawGroups = Group::where('groups.owner', $userId)
+        $rawGroups = Group::where('groups.owner', $userId)
                 ->leftJoin('teams', function ($join) {
                     $join->on('groups.id', '=', 'teams.group_id');
                 })
@@ -40,8 +39,9 @@ class GetGroups
                     'memberships.role as role',
                     'memberships.confirmed as confirmed',
                     'memberships.is_admin as admin',
+                    'memberships.deleted_at as declined',
                     'users.username as username',
-                    'images.path as user_profile_pic' 
+                    'images.path as path' 
                 ])
                 ->groupBy([
                     'groups.id',
@@ -52,6 +52,7 @@ class GetGroups
                     'memberships.group_id',
                     'memberships.role',
                     'memberships.confirmed',
+                    'memberships.deleted_at',
                     'users.username',
                     'images.path'
                 ])
@@ -60,11 +61,6 @@ class GetGroups
                 ->orderBy('memberships.is_admin', 'desc')
                 ->orderBy('users.username')
                 ->get();
-        } catch (QueryException $exception) {
-            return view('groups.queryException');
-        } catch (\Exception $exception) {
-            return view('groups.queryException');
-        }
 
         // Assemble $groups array
         $groups = [];
@@ -107,8 +103,11 @@ class GetGroups
                     $groups[$groupCount]['groupMembers'][$groupMemberCount]['username'] = $rawGroup->username;
                     $groups[$groupCount]['groupMembers'][$groupMemberCount]['role'] = $rawGroup->role;
                     $groups[$groupCount]['groupMembers'][$groupMemberCount]['confirmed'] = $rawGroup->confirmed;
-                    $groups[$groupCount]['groupMembers'][$groupMemberCount]['user_profile_pic'] = $rawGroup->user_profile_pic;
+                    $groups[$groupCount]['groupMembers'][$groupMemberCount]['path'] = $rawGroup->path;
                     $groups[$groupCount]['groupMembers'][$groupMemberCount]['admin'] = $rawGroup->admin;
+                    $groups[$groupCount]['groupMembers'][$groupMemberCount]['declined'] = $rawGroup->declined;
+                    $groups[$groupCount]['groupMembers'][$groupMemberCount]['user_id'] = $rawGroup->user_id;
+                    $groups[$groupCount]['groupMembers'][$groupMemberCount]['invited'] = true;
                     ++$groupMemberCount;
                 }
                 if ($rawGroup->membership_type === 'App\Models\Group' && $rawGroup->member_group_id) {
@@ -122,6 +121,10 @@ class GetGroups
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['role'] = $rawGroup->role;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['confirmed'] = $rawGroup->confirmed;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['admin'] = $rawGroup->admin;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['declined'] = $rawGroup->declined;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['user_id'] = $rawGroup->user_id;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawGroup->path;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['invited'] = true;
                     ++$teamMemberCount;
                 }
             }

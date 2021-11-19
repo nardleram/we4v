@@ -6,7 +6,7 @@ use App\Models\Membership;
 
 class StoreMemberships
 {
-    public function storeMembers($request, $parentId)
+    public function handle($request, $parentId)
     {
         foreach ($request->members as $member) {
             Membership::create([

@@ -1,4 +1,5 @@
 <template>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
     <app-layout>
         <template #centre>
             <div class="w-1/2 p-3 max-h-screen overflow-x-hidden">
@@ -12,8 +13,10 @@
  
 <script>
     import AppLayout from '@/Layouts/AppLayout'
-    import NewPost from './Components/NewPost';
+    import NewPost from './Components/NewPost'
     import Post from './Components/Post'
+    import manageModals from '../Pages/Composables/manageModals'
+    import ModalBackdrop from './Components/ModalBackdrop'
 
     export default {
         name: 'Talkboard',
@@ -27,6 +30,21 @@
             AppLayout,
             Post,
             NewPost,
+            ModalBackdrop,
+        },
+
+        setup() {
+        const {
+            amInside,
+            amOutside, 
+            clearModal,
+            nowInside, 
+            nowOutside,
+            onClickOutside,
+            showBackdrop,
+        } = manageModals()
+
+        return { amInside, amOutside, clearModal, nowInside, nowOutside, onClickOutside, showBackdrop }
         },
 
         methods: {

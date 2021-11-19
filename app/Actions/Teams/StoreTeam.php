@@ -3,7 +3,6 @@
 namespace App\Actions\Teams;
 
 use App\Models\Team;
-use App\Models\Membership;
 use Illuminate\Http\Request;
 
 class StoreTeam

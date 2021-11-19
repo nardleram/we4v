@@ -6,17 +6,28 @@ use Inertia\Inertia;
 use App\Models\Group;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Groups\StoreGroup;
+use App\Actions\Groups\UpdateGroup;
 use App\Http\Requests\StoreGroupRequest;
 use App\Actions\Groups\DestroyGroupCascade;
 use App\Actions\Memberships\StoreMemberships;
+use App\Actions\Memberships\UpdateMemberships;
 
 class GroupController extends Controller
 {
-    public function __construct(StoreGroup $storeGroup, GetGroups $getGroups, StoreMemberships $storeMembers, DestroyGroupCascade $destroyGroupCasc)
+    private $getGroups;
+    private $storeGroup;
+    private $storeMemberships;
+    private $updateGroup;
+    private $updateMemberships;
+    private $destroyGroupCasc;
+
+    public function __construct(GetGroups $getGroups, StoreGroup $storeGroup, StoreMemberships $storeMemberships, UpdateGroup $updateGroup, UpdateMemberships $updateMemberships, DestroyGroupCascade $destroyGroupCasc)
     {
-        $this->storeGroup = $storeGroup;
         $this->getGroups = $getGroups;
-        $this->storeMembers = $storeMembers;
+        $this->storeGroup = $storeGroup;
+        $this->storeMemberships = $storeMemberships;
+        $this->updateGroup = $updateGroup;
+        $this->updateMemberships = $updateMemberships;
         $this->destroyGroupCasc = $destroyGroupCasc;
     }
 
@@ -29,18 +40,29 @@ class GroupController extends Controller
 
     public function store(StoreGroupRequest $request) : object
     {
-        $group = $this->storeGroup->storeGroup($request);
+        $group = $this->storeGroup->handle($request);
 
-        $this->storeMembers->storeMembers($request, $group->id);
+        $this->storeMemberships->handle($request, $group->id);
+
+        count($request->members) > 0
+        ? $flashMessage = 'Group added, invitations sent'
+        : $flashMessage = 'Group added';
 
         return Inertia::render('MyGroups', [
-            'mygroups' => $this->getGroups->handle(auth()->id())
+            'mygroups' => $this->getGroups->handle(auth()->id()),
+            'flash' => ['message' => $flashMessage]
         ]);
     }
 
-    public function update(StoreGroupRequest $request)
+    public function update(StoreGroupRequest $request) : object
     {
+        $this->updateGroup->handle($request);
 
+        $this->updateMemberships->handle($request);
+
+         return redirect()->back()->with([
+            'mygroups' => $this->getGroups->handle(auth()->id()),
+            'flash' => ['message' => 'Group updated']]);
     }
 
     public function destroy(Group $group) : object

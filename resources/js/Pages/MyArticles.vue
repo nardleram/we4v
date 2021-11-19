@@ -9,7 +9,7 @@
                         My articles
                     </template>
                     <template #description>
-                        This is where you share your professional acumen, be it academic, or artistic/literary, or your experise in a trade. More importantly, this is where you share <span class="italic">what you are</span>, which you seek to offer to your community for the healthy furtherance of your community.
+                        This is where you share your professional acumen, be it academic, or artistic/literary, or your experise in a trade, etc. More importantly, this is where you share <span class="italic">what you are</span>, which you seek to offer to your community for the healthy furtherance of your community.
                     </template>
                 </Title>
             </div>
@@ -20,8 +20,11 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout'
 import Title from '@/Jetstream/SectionTitle'
+import ButtonBlue from '../Jetstream/ButtonBlue'
+import FlashMessage from './Components/FlashMessage'
 import ModalBackdrop from './Components/ModalBackdrop'
-import { ref } from 'vue'
+import manageModals from '../Pages/Composables/manageModals'
+import { Inertia } from '@inertiajs/inertia'
 
 export default {
     name: 'MyArticles',
@@ -29,13 +32,31 @@ export default {
     components: {
         AppLayout,
         Title,
-        ModalBackdrop
+        ModalBackdrop,
+        ButtonBlue,
+        FlashMessage
     },
 
     setup() {
-        const showBackdrop = ref(false)
+        const {
+            amInside,
+            amOutside, 
+            clearModal,
+            nowInside, 
+            nowOutside,
+            onClickOutside,
+            showBackdrop,
+        } = manageModals()
 
-        return { showBackdrop }
+        const fireFlashMessage = async () => {
+            const payload = {
+                'message': 'Button clicked. Go you!',
+                'error': 'You missed the barn'
+            }
+            await Inertia.post('/myprojects/flash', payload)
+        }
+
+        return { amInside, amOutside, clearModal, fireFlashMessage, nowInside, nowOutside, onClickOutside, showBackdrop }
     }
     
 }

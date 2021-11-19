@@ -1,14 +1,20 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 
 const amInside = ref(false)
 const amOutside = ref(false)
+const edit = ref(false)
+const geogArea = ref('')
+const gAdmin = ref(false)
+const groupAdmins = ref([])
 const groupId = ref('')
 const groupDescription = ref('')
+const groupMembers = ref([])
+const groupMembersEdit = ref([])
 const groupName = ref('')
 const groupRole = ref('')
 const groupRequester = ref('')
-const geogArea = ref('')
+const inviteData = ref([])
 const mode = ref('')
 const projectId = ref('')
 const projectDescription = ref('')
@@ -22,40 +28,52 @@ const showInviteModal = ref(false)
 const showProjectModal = ref(false)
 const showTaskModal = ref(false)
 const showTeamModal = ref(false)
+const tAdmin = ref(false)
 const taskDescription = ref('')
 const taskName = ref('')
 const taskStartDate = ref('')
 const taskEndDate = ref('')
 const taskableId = ref('')
 const taskableType = ref('')
+const teamAdmins = ref([])
 const teamFunction = ref('')
 const teamId = ref('')
+const teamMembers = ref([])
+const teamMembersEdit = ref([])
 const teamName = ref('')
 const teamRequester = ref('')
 const teamRole = ref('')
 const type = ref('')
+const updated = ref(false)
+const userId = ref(null)
 
 const hydrateInviteModal = (req) => {
     clearModal()
 
     amOutside.value = true
     type.value = req.type
+    inviteData.value.push(req)
 
     if (req.type === 'group') {
+        gAdmin.value = req.gAdmin
         groupName.value = req.groupName
         groupId.value = req.groupId
         groupDescription.value = req.groupDesc
         geogArea.value = req.geogArea
         groupRole.value = req.gRole
         groupRequester.value = req.groupRequester
+        groupMembers.value = req.groupMembers
+        updated.value = req.updated
     }
 
     if (req.type === 'team') {
+        tAdmin.value = req.tAdmin
         teamName.value = req.teamName
         teamId.value = req.teamId
         teamFunction.value = req.teamFunc
         teamRole.value = req.tRole
         teamRequester.value = req.teamRequester
+        updated.value = req.updated
     }
 
     showBackdrop.value = true
@@ -76,8 +94,11 @@ const onActivateTeamModal = (group) => {
     groupId.value = group.group_id
     groupName.value = group.group_name
     groupDescription.value = group.group_description
+    geogArea.value = group.geogArea
+    groupMembers.value = group.groupMembers
     showBackdrop.value = true
     showTeamModal.value = true
+    mode.value = 'team'
 }
 
 const onActivateTaskModal = (project) => {
@@ -86,28 +107,59 @@ const onActivateTaskModal = (project) => {
             projectGroupData.value.push(mygroup)
         }
     })
+    projectDescription.value = project.project_description
     projectId.value = project.project_id
     projectName.value = project.project_name
-    projectDescription.value = project.project_description
     showBackdrop.value = true
     showTaskModal.value = true
 }
 
+const onActivateEditGroupModal = (group) => {
+    groupId.value = group.group_id
+    groupName.value = group.group_name
+    groupDescription.value = group.group_description
+    geogArea.value = group.geog_area
+    groupMembers.value = group.groupMembers
+    edit.value = true
+    showBackdrop.value = true
+    showGroupModal.value = true
+}
+
 const clearModal = () => {
+    amInside.value = false
+    amOutside.value = false
+    edit.value = false
+    gAdmin.value = false
     geogArea.value = ''
+    groupAdmins.value = []
     groupDescription.value = ''
     groupId.value = ''
+    groupMembers.value = []
+    groupMembersEdit.value = []
     groupName.value = ''
     groupRequester.value = ''
     groupRole.value = ''
+    projectDescription.value = ''
+    projectGroupData.value = []
+    projectId.value = ''
+    projectName.value = ''
+    tAdmin.value = false
+    taskableId.value = null
+    taskableType.value = null
+    taskName.value = null
+    taskDescription.value = null
+    taskEndDate.value = null
+    taskStartDate.value = null
+    userId.value = null
+    teamAdmins.value = []
     teamFunction.value = ''
     teamName.value = ''
     teamId.value = ''
     teamRequester.value = ''
     teamRole.value = ''
-    amInside.value = false
-    amOutside.value = false
     showGroupModal.value = false
+    showProjectModal.value = false
+    showTaskModal.value = false
     showTeamModal.value = false
     showInviteModal.value = false
     showBackdrop.value = false
@@ -115,48 +167,8 @@ const clearModal = () => {
 
 const onClickOutside = () => {
     if (amOutside.value && !amInside.value) {
-        if (mode.value === 'group') {
-            showGroupModal.value = false
-            geogArea.value = ''
-            groupDescription.value = ''
-            groupId.value = ''
-            groupName.value = ''
-            groupRequester.value = ''
-            groupRole.value = ''
-            type.value = ''
-        }
-        if (mode.value === 'team') {
-            showTeamModal.value = false
-            teamName.value = ''
-            teamFunction.value = ''
-            teamRequester.value = ''
-            teamRole.value = ''
-            type.value = ''
-        }
-        if (mode.value === 'proj') {
-            showProjectModal.value = false
-            projectName.value = ''
-            projectId.value = ''
-            projectDescription.value = ''
-            projectStartDate.value = ''
-            projectEndDate.value = ''
-        }
-        if (mode.value === 'task') {
-            showTaskModal.value = false
-            taskName.value = ''
-            taskDescription.value = ''
-            taskStartDate.value = ''
-            taskEndDate.value = ''
-            taskableId.value = ''
-            taskableType.value = ''
-            projectId.value = ''
-        }
-        if (showInviteModal.value) {
-            showInviteModal.value = false
-        }
-        showBackdrop.value = false
-        amOutside.value = false
-        amInside.value = false
+        clearModal()
+
         document.body.removeEventListener('click', onClickOutside, true)
     }
 }
@@ -166,13 +178,26 @@ const manageModals = () => {
         amOutside, 
         amInside,
         clearModal,
+        edit,
+        gAdmin,
+        groupAdmins,
         geogArea,
         groupDescription,
         groupId,
+        groupMembers,
+        groupMembersEdit,
         groupName,
         groupRequester,
         groupRole,
+        hydrateInviteModal,
+        inviteData,
         mode,
+        nowInside, 
+        nowOutside,
+        onActivateEditGroupModal,
+        onActivateTeamModal,
+        onActivateTaskModal, 
+        onClickOutside,
         projectId,
         projectName,
         projectDescription,
@@ -185,24 +210,24 @@ const manageModals = () => {
         showProjectModal,
         showTaskModal,
         showInviteModal,
+        tAdmin,
         taskName,
         taskDescription,
         taskStartDate,
         taskEndDate,
         taskableId,
         taskableType,
+        teamAdmins,
         teamFunction,
         teamId,
+        teamMembers,
+        teamMembersEdit,
         teamName,
         teamRequester,
         teamRole,
         type,
-        nowInside, 
-        nowOutside,
-        onActivateTeamModal,
-        onActivateTaskModal, 
-        onClickOutside,
-        hydrateInviteModal
+        updated,
+        userId
     }
 }
 
