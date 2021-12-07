@@ -38,7 +38,7 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link href="#">
+                            <jet-nav-link :href="route('myvotes', $page.props.authUser.id)" :active="route().current('myvotes')">
                                 Votes
                             </jet-nav-link>
                         </div>

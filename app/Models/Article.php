@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Tag;
 use App\Traits\Uuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Article extends Model
 {
@@ -31,5 +32,10 @@ class Article extends Model
     public function approvals()
     {
         return $this->morphMany(Approval::class, 'approvalable');
+    }
+
+    public function tags()
+    {
+        return $this->morphMany(Tag::class, 'tagable');
     }
 }

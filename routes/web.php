@@ -7,12 +7,14 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VoteController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\CastVoteController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
 use App\Http\Controllers\MembershipRequestResponseController;
@@ -105,7 +107,22 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
 
     Route::post('/myprojects/store', [ProjectController::class, 'store'])
         ->name('storeProject')->middleware(['auth']);
+        
+    Route::patch('/myprojects/update', [ProjectController::class, 'update'])
+        ->name('updateProject')->middleware(['auth']);
 
     Route::post('/mytasks/store', [TaskController::class, 'store'])
         ->name('storeTask')->middleware(['auth']);
+    
+    Route::patch('/mytasks/update', [TaskController::class, 'update'])
+        ->name('updateTask')->middleware(['auth']);
+
+    Route::get('/myvotes', [VoteController::class, 'index'])
+        ->name('myvotes')->middleware(['auth']);
+
+    Route::post('/myvotes/store', [VoteController::class, 'store'])
+        ->name('storeVote')->middleware(['auth']);
+
+    Route::post('/cast-vote/store', [CastVoteController::class, 'store'])
+        ->name('castVote')->middleware(['auth']);
 });

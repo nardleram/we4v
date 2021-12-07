@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Redirect;
 
 class PostController extends Controller
 {
+    private $getUserPosts;
+    private $getPosts;
+    
     public function __construct(GetUserPosts $getUserPosts, GetTalkboardPosts $getPosts)
     {
         $this->getUserPosts = $getUserPosts;

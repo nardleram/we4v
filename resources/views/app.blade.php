@@ -21,6 +21,8 @@
         @inertia
         <div id="groupModals"></div>
         <div id="projectModals"></div>
+        <div id="voteModals"></div>
         <div id="membRequestModals"></div>
+        <div id="pendingVoteModals"></div>
     </body>
 </html>

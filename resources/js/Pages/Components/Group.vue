@@ -83,7 +83,6 @@ export default {
     props: [
         'team',
         'group',
-        'users',
     ],
 
     data: () => {

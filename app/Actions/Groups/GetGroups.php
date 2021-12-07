@@ -77,6 +77,7 @@ class GetGroups
                 ++$groupCount;
                 $teamCount = 0;
                 $groupMemberCount = 0;
+                $teamMemberCount = 0;
             }
             if ($rawGroup->membership_type === 'App\Models\Team' && ($currentTeamId !== $rawGroup->team_id) && $loop > 0) {
                 ++$teamCount;

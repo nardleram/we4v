@@ -9,18 +9,27 @@ use App\Actions\Posts\GetTalkboardPosts;
 
 class GetUserPosts
 {
-    public function handlePosts(User $user, GetTalkboardPosts $getPostData, GetUsers $getUserData) : array
+    private $getPostData;
+    private $getUserData;
+    
+    public function __construct(GetTalkboardPosts $getPostData, GetUsers $getUserData)
     {
-        $rawPosts = $getPostData->getPosts([$user->id]);
+        $this->getPostData = $getPostData;
+        $this->getUserData = $getUserData;
+    }
+
+    public function handlePosts(User $user) : array
+    {
+        $rawPosts = $this->getPostData->getPosts([$user->id]);
 
         $user_ids = [$user->id];
         foreach ($rawPosts as $post) {
             array_push($user_ids, $post->comment_posted_by);
         }
         $ids = array_unique($user_ids);
-        $users = $getUserData->getUsers($ids);
+        $users = $this->getUserData->getUsers($ids);
 
-        return $getPostData->compilePostsArray($rawPosts, $users);
+        return $this->getPostData->compilePostsArray($rawPosts, $users);
     }
 
     public function handleUser(User $user) : object

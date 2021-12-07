@@ -5,12 +5,12 @@
             <p class="text-xs font-light text-we4vGrey-200 italic my-1">{{ project.project_description }}</p>
             <p class="text-we4vGrey-300">Project timeframe: {{ project.project_start_date }} <i class="fa fa-arrow-right"></i> {{ project.project_end_date }} – 
                 <span v-if="project.project_deadline_passed" class="text-red-600 font-semibold uppercase">Deadline passed</span>
-                <span v-else-if="project.project_days_remaining < 5 && !project.project_deadline_passed" class="text-red-600 font-semibold uppercase">{{ project.project_days_remaining }} days remaining</span>
-                <span v-else>{{ project.project_days_remaining }} days remaining</span>
+                <span v-else-if="project.project_days_remaining < 5 && !project.project_deadline_passed" class="text-red-600 font-semibold uppercase">{{ project.project_days_remaining }} days left</span>
+                <span v-else>{{ project.project_days_remaining }} days left</span>
             </p>
         </div>
         <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-16 text-we4vGrey-200">
-            <div @click="updateProject(project.id)">
+            <div @click="$emit('activateEditProjectModal', project)">
                 <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
             </div>
             <div @click="deleteProject(project.id)">
@@ -25,30 +25,30 @@
         <div v-if="displayDetails" class="col-start-1 col-end-13 mt-3">
             <div v-if="project.tasks">
                 <h4 class="text-sm font-regular text-we4vGrey-200">Tasks</h4>
-                <div class="bg-we4vBg text-sm font-normal rounded my-2 p-2">
-                    <table>
+                <div class="bg-we4vBg text-sm font-normal rounded my-2 p-2 max-h-44 overflow-y-hidden">
+                    <table class="w-full">
                         <thead class="text-we4vBlue table-fixed border-b border-we4vGrey-200 text-left">
                             <tr class="py-2 px1">
-                                <th class="w-4/12 pl-1">Name</th>
-                                <th class="w-4/12 pl-1">Timeframe</th>
-                                <th class="w-2/12 pl-1">Assignee</th>
-                                <th class="w-2/12 pl-1">Actions</th>
+                                <th class="w-4/12">Name</th>
+                                <th class="w-4/12">Timeframe / days left</th>
+                                <th class="w-2/12">Assignee</th>
+                                <th class="w-2/12">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(task, taskKey) in project.tasks" :key="taskKey" class="border-b border-gray-200">
-                                <td class="font-bold text-xs text-we4vBlue mr-2">
+                                <td class="font-bold text-xs text-we4vGrey-400 mr-2">
                                     {{ task.task_name }}
                                 </td>
-                                <td class="font-regular text-we4vGrey-600 text-xs">
-                                    <p>{{task.task_start_date }} <i class="fa fa-arrow-right"></i> {{task.task_end_date }}</p>
+                                <td class="font-regular text-xs" :class="task.task_days_remaining < 3 ? 'text-red-600 font-semibold' : 'text-we4vGrey-600'">
+                                    <p>{{task.task_start_date }} <i class="fa fa-arrow-right"></i> {{task.task_end_date }} / {{ task.task_days_remaining }}</p>
                                 </td>
                                 <td class="font-regular text-we4vGrey-600 text-xs">
-                                    <p v-if="task.team_member_username || task.group_member_username">{{ task.team_member_username ? task.team_member_username : task.group_member_username }}</p>
-                                    <p v-else>{{ task.team_name }} (team)</p>
+                                    <p>{{ task.assignee }}</p>
                                 </td>
-                                <td class="font-regular text-we4vGrey-600 text-xs">
-                                    <p>View | Complete</p>
+                                <td class="font-regular text-we4vBlue">
+                                    <i @click="$emit('activateEditTaskModal', task)" class="fas fa-edit cursor-pointer text-base mr-5 hover:text-we4vDarkBlue"></i>
+                                    <i @click="deleteTask(task.id)" class="fas fa-trash cursor-pointer text-base hover:text-we4vDarkBlue"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -75,7 +75,9 @@ export default {
     },
 
     emits: [
-        'activateTaskModal'
+        'activateTaskModal',
+        'activateEditProjectModal',
+        'activateEditTaskModal'
     ],
 }
 </script>

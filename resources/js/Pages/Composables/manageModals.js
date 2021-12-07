@@ -4,48 +4,71 @@ import { usePage } from '@inertiajs/inertia-vue3'
 const amInside = ref(false)
 const amOutside = ref(false)
 const edit = ref(false)
-const geogArea = ref('')
+const geogArea = ref(null)
 const gAdmin = ref(false)
 const groupAdmins = ref([])
-const groupId = ref('')
-const groupDescription = ref('')
+const groupId = ref(null)
+const groupDescription = ref(null)
 const groupMembers = ref([])
 const groupMembersEdit = ref([])
-const groupName = ref('')
-const groupRole = ref('')
-const groupRequester = ref('')
+const groupName = ref(null)
+const groupRole = ref(null)
+const groupRequester = ref(null)
 const inviteData = ref([])
-const mode = ref('')
-const projectId = ref('')
-const projectDescription = ref('')
+const mode = ref(null)
+const projectCompleted = ref(false)
+const projectDescription = ref(null)
 const projectGroupData = ref([])
-const projectName = ref('')
-const projectStartDate = ref('')
-const projectEndDate = ref('')
+const projectGroupId = ref(null)
+const projectGroupName = ref(null)
+const projectId = ref(null)
+const projectName = ref(null)
+const projectNotes = ref([])
+const projectStartDate = ref(null)
+const projectEndDate = ref(null)
+const projectInputEndDate = ref(null)
 const showBackdrop = ref(false)
 const showGroupModal = ref(false)
 const showInviteModal = ref(false)
 const showProjectModal = ref(false)
+const showEditProjectModal = ref(false)
+const showEditTaskModal = ref(false)
 const showTaskModal = ref(false)
 const showTeamModal = ref(false)
+const showPendingVoteModal = ref(false)
+const showVoteModal = ref(false)
 const tAdmin = ref(false)
-const taskDescription = ref('')
-const taskName = ref('')
-const taskStartDate = ref('')
-const taskEndDate = ref('')
-const taskableId = ref('')
-const taskableType = ref('')
+const taskableId = ref(null)
+const taskableType = ref(null)
+const taskAssignee = ref(null)
+const taskCompleted = ref(false)
+const taskDescription = ref(null)
+const taskEndDate = ref(null)
+const taskGroupData = ref([])
+const taskId = ref(null)
+const taskInputEndDate = ref(null)
+const taskName = ref(null)
+const taskNotes = ref([])
+const taskProjectId = ref(null)
+const taskRecipientType = ref(null)
+const taskStartDate = ref(null)
+const taskUserId = ref(null)
 const teamAdmins = ref([])
-const teamFunction = ref('')
-const teamId = ref('')
+const teamFunction = ref(null)
+const teamId = ref(null)
 const teamMembers = ref([])
 const teamMembersEdit = ref([])
-const teamName = ref('')
-const teamRequester = ref('')
-const teamRole = ref('')
-const type = ref('')
+const teamName = ref(null)
+const teamRequester = ref(null)
+const teamRole = ref(null)
+const type = ref(null)
 const updated = ref(false)
 const userId = ref(null)
+const voteClosingDate = ref(null)
+const voteElements = ref([])
+const voteId = ref(null)
+const voteOwner = ref(null)
+const voteTitle = ref(null)
 
 const hydrateInviteModal = (req) => {
     clearModal()
@@ -90,6 +113,17 @@ const nowInside = () => {
     amInside.value = true
 }
 
+const onActivatePendingVoteModal = (vote) => {
+    voteTitle.value = vote.vote_title
+    voteId.value = vote.vote_id
+    voteClosingDate.value = vote.closing_date
+    voteElements.value = vote.elements
+    voteOwner.value = vote.vote_owner
+
+    showBackdrop.value = true
+    showPendingVoteModal.value = true
+}
+
 const onActivateTeamModal = (group) => {
     groupId.value = group.group_id
     groupName.value = group.group_name
@@ -114,6 +148,48 @@ const onActivateTaskModal = (project) => {
     showTaskModal.value = true
 }
 
+const onActivateEditProjectModal = (project) => {
+    projectCompleted.value = project.project_completed
+    projectDescription.value = project.project_description
+    projectId.value = project.project_id
+    projectGroupId.value = project.project_group_id
+    projectGroupName.value = project.project_group_name
+    projectName.value = project.project_name
+    projectNotes.value =  project.notes
+    projectEndDate.value = project.project_end_date
+    projectInputEndDate.value = project.project_input_end_date
+    projectStartDate.value = project.project_start_date
+    showBackdrop.value = true
+    showEditProjectModal.value = true
+    edit.value = true
+}
+
+const onActivateEditTaskModal = (task) => {
+    usePage().props.value.mygroups.forEach(mygroup => {
+        if (mygroup.group_id === task.project_group_id) {
+            taskGroupData.value.push(mygroup)
+        }
+    })
+    taskAssignee.value = task.assignee
+    taskCompleted.value = task.task_completed
+    taskId.value = task.task_id
+    taskProjectId.value = task.task_project_id
+    taskName.value = task.task_name
+    taskNotes.value = task.notes
+    taskDescription.value = task.task_description
+    taskRecipientType.value = task.recipient_type
+    taskEndDate.value = task.task_end_date
+    taskStartDate.value = task.task_start_date
+    taskInputEndDate.value = task.task_input_end_date
+    taskableId.value = task.taskable_id
+    taskableType.value = task.taskable_type
+    taskUserId.value = task.task_user_id
+    edit.value = true
+    showBackdrop.value = true
+    showEditTaskModal.value = true
+    mode.value = 'task'
+}
+
 const onActivateEditGroupModal = (group) => {
     groupId.value = group.group_id
     groupName.value = group.group_name
@@ -130,39 +206,60 @@ const clearModal = () => {
     amOutside.value = false
     edit.value = false
     gAdmin.value = false
-    geogArea.value = ''
+    geogArea.value = null
     groupAdmins.value = []
-    groupDescription.value = ''
-    groupId.value = ''
+    groupDescription.value = null
+    groupId.value = null
     groupMembers.value = []
     groupMembersEdit.value = []
-    groupName.value = ''
-    groupRequester.value = ''
-    groupRole.value = ''
-    projectDescription.value = ''
+    groupName.value = null
+    groupRequester.value = null
+    groupRole.value = null
+    projectCompleted.value = false
+    projectDescription.value = null
+    projectEndDate.value = null
     projectGroupData.value = []
-    projectId.value = ''
-    projectName.value = ''
+    projectGroupId.value = null
+    projectId.value = null
+    projectInputEndDate.value = null
+    projectName.value = null
+    projectStartDate.value = null
     tAdmin.value = false
     taskableId.value = null
     taskableType.value = null
-    taskName.value = null
+    taskAssignee.value = null
     taskDescription.value = null
     taskEndDate.value = null
+    taskGroupData.value = []
+    taskId.valeu = null
+    taskInputEndDate.value = null
+    taskName.value = null
+    taskNotes.value = []
+    taskProjectId.value = null
+    taskRecipientType.value = null
     taskStartDate.value = null
-    userId.value = null
     teamAdmins.value = []
-    teamFunction.value = ''
-    teamName.value = ''
-    teamId.value = ''
-    teamRequester.value = ''
-    teamRole.value = ''
+    teamFunction.value = null
+    teamName.value = null
+    teamId.value = null
+    teamRequester.value = null
+    teamRole.value = null
+    showEditProjectModal.value = false
+    showEditTaskModal.value = false
     showGroupModal.value = false
     showProjectModal.value = false
     showTaskModal.value = false
     showTeamModal.value = false
+    showVoteModal.value = false
+    showPendingVoteModal.value = false
     showInviteModal.value = false
     showBackdrop.value = false
+    userId.value = null
+    voteClosingDate.value = null
+    voteElements.value = []
+    voteId.value = null
+    voteOwner.value = null
+    voteTitle.value = null
 }
 
 const onClickOutside = () => {
@@ -195,28 +292,49 @@ const manageModals = () => {
         nowInside, 
         nowOutside,
         onActivateEditGroupModal,
-        onActivateTeamModal,
+        onActivateEditProjectModal,
+        onActivateEditTaskModal,
+        onActivatePendingVoteModal,
         onActivateTaskModal, 
+        onActivateTeamModal,
         onClickOutside,
-        projectId,
-        projectName,
+        projectCompleted,
         projectDescription,
-        projectGroupData,
-        projectStartDate,
         projectEndDate,
+        projectGroupData,
+        projectGroupId,
+        projectGroupName,
+        projectId,
+        projectInputEndDate,
+        projectName,
+        projectNotes,
+        projectStartDate,
         showBackdrop,
+        showEditProjectModal,
+        showEditTaskModal,
         showGroupModal,
-        showTeamModal,
+        showInviteModal,
         showProjectModal,
         showTaskModal,
-        showInviteModal,
+        showTeamModal,
+        showPendingVoteModal,
+        showVoteModal,
         tAdmin,
-        taskName,
-        taskDescription,
-        taskStartDate,
-        taskEndDate,
         taskableId,
         taskableType,
+        taskAssignee,
+        taskCompleted,
+        taskDescription,
+        taskEndDate,
+        taskGroupData,
+        taskId,
+        taskInputEndDate,
+        taskName,
+        taskNotes,
+        taskProjectId,
+        taskRecipientType,
+        taskStartDate,
+        taskUserId,
         teamAdmins,
         teamFunction,
         teamId,
@@ -227,7 +345,12 @@ const manageModals = () => {
         teamRole,
         type,
         updated,
-        userId
+        userId,
+        voteClosingDate,
+        voteElements,
+        voteId,
+        voteOwner,
+        voteTitle,
     }
 }
 

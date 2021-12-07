@@ -28,8 +28,8 @@ class PostRequest extends FormRequest
     public function rules()
     {
         return [
-            'body' => 'required',
-            'user_id' => 'required',
+            'body' => 'required|string',
+            'user_id' => 'required|uuid',
             'image' => 'image|mimes:jpg,jpeg,png|max:2048|nullable'
         ];
     }

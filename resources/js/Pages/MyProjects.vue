@@ -1,4 +1,5 @@
 <template>
+    <flash-message></flash-message>
     <error-message></error-message>
     <modal-backdrop :show="showBackdrop"></modal-backdrop>
     <app-layout>
@@ -8,7 +9,7 @@
                 <!-- Modal forms -->
                 <teleport to="#projectModals">
                     <Modal :show="showProjectModal">
-                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'over'" v-if="showProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
@@ -44,7 +45,7 @@
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Select group</h4>
                                     <div v-if="mygroups" class="flex flex-wrap max-w-full justify-between">
                                         <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
-                                            <input @click="addGroup" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
                                         </div>
                                     </div>
@@ -57,8 +58,57 @@
                 </teleport>
 
                 <teleport to="#projectModals">
-                    <Modal :show="showTaskModal" :name="projectName" :id="projectId" :description="projectDescription" :projectGroupName="projectGroupName">
-                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'over'" v-if="showTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                    <Modal :show="showEditProjectModal">
+                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showEditProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                            <Form>
+                                <template #form>
+                                    <div class="flex justify-end">
+                                        <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                            <div @click="showEditProjectModal = false; clearModal()">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
+
+                                    <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ projectDescription }}</p>
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assigned to: </span>{{ projectGroupName }}</p>
+                                    </div>
+
+                                    <div v-if="projectNotes">
+                                        <Notes :notes="projectNotes" />
+                                    </div>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
+                                    <textarea v-model="projectNoteBody" name="projectNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
+                                    <div class="w-justUnderHalf mb-4">
+                                        <input v-model="projectInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                                    </div>
+
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Reassign project</h4>
+                                    <div v-if="mygroups" class="flex flex-wrap max-w-full justify-between">
+                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
+                                            <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
+                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                        </div>
+                                    </div>
+
+                                    <input :value="projectCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="projectCompleted">
+                                    <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ projectId }}">Project completed</label>
+                                    
+                                    <button-grey @click="submitProjectData()">Update project</button-grey>
+                                </template>
+                            </Form>
+                        </div>
+                    </Modal>
+                </teleport>
+
+                <teleport to="#projectModals">
+                    <Modal :show="showTaskModal">
+                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
@@ -93,44 +143,7 @@
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member / whole team / team member</h4>
 
-                                    <div v-if="projectGroupData[0].groupMembers" class="w-full m-0">
-                                        <h4 class="text-sm font-regular text-we4vGrey-700 mt-2">Group members (of {{ projectGroupData[0].group_name }})</h4>
-                                        <div v-for="(groupMember, groupMemberKey) in projectGroupData[0].groupMembers" :key="groupMemberKey">
-                                            <div v-if="groupMember.confirmed" class="text-xs mt-1">
-                                                <label class="text-we4vGrey-500 text-xs mr-2 w-full text-center" for="groupMember">{{ groupMember.username }}</label>
-                                                <input @click="taskableId = projectGroupData[0].group_id; taskableType = 'App\\Models\\Group'; userId = groupMember.user_id" type="radio" name="task" :value="groupMember.user_id">
-                                            </div>
-                                            <div v-if="!groupMember.confirmed && projectGroupData[0].groupMembers.length === 1" class="text-xs mt-1">
-                                                <p class="text-we4vGrey-600 text-xs mt-1">There are no (confirmed) group members in {{ projectGroupData[0].group_name }}. <span v-if="!projectGroupData[0].teams">Nor are there any teams. Please first add group members or teams with members to this group to be able to assign tasks.</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div v-if="projectGroupData[0].teams" class="w-full m-0">
-                                        <div v-for="(team, teamKey) in projectGroupData[0].teams" :key="teamKey" class="grid gap-1 grid-cols-12 mt-2">
-                                            <div class="row-span-1 row-end-1 col-start-1 col-end-3">
-                                                <h4 class="text-sm font-regular text-we4vGrey-700">Teams</h4>
-                                            </div>
-                                            <div class="row-span-1 row-end-1 col-start-4 col-end-12">
-                                                <h4 class="text-sm font-regular text-we4vGrey-700 m-0 p-0">Team members</h4>
-                                            </div>
-                                            <div class="row-start-2 -row-end-1 col-start-1 col-end-3 items-center">
-                                                <label class="text-we4vDarkBlue font-medium text-xs mr-2 w-full p-0 text-center" for="team">{{ team.team_name }}</label>
-                                                <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'" type="radio" name="task" :value="team.team_id">
-                                            </div>
-                                            <div v-if="team.teamMembers" class="row-span-1 col-start-4 col-span-3 m-0 p-0">
-                                                <div v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey" class="p-0 m-0">
-                                                    <div v-if="teamMember.confirmed" class="p-0 m-0">
-                                                        <label class="text-we4vGrey-600 text-xs mr-2 p-0 w-full text-center" for="teamMember">{{ teamMember.username }}</label>
-                                                        <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'; userId = teamMember.user_id" type="radio" name="task" :value="teamMember.user_id">
-                                                    </div>
-                                                    <div v-if="!teamMember.confirmed && team.teamMembers.length === 1" class="text-xs mt-1">
-                                                        <p class="text-we4vGrey-600 text-xs mt-1">{{ team.team_name }} contains no confirmed members.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <group-team-assignment :groupData="projectGroupData" :taskableId="null" :taskableType="null" :assignee="null" :userId="null" @send-task-data="onSendTaskData"/>
 
                                     <button-grey @click="submitTaskData()">Assign task</button-grey>
                                 </template>
@@ -139,29 +152,75 @@
                     </Modal>
                 </teleport>
 
+                <teleport to="#projectModals">
+                    <Modal :show="showEditTaskModal" :name="taskName" :id="taskId" :description="taskDescription">
+                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showEditTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-28 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+                            <Form>
+                                <template #form>
+                                    <div class="flex justify-end">
+                                        <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                            <div @click="showEditTaskModal = false; clearModal()">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                    <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
+                                    <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>{{ taskAssignee }} ({{ taskRecipientType }})</p>
+                                    </div>
+
+                                    <div v-if="taskNotes">
+                                        <Notes :notes="taskNotes" />
+                                    </div>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
+                                    <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Reassign task</h5>
+
+                                    <group-team-assignment :groupData="taskGroupData" :taskableId="null" :taskableType="null" :assignee="taskAssignee"/>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
+                                    <div class="w-justUnderHalf mb-4">
+                                        <input v-model="taskInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                                    </div>
+
+                                    <input :value="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="taskCompleted">
+                                    <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskId }}">Task completed</label>
+
+                                    <button-grey @click="submitTaskData()">Update task</button-grey>
+                                </template>
+                            </Form>
+                        </div>
+                    </Modal>
+                </teleport>
+
+                <!-- Main page -->
                 <Title>
                     <template #title>
                         Project and task management
                     </template>
                     <template #description>
-                        Projects are assigned to one of your groups. Tasks are created within your projects and assigned to teams or members.
+                        Projects are assigned to one of your groups. Tasks are created within your projects and assigned to whole teams or individual members of that group and its teams.
                     </template>
                 </Title>
 
-                <jet-button-blue @click="showProjectModal = true; showBackdrop = true">Create a new project</jet-button-blue>
+                <button-blue @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
 
-                <!-- Projects -->
+                <!-- Main page – Projects -->
                 <Subtitle>
                     <template #title>
                         My projects
                     </template>
                     <template #description>
-                        Click a project name to manage your project, for example to assign tasks.
+                        Click a project name to assign tasks.
                     </template>
                 </Subtitle>
                 <div v-if="myprojects.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Project v-for="(project, projectKey) in myprojects" :key="projectKey" :project="project" @activate-task-modal="onActivateTaskModal" />
+                        <Project v-for="(project, projectKey) in myprojects" :key="projectKey" :project="project" @activate-task-modal="onActivateTaskModal" @activate-edit-task-modal="onActivateEditTaskModal"
+                        @activate-edit-project-modal="onActivateEditProjectModal"/>
                     </div>
                 </div>
             </div>
@@ -175,15 +234,18 @@ import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
 import Form from '@/Jetstream/FormSection'
 import ButtonGrey from '@/Jetstream/ButtonGrey'
-import JetButtonBlue from '@/Jetstream/ButtonBlue'
+import ButtonBlue from '@/Jetstream/ButtonBlue'
 import Modal from './Components/Modal'
 import ModalBackdrop from './Components/ModalBackdrop'
+import Notes from './Components/Notes'
 import Project from './Components/Project'
 import manageModals from '../Pages/Composables/manageModals'
 import { watch, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-vue3'
+import FlashMessage from '../Pages/Components/FlashMessage'
 import ErrorMessage from '../Pages/Components/ErrorMessage'
+import GroupTeamAssignment from './Components/GroupTeamAssignment'
 
 export default {
     name: 'MyProjects',
@@ -194,11 +256,14 @@ export default {
         Subtitle,
         Form,
         ButtonGrey,
-        JetButtonBlue,
+        ButtonBlue,
         Modal,
         ModalBackdrop,
+        Notes,
         Project,
         ErrorMessage,
+        FlashMessage,
+        GroupTeamAssignment
     },
 
     props: [
@@ -212,31 +277,67 @@ export default {
             amOutside, 
             amInside,
             clearModal,
+            edit,
             mode,
             nowInside, 
             nowOutside,
+            onActivateEditProjectModal,
+            onActivateEditTaskModal,
             onActivateTaskModal,
             onClickOutside,
+            projectCompleted,
             projectDescription,
-            projectGroupData,
-            projectId,
             projectEndDate,
+            projectGroupData,
+            projectGroupId,
+            projectGroupName,
+            projectId,
+            projectInputEndDate,
             projectName,
+            projectNotes,
             projectStartDate,
             showBackdrop,
+            showEditProjectModal,
+            showEditTaskModal,
             showProjectModal,
             showTaskModal,
             taskableId,
+            taskAssignee,
             taskableType,
+            taskCompleted,
             taskDescription,
             taskEndDate,
+            taskGroupData,
             taskId,
+            taskInputEndDate,
             taskName,
+            taskNotes,
+            taskProjectId,
+            taskRecipientType,
             taskStartDate,
+            taskUserId,
             userId
         } = manageModals()
 
+        const taskNoteBody = ref(null)
+        const projectNoteBody = ref(null)
+
+        const onSendTaskData = function (taskData) {
+            taskableId.value = taskData.taskableId
+            taskableType.value = taskData.taskableType
+            userId.value = taskData.userId
+        }
+
         const submitProjectData = async function () {
+            let note = {}
+            edit.value
+            ? note = {
+                'body': projectNoteBody.value,
+                'noteable_id': projectId.value,
+                'noteable_type': 'App\\Models\\Project'
+            }
+            : null
+
             let selectedGroup = document.querySelector('input[name="group"]:checked').value
             let payload = {
                 'owner': usePage().props.value.authUser.id,
@@ -245,39 +346,67 @@ export default {
                 'start_date': projectStartDate.value,
                 'end_date': projectEndDate.value,
                 'group_id': selectedGroup,
+                'note': note
             }
-            
+
+            if (edit.value) {
+                payload.end_date = projectInputEndDate.value
+                payload.id = projectId.value
+            }
+
             try {
-                await Inertia.post('/myprojects/store', payload)
+                edit.value
+                ? await Inertia.patch('/myprojects/update', payload)
+                : await Inertia.post('/myprojects/store', payload)
                 props.errors = null
             } catch (err) {
                 props.errors = err
             }
             
             clearModal()
+            projectNoteBody.value = null
         }
 
         const submitTaskData = async function () {
+            let note = {}
+            edit.value
+            ? note = {
+                'body': taskNoteBody.value,
+                'noteable_id': taskId.value,
+                'noteable_type': 'App\\Models\\Task'
+            }
+            : null
+
             let payload = {
                 'owner': usePage().props.value.authUser.id,
                 'name': taskName.value,
+                'id': taskId.value,
                 'description': taskDescription.value,
                 'start_date': taskStartDate.value,
                 'end_date': taskEndDate.value,
                 'taskable_id': taskableId.value,
                 'taskable_type': taskableType.value,
                 'project_id': projectId.value,
-                'user_id': userId.value
+                'user_id': userId.value,
+                'note': note
+            }
+            
+            if (edit.value) {
+                payload.end_date = taskInputEndDate.value
+                payload.user_id = taskUserId.value
             }
             
             try {
-                await Inertia.post('/mytasks/store', payload)
+                edit.value
+                ? await Inertia.patch('/mytasks/update', payload)
+                : await Inertia.post('/mytasks/store', payload) 
                 props.errors = null
             } catch (err) {
                 props.errors = err
             }
             
             clearModal()
+            taskNoteBody.value = null
         }
 
         watch(amOutside, () => {
@@ -290,29 +419,50 @@ export default {
             amOutside,
             amInside,
             clearModal,
+            edit,
             mode,
             nowInside, 
             nowOutside,
+            onActivateEditTaskModal,
+            onActivateEditProjectModal,
             onActivateTaskModal,
             onClickOutside,
+            onSendTaskData,
+            projectCompleted,
             projectDescription,
+            projectGroupId,
             projectEndDate,
             projectGroupData,
+            projectGroupName,
             projectId,
+            projectInputEndDate,
             projectName,
+            projectNoteBody,
+            projectNotes,
             projectStartDate,
             showBackdrop,
+            showEditProjectModal,
+            showEditTaskModal,
             showProjectModal,
             showTaskModal,
             submitProjectData,
             submitTaskData,
             taskableId,
             taskableType,
+            taskAssignee,
+            taskCompleted,
             taskDescription,
             taskEndDate,
+            taskGroupData,
             taskId,
+            taskInputEndDate,
             taskName,
+            taskNotes,
+            taskNoteBody,
+            taskProjectId,
+            taskRecipientType,
             taskStartDate,
+            taskUserId,
             userId
         }
     }

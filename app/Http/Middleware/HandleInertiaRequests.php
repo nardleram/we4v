@@ -11,6 +11,7 @@ use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
+use App\Models\Vote;
 use Illuminate\Support\Facades\Session;
 
 class HandleInertiaRequests extends Middleware
@@ -251,7 +252,14 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return [];
-            }
+            },
+
+            'myPendingVotes' => function ()
+            {
+                $membIds = Membership::getMemberships();
+                
+                return Vote::getPendingVotes($membIds);
+            },
 
         ]);
     }

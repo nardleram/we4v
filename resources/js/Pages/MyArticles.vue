@@ -48,15 +48,7 @@ export default {
             showBackdrop,
         } = manageModals()
 
-        const fireFlashMessage = async () => {
-            const payload = {
-                'message': 'Button clicked. Go you!',
-                'error': 'You missed the barn'
-            }
-            await Inertia.post('/myprojects/flash', payload)
-        }
-
-        return { amInside, amOutside, clearModal, fireFlashMessage, nowInside, nowOutside, onClickOutside, showBackdrop }
+        return { amInside, amOutside, clearModal, nowInside, nowOutside, onClickOutside, showBackdrop }
     }
     
 }

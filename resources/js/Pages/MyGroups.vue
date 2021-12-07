@@ -57,7 +57,7 @@
                                         <div v-for="(groupMember, groupMembersEditKey) in groupMembersEdit" :key="groupMembersEditKey" class="w-full flex flex-row justify-between items-center">
 
                                             <div class="w-1/4">
-                                                <input @click="addRemoveAssociate('group')" :value="groupMember.user_id" class="invitedAssocsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" :checked="groupMember.invited" type="checkbox">
+                                                <input @click="addRemoveAssociate('group')" :value="groupMember.user_id" class="invitedAssocsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" :checked="groupMember.invited && !groupMember.declined" type="checkbox">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ groupMember.user_id }}">{{ groupMember.user_name }}</label>
                                                 <img :src="'/'+groupMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                             </div>
@@ -67,7 +67,7 @@
                                             </div>
 
                                             <div class="w-1/4 pl-8">
-                                                <input @click="makeAdmin('group')" :value="groupMember.user_id" class="admins rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" :checked="groupMember.admin" type="checkbox">
+                                                <input @click="makeAdmin('group')" :value="groupMember.user_id" class="adminsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" :checked="groupMember.admin" type="checkbox">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ associate.user_id }}">Admin</label>
                                             </div>
                                         </div>

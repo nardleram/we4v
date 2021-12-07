@@ -34,4 +34,12 @@ class Membership extends Model
             ->where('user_id', auth()->id())
             ->get(['membershipable_id', 'membershipable_type', 'role']);
     }
+
+    public static function getMemberships() : object
+    {
+        return (new static())
+            ->where('confirmed', true)
+            ->where('user_id', auth()->id())
+            ->get(['membershipable_id']);
+    }
 }
