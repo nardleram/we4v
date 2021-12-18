@@ -3,9 +3,10 @@
 namespace App\Actions\Groups;
 
 use App\Models\Group;
+use App\Models\Membership;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GetGroups
+class GetAdminGroups
 {
     use SoftDeletes;
 
@@ -18,7 +19,13 @@ class GetGroups
     
     public function handle($userId)
     {
-        $rawGroups = Group::where('groups.owner', $userId)
+        $rawGroupIds = Membership::where('is_admin', true)
+        ->where('user_id', $userId)
+        ->leftJoin('groups', function ($join) {
+            $join->on('groups.id', '=', 'memberships.membershipable_id');
+        })->get('groups.id as group_id');
+
+        $rawGroups = Group::whereIn('groups.id', $rawGroupIds)
         ->leftJoin('teams', function ($join) {
             $join->on('groups.id', '=', 'teams.group_id');
         })
@@ -37,6 +44,7 @@ class GetGroups
         ->select([
             'groups.name as group_name',
             'groups.id as group_id',
+            'groups.owner as group_owner',
             'groups.description as group_description',
             'groups.geog_area as geog_area',
             'teams.id as team_id',

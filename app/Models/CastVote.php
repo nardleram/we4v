@@ -15,4 +15,19 @@ class CastVote extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+
+    public function vote()
+    {
+        return $this->belongsTo(Vote::class);
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function voteElement()
+    {
+        return $this->hasOne(VoteElement::class);
+    }
 }

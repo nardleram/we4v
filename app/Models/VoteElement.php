@@ -15,4 +15,14 @@ class VoteElement extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+
+    public function vote()
+    {
+        return $this->belongsTo(Vote::class);
+    }
+
+    public function castVotes()
+    {
+        $this->hasMany(CastVote::class);
+    }
 }

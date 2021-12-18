@@ -2,260 +2,82 @@
 
 namespace App\Actions\Projects;
 
-use Carbon\Carbon;
-use App\Models\Project;
-use DateTime;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GetProjects
 {
-    public function handle($userId) : array
+    use SoftDeletes;
+    private $compileProjectsArray;
+
+    public function __construct(CompileProjectsArray $compileProjectsArray)
     {
-        $rawProjects = Project::where('projects.owner', $userId)
-        ->leftJoin('tasks', function ($join) use ($userId) {
-            $join->on('tasks.project_id', '=', 'projects.id')
-            ->where('tasks.owner', $userId);
-        })
-        ->leftJoin('notes', function ($join) {
-            $join->on('tasks.id', '=', 'notes.noteable_id')
-            ->orOn('projects.id', '=', 'notes.noteable_id');
-        })
-        ->leftJoin('groups', function ($join) use ($userId) {
-            $join->on('projects.group_id', '=', 'groups.id')
-            ->where('groups.owner', $userId);
-        })
-        ->leftJoin('teams', function ($join) use ($userId) {
-            $join->on('groups.id', '=', 'teams.group_id')
-            ->where('teams.owner', $userId);
-        })
-        ->leftJoin('memberships', function ($join) {
-            $join->on('groups.id', '=', 'membershipable_id')
-            ->orOn('teams.id', '=', 'membershipable_id');
-        })
-        ->leftJoin('users', function ($join) {
-            $join->on('memberships.user_id', '=', 'users.id');
-        })
-        ->select([
-            'projects.id as project_id',
-            'projects.name as project_name',
-            'projects.description as project_description',
-            'projects.start_date as project_start_date',
-            'projects.end_date as project_end_date',
-            'projects.group_id as project_group_id',
-            'projects.completed as project_completed',
-            'tasks.id as task_id',
-            'tasks.completed as task_completed',
-            'tasks.name as task_name',
-            'tasks.description as task_description',
-            'tasks.start_date as task_start_date',
-            'tasks.end_date as task_end_date',
-            'tasks.taskable_type as taskable_type',
-            'tasks.taskable_id as taskable_id',
-            'tasks.user_id as task_user_id',
-            'tasks.project_id as task_project_id',
-            'notes.id as note_id',
-            'notes.body as note_body',
-            'notes.noteable_type as noteable_type',
-            'notes.user_id as note_user_id',
-            'notes.created_at as note_created_at',
-            'groups.name as project_group_name',
-            'memberships.user_id as member_user_id',
-            'memberships.membershipable_type as member_type',
-            'memberships.membershipable_id as member_id',
-            'memberships.confirmed as member_confirmed',
-            'teams.id as team_id',
-            'teams.name as team_name',
-            'users.username as username',
-            // Profile pics?
-        ])
-        ->groupBy([
-            'projects.id',
-            'tasks.id',
-            'groups.id',
-            'teams.id',
-            'notes.id',
-            'memberships.is_admin',
-            'memberships.membershipable_type',
-            'memberships.membershipable_id',
-            'memberships.user_id',
-            'memberships.group_id',
-            'memberships.confirmed',
-            'users.username',
-        ])
-        ->orderBy('projects.end_date', 'asc')
-        ->orderBy('tasks.end_date', 'asc')
-        ->orderBy('projects.completed', 'asc')
-        ->orderBy('tasks.completed', 'asc')
-        ->orderBy('groups.name')
-        ->orderBy('teams.name')
-        ->orderBy('notes.created_at', 'asc')
-        ->orderBy('noteable_type')
-        ->orderBy('memberships.is_admin', 'desc')
-        ->orderBy('users.username')
-        ->get();
+        $this->compileProjectsArray = $compileProjectsArray;
+    }
+
+    public function handle($userId)
+    {
+        $rawProjects = DB::select("SELECT Pr1.name as project_name,
+            Pr1.id as project_id,
+            Pr1.completed as project_completed,
+            Pr1.description as project_description,
+            Pr1.group_id as project_group_id,
+            Pr1.start_date as project_start_date,
+            Pr1.end_date as project_end_date,
+            Ta1.id as task_id,
+            Ta1.name as task_name,
+            Ta1.description as task_description,
+            Ta1.start_date as task_start_date,
+            Ta1.end_date as task_end_date,
+            Ta1.taskable_id as taskable_id,
+            Ta1.taskable_type as taskable_type,
+            Ta1.completed as task_completed,
+            Ta1.user_id as task_user_id,
+            Ta1.project_id as task_project_id,
+            Te1.name as task_team,
+            Te1.id as task_team_id,
+            Gr1.name as project_task_group,
+            Gr1.id as project_task_group_id,
+            Us1.username as task_user_assignee,
+            No1.body as task_note_body,
+            No1.noteable_id as task_note_task_id,
+            No1.created_at as task_note_created_at,
+            No2.body as project_note_body,
+            No2.noteable_id as project_note_project_id,
+            No2.created_at as project_note_created_at,
+            Us2.username as note_author,
+            Us3.username as group_member_username,
+            Us4.username as team_member_username,
+            Gr2.name as project_group_name
+        FROM projects Pr1
+        INNER JOIN tasks Ta1
+        ON Ta1.project_id = Pr1.id
+        LEFT OUTER JOIN teams Te1
+        ON Te1.id = Ta1.taskable_id
+        LEFT OUTER JOIN groups Gr1
+        ON Gr1.id = Ta1.taskable_id
+        LEFT OUTER JOIN users Us1
+        ON Us1.id = Ta1.user_id
+        LEFT OUTER JOIN notes No1
+        ON No1.noteable_id = Ta1.id
+        LEFT OUTER JOIN notes No2
+        ON No2.noteable_id = Pr1.id
+        LEFT OUTER JOIN users Us2
+        ON Us2.id = No1.user_id
+        OR Us2.id = No2.user_id
+        LEFT OUTER JOIN memberships Me1
+        ON Me1.membershipable_id = Gr1.id
+        LEFT OUTER JOIN memberships Me2
+        ON Me2.membershipable_id = Te1.id
+        LEFT OUTER JOIN users Us3
+        ON Us3.id = Me1.user_id
+        LEFT OUTER JOIN users Us4
+        ON Us4.id = Me2.user_id
+        INNER JOIN groups Gr2
+        ON Gr2.id = Pr1.group_id
+        WHERE Pr1.owner = '$userId'
+        ORDER BY Pr1.end_date, Ta1.end_date, No1.created_at asc, No2.created_at asc");
         
-        // Assemble $projects array
-        $currentProjectId = 0;
-        $currentTaskId = 0;
-        $currentNoteId = 0;
-        $projectCount = 0;
-        $taskCount = 0;
-        $projectNoteCount = 0;
-        $taskNoteCount = 0;
-        $taskTeamMemberCount = 0;
-        $projects = [];
-        $loop = 0;
-        $today = date("Y-m-d");
-        $todayDate = new DateTime($today);
-        $deadlinePassed = false;
-        $taskDeadlinePassed = false;
-
-        foreach($rawProjects as $rawProject) {
-            // Compile project data once only
-            if ($currentProjectId !== $rawProject->project_id) {
-                if ($loop > 0) {
-                    ++$projectCount;
-                    $deadlinePassed = false;
-                    $taskCount = 0;
-                }
-                $toDate = new DateTime($rawProject->project_end_date);
-                $interval = $todayDate->diff($toDate);
-                $projectDays = $interval->format('%a');
-                if ($todayDate > $toDate) {
-                    $deadlinePassed = true;
-                }
-                $projects[$projectCount]['project_name'] = $rawProject->project_name;
-                $projects[$projectCount]['project_completed'] = $rawProject->project_completed;
-                $projects[$projectCount]['project_description'] = $rawProject->project_description;
-                $projects[$projectCount]['project_id'] = $rawProject->project_id;
-                $projects[$projectCount]['project_group_id'] = $rawProject->project_group_id;
-                $projects[$projectCount]['project_start_date'] = Carbon::parse($rawProject->project_start_date)->format('d M Y');
-                $projects[$projectCount]['project_end_date'] = Carbon::parse($rawProject->project_end_date)->format('d M Y');
-                $projects[$projectCount]['project_input_end_date'] = $rawProject->project_end_date;
-                $projects[$projectCount]['project_group_name'] = $rawProject->project_group_name;
-                $projects[$projectCount]['project_deadline_passed'] = $deadlinePassed;
-                $deadlinePassed 
-                ? $projects[$projectCount]['project_days_remaining'] = '-'.$projectDays
-                : $projects[$projectCount]['project_days_remaining'] = $projectDays;
-            }
-
-            // Project has notes
-            if (($rawProject->noteable_type === 'App\\Models\\Project') && $rawProject->note_id && ($rawProject->note_id !== $currentNoteId)) {
-                $projects[$projectCount]['notes'][$projectNoteCount]['note_id'] = $rawProject->note_id;
-                $projects[$projectCount]['notes'][$projectNoteCount]['note_body'] = $rawProject->note_body;
-                $projects[$projectCount]['notes'][$projectNoteCount]['note_author'] = $rawProject->note_user_id;
-                $projects[$projectCount]['notes'][$projectNoteCount]['note_created_at'] = Carbon::parse($rawProject->note_created_at)->format('d M y, H:i');
-            }
-
-            // TASKS
-            if ($currentTaskId !== $rawProject->task_id) {
-                if ($loop > 0) {
-                    ++$taskCount;
-                    $taskTeamMemberCount = 0;
-                    $taskDeadlinePassed = false;
-                }
-                $taskToDate = new DateTime($rawProject->task_end_date);
-                $taskInterval = $todayDate->diff($taskToDate);
-                $taskDays = $taskInterval->format('%a');
-                if ($todayDate > $taskToDate) {
-                    $taskDeadlinePassed = true;
-                }
-            }
-
-            // Task assigned to group member
-            if ($rawProject->taskable_type === 'App\\Models\\Group' && $rawProject->member_type === 'App\\Models\\Group' && $rawProject->member_confirmed && $rawProject->member_user_id === $rawProject->task_user_id) {
-                $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;
-                $projects[$projectCount]['tasks'][$taskCount]['group_name'] = $rawProject->project_group_name;
-                $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'group member';
-                $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->username;
-                $projects[$projectCount]['tasks'][$taskCount]['task_completed'] = $rawProject->task_completed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_deadline_passed'] = $taskDeadlinePassed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
-                $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_user_id'] = $rawProject->task_user_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
-                $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
-                $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
-
-                $taskDeadlinePassed
-                ? $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = '-'.$taskDays
-                : $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = $taskDays;
-            }
-
-            // Task assigned to whole team
-            if ($rawProject->taskable_type === 'App\\Models\\Team' && !$rawProject->task_user_id) {
-                $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;
-                $projects[$projectCount]['tasks'][$taskCount]['task_completed'] = $rawProject->task_completed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_deadline_passed'] = $taskDeadlinePassed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
-                $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
-                $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
-                $projects[$projectCount]['tasks'][$taskCount]['team_id'] = $rawProject->team_id;
-                $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'team';
-                $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->team_name;
-                $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
-                $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
-
-                $taskDeadlinePassed
-                ? $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = '-'.$taskDays
-                : $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = $taskDays;
-                
-                // Compile team users
-                if ($rawProject->member_type === 'App\\Models\\Team') {
-                    $projects[$projectCount]['tasks'][$taskCount]['team_members'][$taskTeamMemberCount]['team_member_username'] = $rawProject->username;
-                    // Profile pic?
-                    ++$taskTeamMemberCount;
-                }
-                
-            }
-
-            // Task assigned to specific team member
-            if ($rawProject->taskable_type === 'App\\Models\\Team' && $rawProject->task_user_id) {
-                $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
-                $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;
-                $projects[$projectCount]['tasks'][$taskCount]['task_completed'] = $rawProject->task_completed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_deadline_passed'] = $taskDeadlinePassed;
-                $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
-                $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
-                $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
-                $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
-                $projects[$projectCount]['tasks'][$taskCount]['team_id'] = $rawProject->team_id;
-                $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'team member';
-                $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->username;
-                $projects[$projectCount]['tasks'][$taskCount]['task_user_id'] = $rawProject->task_user_id;
-                $projects[$projectCount]['tasks'][$taskCount]['team_name'] = $rawProject->team_name;
-                $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
-                $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
-
-                $taskDeadlinePassed
-                ? $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = '-'.$taskDays
-                : $projects[$projectCount]['tasks'][$taskCount]['task_days_remaining'] = $taskDays;
-            }
-
-            // Task has notes
-            if (($rawProject->noteable_type === 'App\\Models\\Task') && $rawProject->note_id && ($rawProject->note_id !== $currentNoteId)) {
-                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_id'] = $rawProject->note_id;
-                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_body'] = $rawProject->note_body;
-                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_author'] = $rawProject->note_user_id;
-                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_created_at'] = Carbon::parse($rawProject->note_created_at)->format('d M y, H:i');
-                ++$taskNoteCount;
-            }
-
-            $currentProjectId = $rawProject->project_id;
-            $currentTaskId = $rawProject->task_id;
-            $currentNoteId = $rawProject->note_id;
-            ++$loop;
-        }
-        
-        return $projects;
+        return $this->compileProjectsArray->compileProjects($rawProjects);
     }
 }

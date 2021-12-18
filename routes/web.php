@@ -45,8 +45,11 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/talkboard', function () {
 
 Route::group(['middleware' => config('fortify.middleware', ['web'])], function () {
 
-    Route::get('/users/{user}/profile', [UserController:: class, 'show'])
+    Route::get('/users/{user}/profile', [UserController:: class, 'showProfile'])
         ->name('myprofile')->middleware(['auth']);
+
+    Route::get('/users/{user:username}/self', [UserController::class, 'show'])
+        ->name('user-show')->middleware(['auth']);
 
     Route::patch('/users/{user}/update', [UserController:: class, 'update'])
         ->name('updateProfile')->middleware(['auth']);
@@ -65,9 +68,6 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     
     Route::post('/comments/store', [CommentController::class, 'store'])
         ->name('storeComment')->middleware(['auth']);
-
-    Route::get('/users/{user:username}/posts', [PostController::class, 'show'])
-        ->name('user-posts')->middleware(['auth']);
 
     Route::get('talkboard', [PostController::class, 'index'])
         ->name('talkboard')->middleware(['auth']);

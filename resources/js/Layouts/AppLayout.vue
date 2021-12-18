@@ -1,5 +1,6 @@
 <template>
     <flash-message></flash-message>
+    <error-message></error-message>
     <div class="flex flex-col flex-1 bg-we4vBg min-h-screen overflow-y-hidden" >
         
         <nav class="bg-we4vGrey-900 border-b border-we4vGrey-700 shadow-md fixed top-0 left-0 w-screen z-50">
@@ -43,7 +44,7 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('user-posts', $page.props.authUser.username)" :active="route().current('user-posts')">
+                            <jet-nav-link :href="route('user-show', $page.props.authUser.username)" :active="route().current('user-show') && $page.props.authUser.id === $page.props.user.id">
                                 Self
                             </jet-nav-link>
                         </div>
@@ -164,6 +165,7 @@
     import SidebarLeft from '@/Jetstream/SidebarLeft'
     import SidebarRight from '@/Jetstream/SidebarRight'
     import FlashMessage from '../Pages/Components/FlashMessage'
+    import ErrorMessage from '../Pages/Components/ErrorMessage'
 
     export default {
         components: {
@@ -175,7 +177,8 @@
             JetResponsiveNavLink,
             SidebarLeft,
             SidebarRight,
-            FlashMessage
+            FlashMessage,
+            ErrorMessage,
         },
 
         data() {

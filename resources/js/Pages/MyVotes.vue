@@ -26,8 +26,13 @@
                                             <input v-model="voteTitle" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="E.g.: Build cob or straw-bale house?">
                                         </div>
 
+                                        <div class="w-justUnderHalf">
+                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">closing date</label>
+                                            <input v-model="voteClosingDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select closing date">
+                                        </div>
+
                                         <div id="voteElements" class="my-3">
-                                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote options (hit enter to build list of options)</label>
+                                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote options (hit enter to add to your list of options)</label>
                                             <input @keydown.enter.prevent="addVoteEl" v-model="voteEl" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
                                         </div>
 
@@ -38,7 +43,7 @@
                                             </div>
                                         </div>
 
-                                        <h5 class="text-sm font-semibold text-we4vGrey-500 mb-2 tracking-tight mt-3">Submit vote group or team</h5>
+                                        <h5 class="text-sm font-semibold text-we4vGrey-500 mb-2 tracking-tight mt-3">Select vote group or team</h5>
                                         
                                         <div v-if="$page.props.mygroups">
                                             <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Groups</h5>
@@ -66,6 +71,29 @@
                         </Modal>
                 </teleport>
 
+                <teleport to=#voteModals>
+                    <Modal :show="showEditVoteModal">
+                        <div @mouseleave="nowOutside()" @mouseenter="nowInside()" v-if="showEditVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                            <div class="flex justify-end">
+                                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                    <div @click="showEditVoteModal = false; clearModal()">
+                                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                    </div>   
+                                </div>
+                            </div>
+
+                            <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Extend closing date for <span class="italic text-we4vGrey-600">{{ voteTitle }}</span></h4>
+
+                            <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend date</h5>
+                            <div class="w-justUnderHalf mb-4">
+                                <input v-model="voteInputClosingDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                            </div>
+                            
+                            <button-grey @click="submitVoteData()">Update vote’s closing date</button-grey>
+                        </div>
+                    </Modal>
+                </teleport>
+
                 <Title>
                     <template #title>
                         My votes
@@ -80,11 +108,17 @@
                                 The associates in one of your teams.
                             </li>
                         </ol>
-                        <p>Enter vote options into the relevant input field one by one. Hitting return after entering an option adds that option to the list you build. When the list is finished, you’ve entered the title and selected the group of associates who will vote, your data can be saved. Those invited to vote will then be notified.</p>
+                        <p>Enter vote options into the relevant input field one by one. Hitting return after entering an option adds that option to the list you build. When the list is finished, you've selected a closing date, entered the title and chosen the group of associates who will vote, your data can be saved. Those invited to vote will then be notified.</p>
                     </template>
                 </Title>
 
-                <button-blue @click="showVoteModal = true; showBackdrop = true">Set up a vote</button-blue>
+                <button-blue v-if="$page.props.mygroups.length > 0" @click="showVoteModal = true; showBackdrop = true">Set up a vote</button-blue>
+
+                <button-grey v-else>
+                    <a :href="route('mygroups', $page.props.authUser.id)">
+                        Create a group before setting up a vote
+                    </a>
+                </button-grey>
 
                 <!-- Main page – Projects -->
                 <Subtitle>
@@ -97,9 +131,11 @@
                 </Subtitle>
                 <div v-if="$page.props.myvotes.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Vote v-for="(vote, voteKey) in myvotes" :key="voteKey" :vote="vote" />
+                        <Vote v-for="(vote, voteKey) in myvotes" :key="voteKey" :vote="vote" @activate-edit-vote-modal="onActivateEditVoteModal"/>
                     </div>
                 </div>
+
+                <button-grey>View closed votes</button-grey>
             </div>
         </template>
     </app-layout>
@@ -111,6 +147,7 @@ import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
 import ButtonBlue from '../Jetstream/ButtonBlue'
 import ButtonGrey from '@/Jetstream/ButtonGrey'
+import JetNavLink from '@/Jetstream/NavLink'
 import Form from '@/Jetstream/FormSection'
 import Modal from './Components/Modal'
 import Vote from './Components/Vote'
@@ -127,6 +164,7 @@ export default {
 
     props: [
         'myvotes',
+        'myclosedvotes',
         'mygroups'
     ],
 
@@ -138,6 +176,7 @@ export default {
         ModalBackdrop,
         ButtonBlue,
         ButtonGrey,
+        JetNavLink,
         FlashMessage,
         ErrorMessage,
         Form,
@@ -151,9 +190,13 @@ export default {
             clearModal,
             nowInside, 
             nowOutside,
+            onActivateEditVoteModal,
             onClickOutside,
             showBackdrop,
+            showEditVoteModal,
             showVoteModal,
+            voteClosingDate,
+            voteInputClosingDate,
             voteTitle,
         } = manageModals()
 
@@ -180,6 +223,7 @@ export default {
             let payload = {
                 'owner': usePage().props.value.authUser.id,
                 'title': voteTitle.value,
+                'closing_date': voteClosingDate.value,
                 'voteable_id': selectedGroup,
                 'voteable_type': voteable_type.value,
                 'vote_elements': voteEls.value
@@ -192,6 +236,7 @@ export default {
                 usePage().props.value.myvotes.elements.forEach(element => {
                     usePage().props.value.myvotes.num_votes_cast += element.numElVotes
                 })
+
             } catch (err) {
                 props.errors = err
             }
@@ -215,8 +260,8 @@ export default {
             })
 
             groupTeams.value.forEach(groupTeam => {
-                groupTeam.teams.forEach(team => {
-                    teamMembers.value.push({members: team.teamMembers, groupName: groupTeam.groupName})
+                Object.entries(groupTeam.teams).forEach(([key, value] )=> {
+                    teamMembers.value.push({members: value.teamMembers, groupName: groupTeam.groupName})
                 })
 
             })
@@ -233,39 +278,44 @@ export default {
                     if (myVote.type === 'group' && member.groupName === myVote.group_team_name) {
                         !Object.values(usePage().props.value.myvotes[loop.value].voters).includes(member.username)
                         ? usePage().props.value.myvotes[loop.value].voters.push(member.username)
-                        : null //console.log('Did NOT push ' + member.username + ' into voters array in ' + usePage().props.value.myvotes[loop.value].vote_title)
+                        : null
                     }
                 })
                 ++loop.value
             })
         }
 
-        const countGroupVoters = () => {
+        const addAuthUserToVoters = () => {
             const loop = ref(0)
             usePage().props.value.myvotes.forEach(myVote => {
-                usePage().props.value.myvotes[loop.value].numberVoters = myVote.voters.length
+                !Object.values(usePage().props.value.myvotes[loop.value].voters).includes(usePage().props.value.authUser.username)
+                ? usePage().props.value.myvotes[loop.value].voters.push(usePage().props.value.authUser.username)
+                : null
                 ++loop.value
             })
         }
 
         addTeamMembersToGroupVoters()
-        countGroupVoters()
+        addAuthUserToVoters()
 
         return {
             addTeamMembersToGroupVoters,
             addVoteEl,
             amInside, 
             amOutside, 
-            clearModal, 
-            countGroupVoters,
+            clearModal,
             deleteEl,
             nowInside, 
-            nowOutside, 
+            nowOutside,
+            onActivateEditVoteModal,
             onClickOutside, 
             showBackdrop, 
+            showEditVoteModal,
             showVoteModal,
             submitVoteData,
             voteable_type,
+            voteClosingDate,
+            voteInputClosingDate,
             voteTitle,
             voteEl,
             voteEls,

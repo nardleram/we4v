@@ -2,14 +2,23 @@
 
 namespace App\Actions\Votes;
 
+use DateTime;
 use Carbon\Carbon;
 use App\Models\Vote;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GetVotes
 {
-    public function handle($id) : array
+    use SoftDeletes;
+    
+    public function handle($id, $operator) : array
     {
+        $today = date("Y-m-d");
+        $todayDate = new DateTime($today);
+        
         $rawVotes = Vote::where('votes.owner', $id)
+        ->where('votes.closing_date', $operator, $todayDate)
+        // ->whereIn('votes.id', ['f7cd6f61-1934-41e0-85fc-040f5cc59964'])
         ->leftJoin('vote_elements', function ($join) {
             $join->on('vote_elements.vote_id', '=', 'votes.id');
         })
@@ -23,10 +32,13 @@ class GetVotes
             $join->on('teams.id', '=', 'votes.voteable_id');
         })
         ->leftJoin('memberships', function ($join) {
-            $join->on('memberships.membershipable_id', '=', 'votes.voteable_id');
+            $join->on('memberships.membershipable_id', '=', 'votes.voteable_id')
+            ->where('memberships.deleted_at', null);
         })
         ->leftJoin('users', function($join) {
-            $join->on('users.id', '=', 'memberships.user_id');
+            $join->on('users.id', '=', 'memberships.user_id')
+            ->orOn('users.id', '=', 'votes.owner')
+            ->orOn('users.id', '=', 'cast_votes.user_id');
         })
         ->select([
             'votes.id as vote_id',
@@ -63,18 +75,19 @@ class GetVotes
         // Assemble $votes array
         $currentVoteId = 0;
         $loop = 0;
-        $votes = [];
-        $voters = [];
-        $allCastVoteEls = [];
         $voteCount = 0;
         $elementCount = 0;
         $voteElCount = 0;
         $voteElementVotedFor = false;
-        $usersVoted = [];
         $currentGroupTeamName = '';
         $currentUsername = '';
         $currentElement = '';
         $numVotesCast = 0;
+        $votes = [];
+        $voters = [];
+        $allCastVoteEls = [];
+        $usersVoted = [];
+        $votedUsers = [];
 
         foreach($rawVotes as $rawVote) {
             if ($rawVote->cast_vote_user_id) {
@@ -83,6 +96,7 @@ class GetVotes
         }
 
         $castVoteEls = array_unique($allCastVoteEls, SORT_REGULAR);
+        
         
         foreach($rawVotes as $rawVote) {
             // Compile vote data only once
@@ -93,10 +107,13 @@ class GetVotes
                     $currentUsername = '';
                     $voters = [];
                     ++$voteCount;
+                    $voteElementVotedFor = false;
+                    $votedUsers = [];
                 }
 
                 $votes[$voteCount]['vote_title'] = $rawVote->vote_title;
                 $votes[$voteCount]['closing_date'] = Carbon::parse($rawVote->closing_date)->format('d M y');
+                $votes[$voteCount]['input_closing_date'] = $rawVote->closing_date;
 
                 foreach ($castVoteEls as $castVoteEl) {
                     if ($rawVote->vote_id === $castVoteEl['vote_id']) {
@@ -118,6 +135,15 @@ class GetVotes
                 }
             }
 
+            if ($rawVote->element_title !== $currentElement) {
+                if ($voteElementVotedFor) {
+                    ++$elementCount;
+                }
+                $voteElementVotedFor = false;
+                $usersVoted = [];
+                $voteElCount = 0;
+            }
+
             // Voters
             if ($currentUsername !== $rawVote->username) {
                 if (!in_array($rawVote->username, $voters)) {
@@ -125,6 +151,15 @@ class GetVotes
                 }
 
                 $votes[$voteCount]['voters'] = $voters;
+            }
+
+            // Log users who have voted, but without their vote decision
+            if ( $rawVote->cast_vote_user_id && ($rawVote->cast_vote_user_id === $rawVote->user_id) ) {
+                if (!in_array($rawVote->username, $votedUsers)) {
+                    array_push($votedUsers, $rawVote->username);
+                }
+
+                $votes[$voteCount]['users_who_voted'] = $votedUsers;
             }
 
             // Vote elements
@@ -145,21 +180,12 @@ class GetVotes
                     $voteElementVotedFor = true;
                 }
             }
-
-            if ((!$voteElementVotedFor) && $rawVote->element_id !== $rawVote->cast_vote_element_id) {
+            
+            if ( (!$voteElementVotedFor) && ($rawVote->element_id !== $rawVote->cast_vote_element_id) && ($rawVote->element_title !== $currentElement) ) {
                 $voteElCount = 0;
                 $votes[$voteCount]['elements'][$elementCount]['element_title'] = $rawVote->element_title;
                 $votes[$voteCount]['elements'][$elementCount]['numElVotes'] = 0;
                 $voteElementVotedFor = true;
-            }
-
-            if ($rawVote->element_title !== $currentElement) {
-                if ($voteElementVotedFor) {
-                    ++$elementCount;
-                }
-                $voteElementVotedFor = false;
-                $usersVoted = [];
-                $voteElCount = 0;
             }
 
             ++$loop;

@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Groups\StoreGroup;
 use App\Actions\Groups\UpdateGroup;
+use App\Actions\Groups\GetAdminGroups;
 use App\Http\Requests\StoreGroupRequest;
 use App\Actions\Groups\DestroyGroupCascade;
 use App\Actions\Memberships\StoreMemberships;
@@ -15,15 +16,17 @@ use App\Actions\Memberships\UpdateMemberships;
 class GroupController extends Controller
 {
     private $getGroups;
+    private $getAdminGroups;
     private $storeGroup;
     private $storeMemberships;
     private $updateGroup;
     private $updateMemberships;
     private $destroyGroupCasc;
 
-    public function __construct(GetGroups $getGroups, StoreGroup $storeGroup, StoreMemberships $storeMemberships, UpdateGroup $updateGroup, UpdateMemberships $updateMemberships, DestroyGroupCascade $destroyGroupCasc)
+    public function __construct(GetGroups $getGroups, GetAdminGroups $getAdminGroups, StoreGroup $storeGroup, StoreMemberships $storeMemberships, UpdateGroup $updateGroup, UpdateMemberships $updateMemberships, DestroyGroupCascade $destroyGroupCasc)
     {
         $this->getGroups = $getGroups;
+        $this->getAdminGroups = $getAdminGroups;
         $this->storeGroup = $storeGroup;
         $this->storeMemberships = $storeMemberships;
         $this->updateGroup = $updateGroup;
@@ -34,7 +37,8 @@ class GroupController extends Controller
     public function index() : object
     {
         return Inertia::render('MyGroups', [
-            'mygroups' => $this->getGroups->handle(auth()->id())
+            'mygroups' => $this->getGroups->handle(auth()->id()),
+            'myadmingroups' => $this->getAdminGroups->handle(auth()->id())
         ]);
     }
 
@@ -50,6 +54,7 @@ class GroupController extends Controller
 
         return Inertia::render('MyGroups', [
             'mygroups' => $this->getGroups->handle(auth()->id()),
+            'myadmingroups' => $this->getAdminGroups->handle(auth()->id()),
             'flash' => ['message' => $flashMessage]
         ]);
     }
@@ -60,8 +65,9 @@ class GroupController extends Controller
 
         $this->updateMemberships->handle($request);
 
-         return redirect()->back()->with([
+        return redirect()->back()->with([
             'mygroups' => $this->getGroups->handle(auth()->id()),
+            'myadmingroups' => $this->getAdminGroups->handle(auth()->id()),
             'flash' => ['message' => 'Group updated']]);
     }
 

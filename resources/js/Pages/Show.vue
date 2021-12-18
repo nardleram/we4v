@@ -2,39 +2,36 @@
     <app-layout>
         <template #centre>
             <div class="w-1/2 p-3 flex flex-col items-center max-h-screen overflow-x-hidden">
-                <modal v-if="show">
-                    I was a king
-                </modal>
                 <div class="relative mb-5">
-                    <div class="w-full h-64 overflow-hidden cursor-pointer" @click = "show = !show">
-                        <img :src="'/'+user.bkgrnd_image" alt="">
+                    <div class="w-full h-64 overflow-hidden">
+                        <img :src="'/'+user.bkgrnd_image" alt="User background image">
                     </div>
                     <div class="absolute flex items-center -mb-6 bottom-0 left-0 z-20">
-                        <div class="w-24 cursor-pointer" @click = "show = !show">
-                            <img :src="'/'+user.profile_image" alt="" class="rounded-full object-cover shadow-md h-24 w-24">
+                        <div class="w-24">
+                            <img :src="'/'+user.profile_image" alt="User profile image" class="rounded-full object-cover shadow-md h-24 w-24">
                         </div>
                         <p class="font-bold tracking-tighter ml-4 text-we4vBg text-lg">{{ user.username }}</p>
                     </div>
                     <div v-if="$page.props.authUser.username !== $page.props.user.username" class="absolute flex items-center mb-4 bottom-0 right-0 z-20">
                         <button v-if="associationStatus == 'associated'" 
-                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGrey-200 text-we4vGrey-600 w-full p-2 border border-we4vGrey-600 mr-2 cursor-default">
+                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vBg text-we4vGreen-500 w-full p-2 border border-we4vGreen-600 mr-2 cursor-default">
                             Associated
                         </button>
                         <div class="flex" v-if="associationStatus == 'pending' && myResponseNeeded">
                             <button 
-                            class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGreen-600 text-we4vGrey-100 w-full p-2 hover:text-white hover:bg-we4vGreen-700 border border-we4vGreen-700 mr-2" @click="acceptAssocRequest()">
+                            class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGreen-600 text-we4vGrey-100 w-full p-2 hover:text-white hover:bg-we4vGreen-700 border border-we4vGreen-700 mr-2" @click="respondAssocRequest(1)">
                                 Accept
                             </button>
-                            <button class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-red-700 text-we4vGrey-100 w-full p-2 hover:text-white hover:bg-red-800 border border-red-800 mr-2" @click="rejectAssocRequest()">
+                            <button class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-red-700 text-we4vGrey-100 w-full p-2 hover:text-white hover:bg-red-800 border border-red-800 mr-2" @click="respondAssocRequest(0)">
                                 Reject
                             </button>
                         </div>
                         <button v-else-if="associationStatus == 'pending' && !myResponseNeeded"
-                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGrey-700 text-we4vOrange w-full p-2 border border-we4vGrey-800 mr-2 cursor-default">
+                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGrey-900 text-we4vBlue w-full p-2 border border-we4vDarkBlue mr-2 cursor-default">
                             Association pending...
                         </button>
                         <button v-if="associationStatus == 'none'" 
-                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGrey-200 text-we4vGreen-700 w-full p-2 hover:bg-we4vGrey-300 border border-we4vGrey-400 mr-2"
+                        class="font-bold text-sm tracking-tight flex justify-center rounded-lg bg-we4vGrey-100 text-we4vGreen-600 w-full p-2 hover:bg-we4vGrey-200 border border-we4vGrey-400 mr-2"
                         @click="dispatchAssocRequest()">
                             Connect
                         </button>
@@ -120,21 +117,25 @@ export default {
             this.associationStatus = 'pending';
             this.$inertia.post('/associate-request', payload);
         },
-        acceptAssocRequest() {
+
+        respondAssocRequest(status) {
+            let id
+            this.$page.props.myPendingAssocReqs.forEach(assoc => {
+                if (assoc.requested_by === this.$page.props.user.id) {
+                    id = assoc.id
+                }
+            });
             let payload = {
-                'id': this.$page.props.myPendingAssocReqs.id,
-                'status': 1
+                'id': id,
+                'requested_of': this.$page.props.authUser.id,
+                'requested_by': this.$page.props.user.id,
+                'status': status
             }
-            this.associationStatus = 'associated';
-            this.$inertia.post('/associate-request-response', payload);
-        },
-        rejectAssocRequest() {
-            let payload = {
-                'id': this.$page.props.myPendingAssocReqs.id,
-                'status': 0
-            }
-            this.associationStatus = 'none';
-            this.$inertia.post('/associate-request-response', payload);
+            
+            this.$inertia.post('/associate-request-response', payload)
+            status
+            ? this.associationStatus = 'associated'
+            : this.associationStatus = 'none'
         }
     }
 }

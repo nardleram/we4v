@@ -12,6 +12,7 @@ class StoreVote
         return Vote::create([
             'title' => $request->title,
             'owner' => $request->owner,
+            'closing_date' => $request->closing_date,
             'voteable_id' => $request->voteable_id,
             'voteable_type' => $request->voteable_type,
         ]);

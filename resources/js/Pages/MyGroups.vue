@@ -37,7 +37,7 @@
                                     </div>
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Invite associates to join your group (optional)</h4>
-                                    <div v-if="!edit" class="w-full m-0 flex flex-col items-center">
+                                    <div v-if="!edit" class="w-full m-0 flex flex-col items-center max-h-48 overflow-y-scroll">
                                         <div v-for="(associate, associateKey) in $page.props.myAssociates" :key="associateKey" class="w-full flex flex-row justify-between items-center">
                                             <div class="w-1/4">
                                                 <input @click="addRemoveAssociate('group')" :value="associate.user_id" class="invitedAssocs rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox">
@@ -53,7 +53,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="edit" class="w-full m-0 flex flex-col items-center">
+                                    <div v-if="edit" class="w-full m-0 flex flex-col items-center max-h-48 overflow-y-scroll">
                                         <div v-for="(groupMember, groupMembersEditKey) in groupMembersEdit" :key="groupMembersEditKey" class="w-full flex flex-row justify-between items-center">
 
                                             <div class="w-1/4">
@@ -110,7 +110,7 @@
                                     </div>
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Invite associates to join your team</h4>
-                                    <div class="w-full m-0 flex flex-row flex-wrap justify-between">
+                                    <div class="w-full m-0 flex flex-row flex-wrap justify-between max-h-48 overflow-y-scroll">
                                         <div v-for="(associate, associateKey) in $page.props.myAssociates" :key="associateKey" class="w-full flex flex-row justify-between items-center">
                                             <div class="w-1/4">
                                                 <input @click="addRemoveAssociate('team')" :value="associate.user_id" class="invitedAssocs rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox">
@@ -123,6 +123,60 @@
                                             <div class="w-1/4 pl-8">
                                                 <input @click="makeAdmin('team')" :value="associate.user_id" class="admins rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ associate.user_id }}">Admin</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button class="text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4"
+                                    @click="submitTeamData()">
+                                        <p v-if="!edit">Save team, send invites</p>
+                                        <p v-else>Update team (send invites)</p>
+                                    </button>
+                                </template>
+                            </Form>
+                        </div>
+                    </Modal>
+                </teleport>
+
+                <teleport to="#groupModals">
+                    <Modal :show="showEditTeamModal" :name="teamName" :id="teamId" :description="teamFunction">
+                        <div v-if="showEditTeamModal" @mouseleave="nowOutside(); mode = 'team'" @mouseenter="nowInside(); mode = 'team'" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div class="w-9/12 text-sm font-bold mb-2 text-center m-auto rounded-lg py-1 shadow-md text-red-700 border-b-2 border-red-700" v-if="errors.members">{{ errors.members }}</div>
+                            <Form>
+                                <template #form>
+                                    <div class="flex justify-end">
+                                        <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                            <div @click="clearModal()">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic text-we4vGrey-600">{{ teamName }}</span></h4>
+
+                                    <div>
+                                        <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="teamName">team name</label>
+                                        <input v-model="teamName" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="teamName" placeholder="Enter team name">
+                                    </div>
+
+                                    <div>
+                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="teamFunction">team function</label>
+                                        <input v-model="teamFunction" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="teamFunction" placeholder="Define team’s function">
+                                    </div>
+
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add new associates to your team</h4>
+                                    <div class="w-full m-0 flex flex-row flex-wrap justify-between max-h-48 overflow-y-scroll">
+                                        <div v-for="(teamMember, teamMembersEditKey) in teamMembersEdit" :key="teamMembersEditKey" class="w-full flex flex-row justify-between items-center">
+                                            <div class="w-1/4">
+                                                <input @click="addRemoveAssociate('team')" :value="teamMember.user_id" class="invitedAssocsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox" :checked="teamMember.invited && !teamMember.declined">
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">{{ teamMember.user_name }}</label>
+                                                <img :src="'/'+teamMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            </div>
+                                            <div class="w-1/2">
+                                                <input @blur="collectTeamMemberRoles" :id="teamMember.user_id" v-model="teamMember.role" class="w-full mt-4 pl-4 py-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-xs tracking-tight font-medium" type="text" placeholder="define role">
+                                            </div>
+                                            <div class="w-1/4 pl-8">
+                                                <input @click="makeAdmin('team')" :value="teamMember.user_id" class="adminsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox" :checked="teamMember.admin">
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">Admin</label>
                                             </div>
                                         </div>
                                     </div>
@@ -158,14 +212,29 @@
                         My groups
                     </template>
                     <template #description>
-                        Click a group name to add a team. Click the edit icon to the right of a group’s name to make changes to that group.
+                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group; clicking the wastebin icon will delete the group and its teams. Teams can be edited and deleted by clicking on their relevant icons.
                     </template>
                 </Subtitle>
 
                 <!-- Groups and teams -->
                 <div v-if="mygroups.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Group v-for="(group, groupKey) in mygroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal"/>
+                        <Group v-for="(group, groupKey) in mygroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
+                    </div>
+                </div>
+
+                <Subtitle>
+                    <template #title>
+                        Groups and teams I administer
+                    </template>
+                    <template #description>
+                        Instructions as above, but with fewer rights than for groups you own.
+                    </template>
+                </Subtitle>
+
+                <div v-if="myadmingroups.length > 0" class="w-full m-0 m-auto">
+                    <div class="w-full m-0 flex flex-row flex-wrap justify-start">
+                        <Group v-for="(adminGroup, adminGroupKey) in myadmingroups" :key="adminGroupKey" :group="adminGroup" :teams="adminGroup.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
                     </div>
                 </div>
 
@@ -183,7 +252,7 @@ import ModalBackdrop from './Components/ModalBackdrop'
 import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
 import manageModals from '../Pages/Composables/manageModals'
-import { watch, ref } from 'vue'
+import { watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 import FlashMessage from '../Pages/Components/FlashMessage'
@@ -206,6 +275,7 @@ export default {
 
     props: [
         'mygroups',
+        'myadmingroups',
         'errors',
         'user'
     ],
@@ -219,6 +289,7 @@ export default {
             edit,
             groupAdmins,
             groupId,
+            groupMemberRoles,
             groupMembers,
             groupMembersEdit,
             groupName,
@@ -228,22 +299,23 @@ export default {
             nowInside, 
             nowOutside,
             onActivateEditGroupModal,
+            onActivateEditTeamModal,
             onActivateTeamModal,
             onClickOutside,
+            selectedGroupAssociates,
+            selectedTeamAssociates,
             showBackdrop,
+            showEditTeamModal,
             showGroupModal,
             showTeamModal,
             teamAdmins,
+            teamId,
+            teamMemberRoles,
             teamMembers,
             teamMembersEdit,
             teamFunction,
             teamName,
         } = manageModals()
-        
-        let groupMemberRoles = ref([])
-        let selectedGroupAssociates = ref([])
-        let selectedTeamAssociates = ref([])
-        let teamMemberRoles = ref([])
 
         const submitGroupData = async function () {
             let members = []
@@ -252,15 +324,15 @@ export default {
 
             if (edit.value) {
                 groupMembersEdit.value.forEach(groupMember => {
-                    if (groupMember.invited === 'clicked' || groupMember.invited) {
-                        groupMember.invited === 'clicked'
-                        ? selectedGroupAssociates.value.push({id: groupMember.user_id, invited: false, confirmed: groupMember.confirmed})
-                        : selectedGroupAssociates.value.push({id: groupMember.user_id, invited: groupMember.invited, confirmed: groupMember.confirmed})
-                    }
+                    groupMember.invited
+                    ? selectedGroupAssociates.value.push({id: groupMember.user_id, invited: true, confirmed: groupMember.confirmed})
+                    : null
+
                     if (!groupMemberRoles.value.find(role => role.id === groupMember.user_id)) {
                         groupMemberRoles.value.push({id: groupMember.user_id, role: groupMember.role})
                     }
-                    if (groupMember.admin) {
+
+                    if (groupMember.admin && groupAdmins.value.includes(groupMember.user_id)) {
                         groupAdmins.value.push(groupMember.user_id)
                     }
                 })
@@ -307,15 +379,15 @@ export default {
 
             if (edit.value) {
                 teamMembersEdit.value.forEach(teamMember => {
-                    if (teamMember.invited === 'clicked' || teamMember.invited) {
-                        teamMember.invited === 'clicked'
-                        ? selectedTeamAssociates.value.push({id: teamMember.user_id, invited: false, confirmed: teamMember.confirmed})
-                        : selectedTeamAssociates.value.push({id: teamMember.user_id, invited: teamMember.invited, confirmed: teamMember.confirmed})
-                    }
+                    teamMember.invited
+                    ? selectedTeamAssociates.value.push({id: teamMember.user_id, invited: true, confirmed: teamMember.confirmed})
+                    : null
+
                     if (!teamMemberRoles.value.find(role => role.id === teamMember.user_id)) {
                         teamMemberRoles.value.push({id: teamMember.user_id, role: teamMember.role})
                     }
-                    if (teamMember.admin) {
+                    
+                    if (teamMember.admin && teamAdmins.value.includes(teamMember.user_id)) {
                         teamAdmins.value.push(teamMember.user_id)
                     }
                 })
@@ -343,6 +415,8 @@ export default {
                 'members': members
             }
 
+            edit.value ? payload.membershipable_id = teamId.value : null
+
             try {
                 edit.value
                 ? await Inertia.patch('/myteams/update', payload)
@@ -363,7 +437,7 @@ export default {
             ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
             : myVals = document.querySelectorAll('input.invitedAssocs')
 
-            if (mode === 'group') {
+            if (mode === 'group' && !edit.value) {
                 selectedGroupAssociates.value = []
                 for (const myVal of myVals) {
                     if (myVal.checked) {
@@ -383,7 +457,7 @@ export default {
                 }
             }
 
-            if (mode === 'team') {
+            if (mode === 'team' && !edit.value) {
                 for (const myVal of myVals) {
                     if (myVal.checked) {
                         selectedTeamAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
@@ -494,17 +568,20 @@ export default {
             nowInside, 
             nowOutside,
             onActivateEditGroupModal,
+            onActivateEditTeamModal,
             onActivateTeamModal,
             onClickOutside,
             selectedGroupAssociates,
             selectedTeamAssociates,
             showBackdrop,
+            showEditTeamModal,
             showGroupModal,
             showTeamModal,
             submitGroupData,
             submitTeamData,
             teamAdmins,
             teamFunction,
+            teamId,
             teamMembers,
             teamMembersEdit,
             teamMemberRoles,

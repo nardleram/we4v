@@ -206,7 +206,13 @@
                     </template>
                 </Title>
 
-                <button-blue @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
+                <button-blue v-if="$page.props.mygroups.length > 0" @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
+
+                <button-grey v-else>
+                    <a :href="route('mygroups', $page.props.authUser.id)">
+                        Create a group before setting up a project
+                    </a>
+                </button-grey>
 
                 <!-- Main page – Projects -->
                 <Subtitle>
@@ -381,6 +387,7 @@ export default {
                 'owner': usePage().props.value.authUser.id,
                 'name': taskName.value,
                 'id': taskId.value,
+                'completed': taskCompleted.value,
                 'description': taskDescription.value,
                 'start_date': taskStartDate.value,
                 'end_date': taskEndDate.value,

@@ -13,6 +13,8 @@ class Association extends Model
 
     public static function getAssociations() : array
     {
+        $ids = [];
+        
         $associates = (new static())
             ->select('requested_by', 'requested_of')
             ->where('status', 1)
@@ -21,16 +23,15 @@ class Association extends Model
                     ->orWhere('requested_by', auth()->id());
             })->get();
 
-        $ids = [];
         foreach ($associates as $associate) {
             array_push($ids, $associate->requested_by);
             array_push($ids, $associate->requested_of);
         }
 
         $assocIds = array_unique($ids);
-        // if (count($assocIds) === 0) {
-        //     array_push($assocIds, auth()->id());
-        // }
+        if (count($assocIds) === 0) {
+            array_push($assocIds, auth()->id());
+        }
 
         return $assocIds;
     }

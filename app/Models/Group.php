@@ -18,9 +18,9 @@ class Group extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
 
-    public function team()
+    public function teams()
     {
-        return $this->belongsTo(Team::class);
+        return $this->hasMany(Team::class);
     }
 
     public function memberships() : object

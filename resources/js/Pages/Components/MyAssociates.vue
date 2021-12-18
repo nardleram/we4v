@@ -3,7 +3,7 @@
         <div v-for="(assoc, assocKey) in $page.props.myAssociates" :key="assocKey">
             <div class="flex flex-row flex-nowrap items-center justify-between w-full rounded-md p-1 border-b border-we4vGrey-600">
                 <div>
-                    <inertia-link :href="route('user-posts', assoc.username)" as="button">
+                    <inertia-link :href="route('user-show', assoc.username)" as="button">
                         <img :src="'/'+assoc.path" alt="{{ assoc.username }}" class="rounded-full cursor-pointer w-8 h-8 object-cover">
                     </inertia-link>
                 </div>

@@ -23,9 +23,9 @@ class Team extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function groups()
+    public function group()
     {
-        return $this->hasMany(Group::class);
+        return $this->belongsTo(Group::class);
     }
 
     public static function getTeams()

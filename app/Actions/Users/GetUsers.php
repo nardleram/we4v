@@ -4,7 +4,7 @@ namespace App\Actions\Users;
 
 use App\Models\User;
 
-class getUsers
+class GetUsers
 {
     public function getUsers($ids) : object
     {

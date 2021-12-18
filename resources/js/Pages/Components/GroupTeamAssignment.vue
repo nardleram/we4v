@@ -22,13 +22,13 @@
             </div>
             <div class="row-start-2 -row-end-1 col-start-1 col-end-3 items-center">
                 <label class="text-we4vGrey-600 text-xs mr-2 w-full p-0 text-center" for="team">{{ team.team_name }}</label>
-                <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'" type="radio" name="task" :value="team.team_id" :checked="assignee === team.team_name">
+                <input @click="sendTaskData(taskableId = team.team_id, taskableType = 'App\\Models\\Team')" type="radio" name="task" :value="team.team_id" :checked="assignee === team.team_name">
             </div>
             <div v-if="team.teamMembers" class="row-span-1 col-start-4 col-span-3 m-0 p-0">
                 <div v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey" class="p-0 m-0">
                     <div v-if="teamMember.confirmed" class="p-0 m-0">
                         <label class="text-we4vGrey-600 text-xs mr-2 p-0 w-full text-center" for="teamMember">{{ teamMember.username }}</label>
-                        <input @click="taskableId = team.team_id; taskableType = 'App\\Models\\Team'; userId = teamMember.user_id" type="radio" name="task" :value="teamMember.user_id" :checked="assignee === teamMember.username && !teamMember.declined">
+                        <input @click="sendTaskData(taskableId = team.team_id, taskableType = 'App\\Models\\Team', userId = teamMember.user_id)" type="radio" name="task" :value="teamMember.user_id" :checked="assignee === teamMember.username && !teamMember.declined">
                     </div>
                     <div v-if="!teamMember.confirmed && team.teamMembers.length === 1" class="text-xs mt-1">
                         <p class="text-we4vGrey-600 text-xs mt-1">{{ team.team_name }} contains no confirmed members.</p>

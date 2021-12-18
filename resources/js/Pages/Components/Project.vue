@@ -25,10 +25,10 @@
         <div v-if="displayDetails" class="col-start-1 col-end-13 mt-3">
             <div v-if="project.tasks">
                 <h4 class="text-sm font-regular text-we4vGrey-200">Tasks</h4>
-                <div class="bg-we4vBg text-sm font-normal rounded my-2 p-2 max-h-44 overflow-y-hidden">
+                <div class="bg-we4vBg text-sm font-normal rounded my-2 p-2 max-h-48 overflow-y-scroll">
                     <table class="w-full">
                         <thead class="text-we4vBlue table-fixed border-b border-we4vGrey-200 text-left">
-                            <tr class="py-2 px1">
+                            <tr class="py-2 px-1">
                                 <th class="w-4/12">Name</th>
                                 <th class="w-4/12">Timeframe / days left</th>
                                 <th class="w-2/12">Assignee</th>

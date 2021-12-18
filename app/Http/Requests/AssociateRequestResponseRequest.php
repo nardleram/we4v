@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreVoteRequest extends FormRequest
+class AssociateRequestResponseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,7 +16,7 @@ class StoreVoteRequest extends FormRequest
         if (auth()->id()) {
             return true;
         }
-
+        
         return false;
     }
 
@@ -28,12 +28,10 @@ class StoreVoteRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255',
-            'owner' => 'required|uuid',
-            'closing_date' => 'required|date',
-            'voteable_type' => 'required|string|max:20',
-            'voteable_id' => 'required|uuid',
-            'vote_elements' => 'required|array',
+            'status' => 'required|boolean',
+            'id' => 'required|numeric',
+            'requested_by' => 'required|uuid',
+            'requested_of' => 'required|uuid',
         ];
     }
 }

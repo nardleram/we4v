@@ -2,37 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Association;
-use Illuminate\Http\Request;
-use App\Exceptions\AssocRequestNotFoundException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Redirect;
+use App\Actions\Associations\UpdateAssociation;
+use App\Http\Requests\AssociateRequestResponseRequest;
 
 class AssociateRequestResponseController extends Controller
 {
-    public function update()
+    private $updateAssociation;
+
+    public function __construct(UpdateAssociation $updateAssociation)
     {
-        $data = request()->validate([
-            'status' => 'required',
-            'id' => 'required',
-        ]);
-
-        try {
-            $associateRequest = Association::where('id', $data['id'])
-                ->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            throw new AssocRequestNotFoundException();
-        }
-        
-        if ($data['status'] === 1) {
-            $associateRequest->update(array_merge($data, [
-                'confirmed_at' => now(),
-            ]));
+        $this->updateAssociation = $updateAssociation;
+    }
+    
+    public function update(AssociateRequestResponseRequest $request)
+    {
+        if ($request->status) {
+            $this->updateAssociation->accept($request);
+            $message = 'Association accepted';
         } else {
-            $associateRequest->delete();
+            $this->updateAssociation->reject($request);
+            $message = 'Association rejected';
         }
 
-        return Redirect::back();
+        return redirect()->back()->with([
+            'flash' => ['message' => $message]]);
 
     }
 }

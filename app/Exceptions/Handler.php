@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
                 return response()->json(['message' => 'Object not found', 422]);
             }
 
-            if ($request->path() === 'users/{user}/posts') {
+            if ($request->path() === 'users/{user:username}/self') {
                 return response()->view('users.notFound', [], 422);
             }
 

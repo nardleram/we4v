@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Vote;
 use App\Models\Group;
 use App\Models\Image;
 use Inertia\Middleware;
@@ -11,7 +13,6 @@ use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
-use App\Models\Vote;
 use Illuminate\Support\Facades\Session;
 
 class HandleInertiaRequests extends Middleware
@@ -246,7 +247,7 @@ class HandleInertiaRequests extends Middleware
                             : $membReqs[$membCount]['updated'] = false;
                             ++$membCount;
                         }
-
+                        
                         return $membReqs;
                     }
                 }
@@ -256,9 +257,16 @@ class HandleInertiaRequests extends Middleware
 
             'myPendingVotes' => function ()
             {
-                $membIds = Membership::getMemberships();
+                $membIds = Membership::getMemberships4Votes();
                 
                 return Vote::getPendingVotes($membIds);
+            },
+
+            'myOpenTasks' => function ()
+            {
+                $membIds = Membership::getMemberships4Tasks();
+
+                return Task::getOpenTasks($membIds);
             },
 
         ]);

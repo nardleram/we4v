@@ -9,7 +9,7 @@
                         My articles
                     </template>
                     <template #description>
-                        This is where you share your professional acumen, be it academic, or artistic/literary, or your experise in a trade, etc. More importantly, this is where you share <span class="italic">what you are</span>, which you seek to offer to your community for the healthy furtherance of your community.
+                        This is where you share your professional acumen, be it academic, or artistic/literary, or your experise in a trade, etc. More importantly, this is where you share <span class="italic">what you are</span>, which you seek to offer the world in the interests of the world.
                     </template>
                 </Title>
             </div>

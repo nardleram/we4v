@@ -18,7 +18,7 @@ class GetUserPosts
         $this->getUserData = $getUserData;
     }
 
-    public function handlePosts(User $user) : array
+    public function handle(User $user) : array
     {
         $rawPosts = $this->getPostData->getPosts([$user->id]);
 
@@ -30,20 +30,5 @@ class GetUserPosts
         $users = $this->getUserData->getUsers($ids);
 
         return $this->getPostData->compilePostsArray($rawPosts, $users);
-    }
-
-    public function handleUser(User $user) : object
-    {
-        $user_bkgrnd_image = Image::get_user_bkgrnd_image($user);
-        $user_profile_image = Image::get_user_profile_image($user);
-        
-        count($user_bkgrnd_image) > 0
-            ? $user['bkgrnd_image'] = $user_bkgrnd_image[0]
-            : $user['bkgrnd_image'] = 'images/bkgrnd.jpg';
-        count($user_profile_image) > 0
-            ? $user['profile_image'] = $user_profile_image[0]
-            : $user['profile_image'] = 'images/nobody.png';
-
-        return $user;
     }
 }

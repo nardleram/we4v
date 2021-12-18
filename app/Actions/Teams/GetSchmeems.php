@@ -3,9 +3,12 @@
 namespace App\Actions\Teams;
 
 use App\Models\Team;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GetTeams
+class GetSchmeems
 {
+    use SoftDeletes;
+    
     public function handle($userId) : array
     {
         $rawTeams = Team::where('owner', $userId)

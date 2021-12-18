@@ -9,7 +9,7 @@ class UpdateTeam
 {
     public function handle(Request $request) : int
     {
-        return Team::where('id', $request->membershipable_id)
+        return Team::where('id', $request->team_id)
             ->where('owner', $request->owner)
             ->update([
                 'function' => $request->function,

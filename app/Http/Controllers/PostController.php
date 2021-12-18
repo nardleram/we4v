@@ -12,12 +12,10 @@ use Illuminate\Support\Facades\Redirect;
 
 class PostController extends Controller
 {
-    private $getUserPosts;
     private $getPosts;
     
-    public function __construct(GetUserPosts $getUserPosts, GetTalkboardPosts $getPosts)
+    public function __construct(GetTalkboardPosts $getPosts)
     {
-        $this->getUserPosts = $getUserPosts;
         $this->getPosts = $getPosts;
     }
 
@@ -28,19 +26,6 @@ class PostController extends Controller
         return Inertia::render('Talkboard', [
             'posts' => $posts,
             'posts_status' => 'success',
-        ]);
-    }
-
-    public function show(User $user) : object
-    {
-        $posts = $this->getUserPosts->handlePosts($user);
-
-        $user = $this->getUserPosts->handleUser($user);
-
-        return Inertia::render('Show', [
-            'posts' => $posts,
-            'posts_status' => 'success',
-            'user' => $user,
         ]);
     }
 

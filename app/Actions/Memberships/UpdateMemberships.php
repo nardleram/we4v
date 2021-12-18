@@ -6,7 +6,7 @@ use App\Models\Membership;
 
 class UpdateMemberships
 {
-    public function handle($request)
+    public function handle($request) : void
     {
         foreach ($request->members as $member) {
             if ($member['invited']) {

@@ -32,6 +32,7 @@ class UpdateTaskRequest extends FormRequest
             'user_id' => 'nullable|uuid',
             'taskable_id' => 'required|uuid',
             'taskable_type' => 'required|string|max:20',
+            'completed' => 'required|boolean',
             'note' => 'array|nullable'
         ];
     }

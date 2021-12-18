@@ -12,22 +12,31 @@ class Vote extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['title', 'voteable_id', 'voteable_type', 'owner'];
+    protected $fillable = ['title', 'voteable_id', 'voteable_type', 'owner', 'closing_date'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
     protected $rawVotes;
 
-    protected $casts = ['closing_date' => 'datetime:d M Y'];
-
-    public function getClosingDateAttribute($date)
+    public function voteElements()
     {
-        return Carbon::parse($date)->format('d M Y');
+        $this->hasMany(VoteElement::class);
+    }
+
+    public function castVotes()
+    {
+        return $this->hasManyThrough(
+            CastVote::class, 
+            VoteElement::class,
+            'vote_id',
+            'element_id'
+        );
     }
 
     public static function getPendingVotes($ids) : array
     {
-        $rawVotes = Vote::whereIn('voteable_id', $ids)
+        $rawVotes = Vote::whereIn('votes.voteable_id', $ids)
+        ->orWhere('votes.owner', auth()->id())
         ->leftJoin('vote_elements', function ($join) {
             $join->on('votes.id', '=', 'vote_elements.vote_id');
         })
@@ -62,10 +71,10 @@ class Vote extends Model
         $currentVoteId = 0;
         $loop = 0;
         $voteCount = 0;
-        $elementCount = 0;
-        $currentElement = '';
         $votes = [];
         $voted = [];
+        $elements = [];
+        $keyedElements = [];
 
         foreach($rawVotes as $rawVote) {
             if ($rawVote->cast_vote_user_id === auth()->id()) {
@@ -75,13 +84,14 @@ class Vote extends Model
         $votedUnique = array_unique($voted);
 
         foreach($rawVotes as $rawVote) {
-            //Strip out votes cast by authUser
+            // Ignore votes cast by authUser
             if ( (!$rawVote->cast_vote_user_id) || (!in_array($rawVote->vote_id, $votedUnique)) ) {
 
                 // Compile vote data only once
                 if ($currentVoteId !== $rawVote->vote_id) {
                     if ($loop > 0) {
-                        $elementCount = 0;
+                        $elements = [];
+                        $keyedElements = [];
                         ++$voteCount;
                     }
     
@@ -90,20 +100,21 @@ class Vote extends Model
                     $votes[$voteCount]['closing_date'] = Carbon::parse($rawVote->closing_date)->format('d M y');
                     $votes[$voteCount]['vote_owner'] = $rawVote->vote_owner;
                 }
-    
-                if ($currentElement !== $rawVote->element_title) {
-                    $votes[$voteCount]['elements'][$elementCount]['element_title'] = $rawVote->element_title;
-                    $votes[$voteCount]['elements'][$elementCount]['element_id'] = $rawVote->vote_el_id;
-                    ++$elementCount;
+                
+                if (!in_array($rawVote->element_title, $elements)) {
+                    array_push($elements, $rawVote->element_title);
+                    array_push($keyedElements, ['element_title' => $rawVote->element_title, 'element_id' => $rawVote->vote_el_id]);
                 }
+                
+            }
+            if (count($elements) > 0) {
+                $votes[$voteCount]['elements'] = $keyedElements;
             }
 
             ++$loop;
             $currentVoteId = $rawVote->vote_id;
-            $currentElement = $rawVote->element_title;
         }
         
         return $votes;
-
     }
 }

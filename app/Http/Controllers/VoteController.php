@@ -26,7 +26,8 @@ class VoteController extends Controller
     public function index() : object
     {
         return Inertia::render('MyVotes', [
-            'myvotes' => $this->getVotes->handle(auth()->id()),
+            'myvotes' => $this->getVotes->handle(auth()->id(), '>='),
+            'myclosedvotes' => $this->getVotes->handle(auth()->id(), '<='),
             'mygroups' => $this->getGroups->handle(auth()->id())
         ]);
     }
@@ -38,7 +39,8 @@ class VoteController extends Controller
         $this->storeVoteElements->handle($request, $vote->id);
 
         return redirect()->back()->with([
-            'myvotes' => $this->getVotes->handle(auth()->id()),
+            'myvotes' => $this->getVotes->handle(auth()->id(), '>='),
+            'myclosedvotes' => $this->getVotes->handle(auth()->id(), '<='),
             'mygroups' => $this->getGroups->handle(auth()->id()),
             'flash' => ['message' => 'Vote created']]);
     }
