@@ -9,7 +9,7 @@
                 <!-- Modal forms -->
                 <teleport to="#projectModals">
                     <Modal :show="showProjectModal">
-                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
@@ -43,10 +43,10 @@
                                     </div>
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Select group</h4>
-                                    <div v-if="mygroups" class="flex flex-wrap max-w-full justify-between">
-                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
+                                    <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
+                                        <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
                                             <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
-                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}<span v-if="group.am_admin" class="text-we4vOrange font-semibold">*</span></label>
                                         </div>
                                     </div>
                                     
@@ -59,7 +59,7 @@
 
                 <teleport to="#projectModals">
                     <Modal :show="showEditProjectModal">
-                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showEditProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showEditProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
@@ -89,8 +89,8 @@
                                     </div>
 
                                     <h4 class="text-we4vBlue font-semibold text-sm mt-4">Reassign project</h4>
-                                    <div v-if="mygroups" class="flex flex-wrap max-w-full justify-between">
-                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
+                                    <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
+                                        <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
                                             <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
                                         </div>
@@ -108,7 +108,7 @@
 
                 <teleport to="#projectModals">
                     <Modal :show="showTaskModal">
-                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
                             <Form>
                                 <template #form>
                                     <div class="flex justify-end">
@@ -196,6 +196,46 @@
                     </Modal>
                 </teleport>
 
+                <teleport to="#projectModals">
+                    <Modal :show="showEditAdminTaskModal" :name="taskName" :id="taskId" :description="taskDescription">
+                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showEditAdminTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-28 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+                            <Form>
+                                <template #form>
+                                    <div class="flex justify-end">
+                                        <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                            <div @click="showEditAdminTaskModal = false; clearModal()">
+                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                            </div>   
+                                        </div>
+                                    </div>
+                                    <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
+                                    <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>{{ taskAssignee }} (team)</p>
+                                    </div>
+
+                                    <div v-if="taskNotes">
+                                        <Notes :notes="taskNotes" />
+                                    </div>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
+                                    <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
+                                    <div class="w-justUnderHalf mb-4">
+                                        <input v-model="taskInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                                    </div>
+
+                                    <input @click="taskCompleted = !taskCompleted" :value="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="taskCompleted">
+                                    <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskId }}">Task completed</label>
+
+                                    <button-grey @click="submitTaskData()">Update task</button-grey>
+                                </template>
+                            </Form>
+                        </div>
+                    </Modal>
+                </teleport>
+
                 <!-- Main page -->
                 <Title>
                     <template #title>
@@ -206,7 +246,7 @@
                     </template>
                 </Title>
 
-                <button-blue v-if="$page.props.mygroups.length > 0" @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
+                <button-blue v-if="$page.props.myGroups.length > 0" @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
 
                 <button-grey v-else>
                     <a :href="route('mygroups', $page.props.authUser.id)">
@@ -223,10 +263,24 @@
                         Click a project name to assign tasks.
                     </template>
                 </Subtitle>
-                <div v-if="myprojects.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myProjects.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Project v-for="(project, projectKey) in myprojects" :key="projectKey" :project="project" @activate-task-modal="onActivateTaskModal" @activate-edit-task-modal="onActivateEditTaskModal"
+                        <Project v-for="(project, projectKey) in myProjects" :key="projectKey" :project="project" @activate-task-modal="onActivateTaskModal" @activate-edit-task-modal="onActivateEditTaskModal"
                         @activate-edit-project-modal="onActivateEditProjectModal"/>
+                    </div>
+                </div>
+
+                <Subtitle>
+                    <template #title>
+                        Tasks I administrate
+                    </template>
+                    <template #description>
+                        Click a task name or its edit icon to edit a task.
+                    </template>
+                </Subtitle>
+                <div v-if="myAdminTasks.length > 0" class="w-full m-0 m-auto">
+                    <div class="w-full m-0 flex flex-row flex-wrap justify-start">
+                        <Task v-for="(task, taskKey) in myAdminTasks" :key="taskKey" :task="task" @activate-edit-admin-task-modal="onActivateEditAdminTaskModal"/>
                     </div>
                 </div>
             </div>
@@ -245,6 +299,7 @@ import Modal from './Components/Modal'
 import ModalBackdrop from './Components/ModalBackdrop'
 import Notes from './Components/Notes'
 import Project from './Components/Project'
+import Task from './Components/Task'
 import manageModals from '../Pages/Composables/manageModals'
 import { watch, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
@@ -267,14 +322,16 @@ export default {
         ModalBackdrop,
         Notes,
         Project,
+        Task,
         ErrorMessage,
         FlashMessage,
         GroupTeamAssignment
     },
 
     props: [
-        'myprojects',
-        'mygroups',
+        'myProjects',
+        'myAdminTasks',
+        'myGroups',
         'errors'
     ],
 
@@ -287,6 +344,7 @@ export default {
             mode,
             nowInside, 
             nowOutside,
+            onActivateEditAdminTaskModal,
             onActivateEditProjectModal,
             onActivateEditTaskModal,
             onActivateTaskModal,
@@ -303,6 +361,7 @@ export default {
             projectNotes,
             projectStartDate,
             showBackdrop,
+            showEditAdminTaskModal,
             showEditProjectModal,
             showEditTaskModal,
             showProjectModal,
@@ -430,6 +489,7 @@ export default {
             mode,
             nowInside, 
             nowOutside,
+            onActivateEditAdminTaskModal,
             onActivateEditTaskModal,
             onActivateEditProjectModal,
             onActivateTaskModal,
@@ -448,6 +508,7 @@ export default {
             projectNotes,
             projectStartDate,
             showBackdrop,
+            showEditAdminTaskModal,
             showEditProjectModal,
             showEditTaskModal,
             showProjectModal,

@@ -2,6 +2,7 @@
 
 namespace App\Actions\Projects;
 
+use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -40,17 +41,18 @@ class GetProjects
             Gr1.id as project_task_group_id,
             Us1.username as task_user_assignee,
             No1.body as task_note_body,
-            No1.noteable_id as task_note_task_id,
+            No1.id as task_note_id,
             No1.created_at as task_note_created_at,
             No2.body as project_note_body,
-            No2.noteable_id as project_note_project_id,
+            No2.id as project_note_id,
             No2.created_at as project_note_created_at,
-            Us2.username as note_author,
-            Us3.username as group_member_username,
-            Us4.username as team_member_username,
+            Us2.username as task_note_author,
+            Us3.username as project_note_author,
+            Us4.username as group_member_username,
+            Us5.username as team_member_username,
             Gr2.name as project_group_name
         FROM projects Pr1
-        INNER JOIN tasks Ta1
+        LEFT OUTER JOIN tasks Ta1
         ON Ta1.project_id = Pr1.id
         LEFT OUTER JOIN teams Te1
         ON Te1.id = Ta1.taskable_id
@@ -64,14 +66,15 @@ class GetProjects
         ON No2.noteable_id = Pr1.id
         LEFT OUTER JOIN users Us2
         ON Us2.id = No1.user_id
-        OR Us2.id = No2.user_id
+        LEFT OUTER JOIN users Us3
+        ON Us3.id = No2.user_id
         LEFT OUTER JOIN memberships Me1
         ON Me1.membershipable_id = Gr1.id
         LEFT OUTER JOIN memberships Me2
         ON Me2.membershipable_id = Te1.id
-        LEFT OUTER JOIN users Us3
-        ON Us3.id = Me1.user_id
         LEFT OUTER JOIN users Us4
+        ON Us3.id = Me1.user_id
+        LEFT OUTER JOIN users Us5
         ON Us4.id = Me2.user_id
         INNER JOIN groups Gr2
         ON Gr2.id = Pr1.group_id

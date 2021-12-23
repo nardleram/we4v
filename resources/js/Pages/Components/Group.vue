@@ -4,7 +4,7 @@
             <p>{{ group.group_name }} <span v-if="group.geog_area" class="text-we4vGrey-200 font-light text-xs italic">({{ group.geog_area }})</span> <span v-if="group.group_owner" class="text-we4vGrey-200 font-light text-xs italic"> – Owner: {{ owner }}</span></p>
             <p class="text-xs font-light text-we4vGrey-200 italic mt-1">{{ group.group_description }}</p>
         </div>
-        <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-10">
+        <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-around p-0 content-center items-center max-h-10">
             <div @click="$emit('activateEditGroupModal', group)">
                 <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
             </div>

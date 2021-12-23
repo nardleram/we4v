@@ -5,8 +5,8 @@
             <p class="text-xs font-light text-we4vGrey-200 italic my-1">{{ project.project_description }}</p>
             <p class="text-we4vGrey-300">Project timeframe: {{ project.project_start_date }} <i class="fa fa-arrow-right"></i> {{ project.project_end_date }} – 
                 <span v-if="project.project_deadline_passed" class="text-red-600 font-semibold uppercase">Deadline passed</span>
-                <span v-else-if="project.project_days_remaining < 5 && !project.project_deadline_passed" class="text-red-600 font-semibold uppercase">{{ project.project_days_remaining }} days left</span>
-                <span v-else>{{ project.project_days_remaining }} days left</span>
+                <span v-else-if="project.project_days_remaining < 5 && !project.project_deadline_passed" class="text-red-600 font-semibold uppercase">{{ project.project_days_remaining }} days to go</span>
+                <span v-else>{{ project.project_days_remaining }} days to go</span>
             </p>
         </div>
         <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-16 text-we4vGrey-200">

@@ -4,7 +4,7 @@ namespace App\Actions\Groups;
 
 class CompileGroupsArray
 {
-    public function compileGroups($rawGroups) : array 
+    public function compileGroups($rawGroups, $is_admin) : array 
     {
         // Assemble $groups array
         $groups = [];
@@ -37,6 +37,7 @@ class CompileGroupsArray
                 $groups[$groupCount]['group_description'] = $rawGroup->group_description;
                 $groups[$groupCount]['group_id'] = $rawGroup->group_id;
                 $groups[$groupCount]['geog_area'] = $rawGroup->geog_area;
+                $groups[$groupCount]['am_admin'] = $is_admin;
 
                 $rawGroup->group_owner
                 ? $groups[$groupCount]['group_owner'] = $rawGroup->group_owner

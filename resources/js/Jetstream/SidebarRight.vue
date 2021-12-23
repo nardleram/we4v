@@ -112,11 +112,12 @@
                 0
             </span>
         </div>
+        
         <div v-if="showAssocReqs">
             <pending-assoc-reqs v-for="(req, reqKey) in $page.props.myPendingAssocReqs" :key="reqKey" :req="req" />
         </div>
 
-        <div class="text-l tracking-tight mb-1 text-right text-sm">Group & team invitations: 
+        <div class="tracking-tight mb-1 text-right text-sm">Group & team invitations: 
             <span 
             v-if="$page.props.myPendingMembReqs.length > 0" class="text-xl font-extrabold text-we4vOrange cursor-pointer"
             @click="showMembReqs = !showMembReqs">
@@ -126,15 +127,16 @@
                 0
             </span>
         </div>
-        <table v-if="showMembReqs" class="text-xs font-light tracking-tighter bg-we4vGrey-700 w-full mb-2">
+
+        <table v-if="showMembReqs" class="text-xs font-light tracking-tighter bg-we4vGrey-700 w-full mb-2 rounded-md">
             <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
                 <tr class="py-2 px1">
-                    <th class="w-2/12 border border-we4vGrey-800 pl-1">From</th>
-                    <th class="w-4/12 border border-we4vGrey-800 pl-1">Name</th>
-                    <th class="w-1/2 border border-we4vGrey-800 pl-1">Description</th>
+                    <th class="w-2/12 border border-we4vGrey-800 py-2 px-1">From</th>
+                    <th class="w-4/12 border border-we4vGrey-800 py-2 px-1">Name</th>
+                    <th class="w-1/2 border border-we4vGrey-800 py-2 px-1">Description</th>
                 </tr>
             </thead>
-            <tbody class="border border-we4vGrey-700 text-we4vGrey-100">
+            <tbody class="border border-we4vGrey-800 text-we4vGrey-100">
                 <pending-memb-reqs @activate-invite-modal="hydrateInviteModal" v-for="(req, reqKey) in $page.props.myPendingMembReqs" :key="reqKey" :req="req" />
             </tbody>
         </table>
@@ -153,23 +155,26 @@
             <pending-votes @activate-pending-vote-modal="onActivatePendingVoteModal" v-for="(vote, voteKey) in $page.props.myPendingVotes" :key="voteKey" :vote="vote" />
         </div>
 
-        <h4 @click="showAssocs = !showAssocs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Associates</h4>
+        <h4 @click="showAssocs = !showAssocs" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Associates</h4>
         <div v-if="showAssocs" class="mb-2">
             <Associates />
         </div>
 
-        <h4 @click="showMembs = !showMembs" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Memberships</h4>
-        <div v-if="showMembs">
-            <small>To be completed</small>
+        <h4 @click="showMembs = !showMembs" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Memberships</h4>
+        <div v-if="showMembs && $page.props.myMemberships.length" class="mb-2 max-h-48 overflow-y-scroll">
+            <Memberships />
+        </div>
+        <div v-if="showMembs && !$page.props.myMemberships.length" class="tracking-tight text-right -mt-2 mb-1">
+            <small class="text-we4vGrey-200 text-xs">You are not yet a member of any group or team</small>
         </div>
 
-        <h4 @click="showUnansweredInvites = !showUnansweredInvites" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Unanswered invitations</h4>
-        <div v-if="showUnansweredInvites">
-            <small>To be completed</small>
+        <h4 @click="showUnansweredInvites = !showUnansweredInvites" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Open invitations</h4>
+        <div v-if="showUnansweredInvites" class="text-right -mt-2 mb-1">
+            <small class="text-we4vGrey-200 text-xs">To be completed</small>
         </div>
 
         <h4 @click="showTasks = !showTasks" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Assigned tasks</h4>
-        <div v-if="showTasks">
+        <div v-if="showTasks && Object.keys($page.props.myOpenTasks).length">
             <table v-if="showTasks" class="text-xs font-light tracking-tighter bg-we4vGrey-700 w-full mb-2 rounded-md">
                 <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
                     <tr>
@@ -178,7 +183,7 @@
                         <th class="w-3/2 border border-we4vGrey-800 py-2 px-1">Deadline</th>
                     </tr>
                 </thead>
-                <tbody class="border border-we4vGrey-700 text-we4vGrey-100">
+                <tbody class="border border-we4vGrey-800 text-we4vGrey-100">
                     <tr v-for="(task, taskKey) in $page.props.myOpenTasks" :key="taskKey" @click="activateUserTaskModal(task)" class="cursor-pointer hover:bg-we4vBlue">
                         <td class="px-1 py-2 border border-we4vGrey-800">
                             {{ task.owner}}
@@ -193,6 +198,9 @@
                 </tbody>
             </table>
         </div>
+        <div v-if="showTasks && !Object.keys($page.props.myOpenTasks).length" class="text-right -mt-2 mb-1">
+            <small class="text-we4vGrey-200 text-xs">There are no tasks currently assigned to you</small>
+        </div>
     </div>
 </template>
 
@@ -201,6 +209,7 @@ import PendingAssocReqs from '../Pages/Components/PendingAssocReqs'
 import PendingMembReqs from '../Pages/Components/PendingMembReqs'
 import PendingVotes from '../Pages/Components/PendingVotes'
 import Associates from '../Pages/Components/MyAssociates'
+import Memberships from '../Pages/Components/MyMemberships'
 import Notes from '../Pages/Components/Notes'
 import Modal from '../Pages/Components/Modal'
 import manageModals from '../Pages/Composables/manageModals'
@@ -216,6 +225,7 @@ export default {
         PendingMembReqs,
         PendingVotes,
         Associates,
+        Memberships,
         Modal,
         Notes,
     },
@@ -298,16 +308,12 @@ export default {
             if (inviteData[0].type === 'group') {
                 var payload = {
                     'membershipable_id': inviteData[0].groupId,
-                    'requester': inviteData[0].groupRequesterId,
-                    'membershipable_type': 'App\\Models\\Group',
                     'confirmed': res
                 }
             }
             if (inviteData[0].type === 'team') {
                 var payload = {
                     'membershipable_id': inviteData[0].teamId,
-                    'requester': inviteData[0].teamRequesterId,
-                    'membershipable_type': 'App\\Models\\Team',
                     'confirmed': res
                 }
             }
@@ -359,7 +365,7 @@ export default {
                 'taskable_id': taskableId.value,
                 'taskable_type': taskableType.value,
                 'end_date': taskInputEndDate.value,
-                'user_id': null,
+                'user_id': usePage().props.value.authUser.id,
                 'note': note
             }
             

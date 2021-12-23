@@ -19,8 +19,6 @@ class StoreMembershipRequestResponseRequest extends FormRequest
     {
         return [
             'membershipable_id' => 'required|uuid',
-            'requester' => 'required|uuid',
-            'membershipable_type' => 'required|string|max:20',
             'confirmed' => 'required|boolean'
         ];
     }

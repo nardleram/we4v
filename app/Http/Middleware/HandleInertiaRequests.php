@@ -170,24 +170,28 @@ class HandleInertiaRequests extends Middleware
                         };
 
                         $rawGroups = Group::whereIn('groups.id', $groupIds)
-                            ->join('users', function ($join) {
-                                $join->on('users.id', '=', 'groups.owner');
+                            ->join('users AS Us1', function ($join) {
+                                $join->on('Us1.id', '=', 'groups.owner');
                             })
-                            ->join('memberships', function ($join) {
-                                $join->on('memberships.membershipable_id', '=', 'groups.id')
-                                ->where('memberships.user_id', auth()->id());
+                            ->join('memberships AS Me', function ($join) {
+                                $join->on('Me.membershipable_id', '=', 'groups.id')
+                                ->where('Me.user_id', auth()->id());
+                            })
+                            ->join('users AS Us2', function ($join) {
+                                $join->on('Us2.id', '=', 'Me.updated_by');
                             })
                             ->select([
                                 'groups.name as group_name',
                                 'groups.id as group_id',
                                 'groups.description as group_description',
                                 'groups.geog_area as geog_area',
-                                'users.username as username',
-                                'users.id as g_user_id',
-                                'memberships.role as g_role',
-                                'memberships.is_admin as g_admin',
-                                'memberships.created_at as g_created',
-                                'memberships.updated_at as g_updated',
+                                'Us1.username as g_owner_username',
+                                'Us1.id as g_owner_id',
+                                'Me.role as g_role',
+                                'Us2.username as g_updated_by',
+                                'Me.is_admin as g_admin',
+                                'Me.created_at as g_created',
+                                'Me.updated_at as g_updated'
                             ])
                             ->orderBy('groups.name')
                             ->get();
@@ -196,20 +200,25 @@ class HandleInertiaRequests extends Middleware
                             ->join('users', function ($join) {
                                 $join->on('users.id', '=', 'teams.owner');
                             })
-                            ->join('memberships', function ($join) {
-                                $join->on('memberships.membershipable_id', '=', 'teams.id')
-                                ->where('memberships.user_id', auth()->id());
+                            ->join('memberships AS Me', function ($join) {
+                                $join->on('Me.membershipable_id', '=', 'teams.id')
+                                ->where('Me.user_id', auth()->id());
+                            })
+                            ->join('users AS Us2', function ($join) {
+                                $join->on('Us2.id', '=', 'Me.updated_by');
                             })
                             ->select([
                                 'teams.name as team_name',
                                 'teams.id as team_id',
                                 'teams.function as team_function',
-                                'users.username as username',
-                                'users.id as t_user_id',
-                                'memberships.role as t_role',
-                                'memberships.is_admin as t_admin',
-                                'memberships.created_at as t_created',
-                                'memberships.updated_at as t_updated',
+                                'users.username as t_owner_username',
+                                'users.id as t_owner_id',
+                                'Me.role as t_role',
+                                'Us2.username as t_updated_by',
+                                'Us2.id as t_updated_by_id',
+                                'Me.is_admin as t_admin',
+                                'Me.created_at as t_created',
+                                'Me.updated_at as t_updated'
                             ])
                             ->orderBy('teams.name')
                             ->get();
@@ -222,8 +231,10 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['groupId'] = $rawGroup->group_id;
                             $membReqs[$membCount]['groupDesc'] = $rawGroup->group_description;
                             $membReqs[$membCount]['geogArea'] = $rawGroup->geog_area;
-                            $membReqs[$membCount]['groupRequester'] = $rawGroup->username;
-                            $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_user_id;
+                            $membReqs[$membCount]['groupRequester'] = $rawGroup->g_updated_by;
+                            $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_updated_by_id;
+                            $membReqs[$membCount]['groupOwner'] = $rawGroup->g_owner_username;
+                            $membReqs[$membCount]['groupOwnerId'] = $rawGroup->g_owner_id;
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
                             $membReqs[$membCount]['gAdmin'] = $rawGroup->g_admin;
@@ -237,8 +248,10 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['teamName'] = $rawTeam->team_name;
                             $membReqs[$membCount]['teamId'] = $rawTeam->team_id;
                             $membReqs[$membCount]['teamFunc'] = $rawTeam->team_function;
-                            $membReqs[$membCount]['teamRequester'] = $rawTeam->username;
-                            $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_user_id;
+                            $membReqs[$membCount]['teamRequester'] = $rawTeam->t_updated_by;
+                            $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_updated_by_id;
+                            $membReqs[$membCount]['teamOwner'] = $rawTeam->t_owner_username;
+                            $membReqs[$membCount]['teamOwnerId'] = $rawTeam->t_owner_id;
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
                             $membReqs[$membCount]['tAdmin'] = $rawTeam->t_admin;
@@ -267,6 +280,13 @@ class HandleInertiaRequests extends Middleware
                 $membIds = Membership::getMemberships4Tasks();
 
                 return Task::getOpenTasks($membIds);
+            },
+
+            'myMemberships' => function ()
+            {
+                if (request()->user()) {
+                    return Membership::getUserMemberships(auth()->id());
+                }
             },
 
         ]);

@@ -13,8 +13,8 @@ class CompileProjectsArray
         $teamMembers = [];
         $currentProjectId = 0;
         $currentTaskId = 0;
-        $currentProjectNoteBody = '_EMPTY_9ugb1@/5%1_#\`"!§';
-        $currentTaskNoteBody = '_EMPTY_9ugb1@/5%1_#\`"!§';
+        $currentProjectNoteId = 0;
+        $currentTaskNoteId = 0;
         $projectCount = 0;
         $taskCount = 0;
         $projectNoteCount = 0;
@@ -57,10 +57,10 @@ class CompileProjectsArray
             }
 
             // Project has notes
-            if ($rawProject->project_note_body !== $currentProjectNoteBody && $rawProject->project_note_body) {
+            if ($rawProject->project_note_id !== $currentProjectNoteId && $rawProject->project_note_body) {
                 $projects[$projectCount]['notes'][$projectNoteCount]['note_body'] = $rawProject->project_note_body;
                 $projects[$projectCount]['notes'][$projectNoteCount]['note_created_at'] = Carbon::parse($rawProject->project_note_created_at)->format('d M y, H:i');
-                $projects[$projectCount]['notes'][$projectNoteCount]['note_author'] = $rawProject->note_author;
+                $projects[$projectCount]['notes'][$projectNoteCount]['note_author'] = $rawProject->project_note_author;
 
                 ++$projectNoteCount;
             }
@@ -170,16 +170,16 @@ class CompileProjectsArray
             }
 
             // Task has notes
-            if ($rawProject->task_note_body !== $currentTaskNoteBody && $rawProject->task_note_body) {
+            if ($rawProject->task_note_id !== $currentTaskNoteId && $rawProject->task_note_body) {
                 $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_body'] = $rawProject->task_note_body;
                 $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_created_at'] = Carbon::parse($rawProject->task_note_created_at)->format('d M y, H:i');
-                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_author'] = $rawProject->note_author;
+                $projects[$projectCount]['tasks'][$taskCount]['notes'][$taskNoteCount]['note_author'] = $rawProject->task_note_author;
 
                 ++$taskNoteCount;
             }
 
-            $currentProjectNoteBody = $rawProject->project_note_body;
-            $currentTaskNoteBody = $rawProject->task_note_body;
+            $currentProjectNoteId = $rawProject->project_note_id;
+            $currentTaskNoteId = $rawProject->task_note_id;
             $currentProjectId = $rawProject->project_id;
             $currentTaskId = $rawProject->task_id;
             ++$loop;

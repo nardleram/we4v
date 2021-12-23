@@ -20,6 +20,7 @@ class CreateMembershipsTable extends Migration
             $table->boolean('confirmed')->default(false);
             $table->uuid('membershipable_id');
             $table->string('membershipable_type');
+            $table->uuid('updated_by');
             $table->softDeletes();
             $table->timestamps();
 

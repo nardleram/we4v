@@ -163,12 +163,12 @@
                                         <input v-model="teamFunction" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="teamFunction" placeholder="Define team’s function">
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add new associates to your team</h4>
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add/Remove associates to/from this team</h4>
                                     <div class="w-full m-0 flex flex-row flex-wrap justify-between max-h-48 overflow-y-scroll">
                                         <div v-for="(teamMember, teamMembersEditKey) in teamMembersEdit" :key="teamMembersEditKey" class="w-full flex flex-row justify-between items-center">
                                             <div class="w-1/4">
                                                 <input @click="addRemoveAssociate('team')" :value="teamMember.user_id" class="invitedAssocsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox" :checked="teamMember.invited && !teamMember.declined">
-                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">{{ teamMember.user_name }}</label>
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">{{ teamMember.username }}</label>
                                                 <img :src="'/'+teamMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                             </div>
                                             <div class="w-1/2">
@@ -176,15 +176,14 @@
                                             </div>
                                             <div class="w-1/4 pl-8">
                                                 <input @click="makeAdmin('team')" :value="teamMember.user_id" class="adminsEdit rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox" :checked="teamMember.admin">
-                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">Admin</label>
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" :for="teamMember.user_id">Admin</label>
                                             </div>
                                         </div>
                                     </div>
 
                                     <button class="text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4"
                                     @click="submitTeamData()">
-                                        <p v-if="!edit">Save team, send invites</p>
-                                        <p v-else>Update team (send invites)</p>
+                                        <p>Update team (send invites)</p>
                                     </button>
                                 </template>
                             </Form>
@@ -217,24 +216,32 @@
                 </Subtitle>
 
                 <!-- Groups and teams -->
-                <div v-if="mygroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myGroups.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Group v-for="(group, groupKey) in mygroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
+                        <Group v-for="(group, groupKey) in myGroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
                     </div>
                 </div>
 
                 <Subtitle>
                     <template #title>
-                        Groups and teams I administer
+                        Groups and teams I administrate
                     </template>
                     <template #description>
                         Instructions as above, but with fewer rights than for groups you own.
                     </template>
                 </Subtitle>
 
-                <div v-if="myadmingroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myAdminGroups.length > 0" class="w-full m-0 m-auto">
+                    <h5 class="font-medium mb-1 text-we4vGrey-600 -mt-2">Groups</h5>
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Group v-for="(adminGroup, adminGroupKey) in myadmingroups" :key="adminGroupKey" :group="adminGroup" :teams="adminGroup.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
+                        <Group v-for="(adminGroup, adminGroupKey) in myAdminGroups" :key="adminGroupKey" :group="adminGroup" :teams="adminGroup.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
+                    </div>
+                </div>
+
+                <div v-if="myAdminTeams.length > 0" class="w-full m-0 m-auto">
+                    <h5 class="font-medium mb-1 mt-3 text-we4vGrey-600">Teams</h5>
+                    <div class="w-full m-0 flex flex-row flex-wrap justify-start">
+                        <Team v-for="(adminTeam, adminTeamKey) in myAdminTeams" :key="adminTeamKey" :team="adminTeam" :members="adminTeam.team_members" @activate-edit-team-modal="onActivateEditTeamModal"/>
                     </div>
                 </div>
 
@@ -247,6 +254,7 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Form from '@/Jetstream/FormSection'
 import Group from './Components/Group'
+import Team from './Components/Team'
 import Modal from './Components/Modal'
 import ModalBackdrop from './Components/ModalBackdrop'
 import Title from '@/Jetstream/SectionTitle'
@@ -267,6 +275,7 @@ export default {
         Modal,
         ModalBackdrop,
         Group,
+        Team,
         Title,
         Subtitle,
         FlashMessage,
@@ -274,8 +283,9 @@ export default {
     },
 
     props: [
-        'mygroups',
-        'myadmingroups',
+        'myGroups',
+        'myAdminGroups',
+        'myAdminTeams',
         'errors',
         'user'
     ],
@@ -309,12 +319,13 @@ export default {
             showGroupModal,
             showTeamModal,
             teamAdmins,
+            teamFunction,
             teamId,
             teamMemberRoles,
             teamMembers,
             teamMembersEdit,
-            teamFunction,
             teamName,
+            teamOwner,
         } = manageModals()
 
         const submitGroupData = async function () {
@@ -429,7 +440,7 @@ export default {
             clearModal()
         }
 
-        const addRemoveAssociate = function (mode) {
+        const addRemoveAssociate = function (modus) {
             selectedGroupAssociates.value = []
             selectedTeamAssociates.value = []
             let myVals
@@ -437,7 +448,7 @@ export default {
             ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
             : myVals = document.querySelectorAll('input.invitedAssocs')
 
-            if (mode === 'group' && !edit.value) {
+            if (modus === 'group' && !edit.value) {
                 selectedGroupAssociates.value = []
                 for (const myVal of myVals) {
                     if (myVal.checked) {
@@ -445,7 +456,7 @@ export default {
                     }
                 }
             }
-            if (mode === 'group' && edit.value) {
+            if (modus === 'group' && edit.value) {
                 for (const groupMember of groupMembersEdit.value) {
                     if (!groupMember.invited) {
                         for (const myVal of myVals) {
@@ -457,14 +468,14 @@ export default {
                 }
             }
 
-            if (mode === 'team' && !edit.value) {
+            if (modus === 'team' && !edit.value) {
                 for (const myVal of myVals) {
                     if (myVal.checked) {
                         selectedTeamAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
                     }
                 }
             }
-            if (mode === 'team' && edit.value) {
+            if (modus === 'team' && edit.value) {
                 for (const teamMember of teamMembersEdit.value) {
                     if (!teamMember.invited) {
                         for (const myVal of myVals) {
@@ -477,7 +488,7 @@ export default {
             }
         }
 
-        const makeAdmin = function (mode) {
+        const makeAdmin = function (modus) {
             groupAdmins.value = []
             teamAdmins.value = []
             let myVals = []
@@ -487,10 +498,10 @@ export default {
             : myVals = document.querySelectorAll('input.admins')
 
             myVals.forEach(myVal => {
-                if (mode === 'group') {
+                if (modus === 'group') {
                     myVal.checked ? groupAdmins.value.push(myVal.value) : null
                 }
-                if (mode === 'team') {
+                if (modus === 'team') {
                     myVal.checked ? teamAdmins.value.push(myVal.value) : null
                 }
             })
@@ -518,6 +529,10 @@ export default {
             }
         })
 
+        watch(mode, () => {
+            makeAdmin(mode.value) // Must be executed at least once; admin roles might be left unedited
+        })
+
         watch(edit, () => {
             if (groupMembers.value.length) {
                 groupMembers.value.forEach(groupMember => {
@@ -540,7 +555,9 @@ export default {
                     if (!teamMembersEdit.value.some(teamMemberEdit => teamMemberEdit.user_id === associate.user_id)) {
                         associate.invited = false
                         associate.confirmed = false
-                        teamMembersEdit.value.push(associate)
+                        teamOwner.value !== associate.username
+                        ? teamMembersEdit.value.push(associate) : null
+                        
                     }
                 })
             }
@@ -585,7 +602,8 @@ export default {
             teamMembers,
             teamMembersEdit,
             teamMemberRoles,
-            teamName
+            teamName,
+            teamOwner,
         }
     }
 }

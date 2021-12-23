@@ -20,10 +20,10 @@ class GetAdminGroups
     public function handle($userId)
     {
         $rawGroupIds = Membership::where('is_admin', true)
+        ->where('confirmed', true)
         ->where('user_id', $userId)
-        ->leftJoin('groups', function ($join) {
-            $join->on('groups.id', '=', 'memberships.membershipable_id');
-        })->get('groups.id as group_id');
+        ->where('membershipable_type', 'App\\Models\\Group')
+        ->get('membershipable_id as group_id');
 
         $rawGroups = Group::whereIn('groups.id', $rawGroupIds)
         ->leftJoin('teams', function ($join) {
@@ -38,7 +38,7 @@ class GetAdminGroups
         })
         ->join('images', function ($join) {
             $join->on('users.id', '=', 'imageable_id')
-            ->where('images.imageable_type', 'App\Models\User')
+            ->where('images.imageable_type', 'App\\Models\\User')
             ->where('images.format', 'profile');
         })
         ->select([
@@ -81,6 +81,6 @@ class GetAdminGroups
         ->orderBy('users.username')
         ->get();
 
-        return $this->compileGroupsArray->compileGroups($rawGroups);
+        return $this->compileGroupsArray->compileGroups($rawGroups, true);
     }
 }

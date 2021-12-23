@@ -73,6 +73,6 @@ class GetGroups
         ->orderBy('users.username')
         ->get();
 
-        return $this->compileGroupsArray->compileGroups($rawGroups);
+        return $this->compileGroupsArray->compileGroups($rawGroups, false);
     }
 }

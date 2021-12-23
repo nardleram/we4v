@@ -16,7 +16,8 @@ class UpdateMemberships
                 ->update([
                     'role' => $member['role'],
                     'is_admin' => $member['admin'],
-                    'confirmed' => false
+                    'confirmed' => $member['confirmed'],
+                    'updated_by' => auth()->id()
                 ]);
             }
             
@@ -25,6 +26,7 @@ class UpdateMemberships
                     'membershipable_id' => $request->membershipable_id,
                     'membershipable_type' => $request->membershipable_type,
                     'user_id' => $member['user_id'],
+                    'updated_by' => auth()->id(),
                     'role' => $member['role'],
                     'is_admin' => $member['admin'],
                     'confirmed' => false

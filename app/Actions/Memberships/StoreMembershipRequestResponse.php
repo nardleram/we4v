@@ -10,7 +10,6 @@ class StoreMembershipRequestResponse
     {
         if ($request->confirmed) {
             Membership::where('membershipable_id', $request->membershipable_id)
-                ->where('membershipable_type', $request->membershipable_type)
                 ->where('user_id', auth()->id())
                 ->update(array('confirmed' => $request->confirmed));
 
@@ -19,7 +18,6 @@ class StoreMembershipRequestResponse
 
         if (!$request->confirmed) {
             Membership::where('membershipable_id', $request->membershipable_id)
-                ->where('membershipable_type', $request->membershipable_type)
                 ->where('user_id', auth()->id())
                 ->delete();
             

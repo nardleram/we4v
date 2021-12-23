@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Groups\StoreGroup;
 use App\Actions\Groups\UpdateGroup;
+use App\Actions\Teams\GetAdminTeams;
 use App\Actions\Groups\GetAdminGroups;
 use App\Http\Requests\StoreGroupRequest;
 use App\Actions\Groups\DestroyGroupCascade;
@@ -21,9 +22,19 @@ class GroupController extends Controller
     private $storeMemberships;
     private $updateGroup;
     private $updateMemberships;
+    private $getAdminTeams;
     private $destroyGroupCasc;
 
-    public function __construct(GetGroups $getGroups, GetAdminGroups $getAdminGroups, StoreGroup $storeGroup, StoreMemberships $storeMemberships, UpdateGroup $updateGroup, UpdateMemberships $updateMemberships, DestroyGroupCascade $destroyGroupCasc)
+    public function __construct(
+        GetGroups $getGroups,
+        GetAdminGroups $getAdminGroups,
+        StoreGroup $storeGroup,
+        StoreMemberships $storeMemberships,
+        UpdateGroup $updateGroup,
+        UpdateMemberships $updateMemberships,
+        GetAdminTeams $getAdminTeams,
+        DestroyGroupCascade $destroyGroupCasc
+    )
     {
         $this->getGroups = $getGroups;
         $this->getAdminGroups = $getAdminGroups;
@@ -31,14 +42,16 @@ class GroupController extends Controller
         $this->storeMemberships = $storeMemberships;
         $this->updateGroup = $updateGroup;
         $this->updateMemberships = $updateMemberships;
+        $this->getAdminTeams = $getAdminTeams;
         $this->destroyGroupCasc = $destroyGroupCasc;
     }
 
     public function index() : object
     {
         return Inertia::render('MyGroups', [
-            'mygroups' => $this->getGroups->handle(auth()->id()),
-            'myadmingroups' => $this->getAdminGroups->handle(auth()->id())
+            'myGroups' => $this->getGroups->handle(auth()->id()),
+            'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id())
         ]);
     }
 
@@ -53,8 +66,9 @@ class GroupController extends Controller
         : $flashMessage = 'Group added';
 
         return Inertia::render('MyGroups', [
-            'mygroups' => $this->getGroups->handle(auth()->id()),
-            'myadmingroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myGroups' => $this->getGroups->handle(auth()->id()),
+            'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
             'flash' => ['message' => $flashMessage]
         ]);
     }
@@ -66,8 +80,9 @@ class GroupController extends Controller
         $this->updateMemberships->handle($request);
 
         return redirect()->back()->with([
-            'mygroups' => $this->getGroups->handle(auth()->id()),
-            'myadmingroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myGroups' => $this->getGroups->handle(auth()->id()),
+            'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
             'flash' => ['message' => 'Group updated']]);
     }
 
@@ -76,7 +91,10 @@ class GroupController extends Controller
         $this->destroyGroupCasc->handle($group->id);
 
         return Inertia::render('MyGroups', [
-            'mygroups' => $this->getGroups->handle(auth()->id())
+            'myGroups' => $this->getGroups->handle(auth()->id()),
+            'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
+            'flash' => ['message' => 'Group deleted'] 
         ]);
     }
 }
