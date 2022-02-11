@@ -6,23 +6,27 @@ use App\Models\User;
 use Inertia\Inertia;
 use App\Actions\Posts\GetUserPosts;
 use App\Actions\Users\GetUserImages;
+use App\Actions\Users\SearchUsers;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\ProfileRequest;
-use Illuminate\Support\Facades\Redirect;
 use App\Exceptions\NotFoundException;
+use App\Http\Requests\ProfileRequest;
+use App\Http\Requests\SearchUserRequest;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\UpdatePasswordRequest;
 
 class UserController extends Controller
 {
     private $getUserPosts;
+    private $searchUsers;
     private $getUserArticles;
     private $getUserGroups;
     private $getUserProjects;
     private $getUserVotes;
     
-    public function __construct(GetUserPosts $getUserPosts, GetUserImages $getUserImages)
+    public function __construct(GetUserPosts $getUserPosts, GetUserImages $getUserImages, SearchUsers $searchUsers)
     {
         $this->getUserPosts = $getUserPosts;
+        $this->searchUsers = $searchUsers;
         $this->getUserImages = $getUserImages;
         // $getUserArticles
         // $getUserGroups
@@ -72,7 +76,7 @@ class UserController extends Controller
         return Redirect::route('myprofile', ['user' => $user]);
     }
 
-    public function updatePassword(User $user, UpdatePasswordRequest $request) 
+    public function updatePassword(User $user, UpdatePasswordRequest $request)
     {
         $password = Hash::make($request->newPassword);
         
@@ -81,5 +85,12 @@ class UserController extends Controller
         ]);
 
         return Redirect::route('myprofile', ['user' => $user]);
+    }
+
+    public function search(SearchUserRequest $string)
+    {
+        return redirect()->back()->with([
+            'searchResults' => [session(['searchData' => $this->searchUsers->handle($string->searchString)])]
+        ]);
     }
 }

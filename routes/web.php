@@ -56,6 +56,9 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     
     Route::patch('/users/{user}/updatePassword', [UserController:: class, 'updatePassword'])
         ->name('updatePassword')->middleware(['auth']);
+    
+    Route::post('/users/search', [UserController:: class, 'search'])
+        ->name('searchUsers')->middleware((['auth']));
 
     Route::post('/images/store', [ImagesController::class, 'store'])
         ->name('storeImage')->middleware(['auth']);
@@ -92,6 +95,9 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
         
     Route::delete('/mygroups/{group}/destroy', [GroupController::class, 'destroy'])
         ->name('deleteGroup')->middleware(['auth']);
+    
+    Route::post('/groups/search', [GroupController:: class, 'search'])
+        ->name('searchGroups')->middleware((['auth']));
 
     Route::post('/myteams/store', [TeamController::class, 'store'])
         ->name('storeTeam')->middleware(['auth']);

@@ -10,7 +10,9 @@ use App\Actions\Groups\UpdateGroup;
 use App\Actions\Teams\GetAdminTeams;
 use App\Actions\Groups\GetAdminGroups;
 use App\Http\Requests\StoreGroupRequest;
+use App\Http\Requests\SearchGroupRequest;
 use App\Actions\Groups\DestroyGroupCascade;
+use App\Actions\Groups\SearchGroups;
 use App\Actions\Memberships\StoreMemberships;
 use App\Actions\Memberships\UpdateMemberships;
 
@@ -24,6 +26,7 @@ class GroupController extends Controller
     private $updateMemberships;
     private $getAdminTeams;
     private $destroyGroupCasc;
+    private $searchGroups;
 
     public function __construct(
         GetGroups $getGroups,
@@ -33,7 +36,8 @@ class GroupController extends Controller
         UpdateGroup $updateGroup,
         UpdateMemberships $updateMemberships,
         GetAdminTeams $getAdminTeams,
-        DestroyGroupCascade $destroyGroupCasc
+        DestroyGroupCascade $destroyGroupCasc,
+        SearchGroups $searchGroups
     )
     {
         $this->getGroups = $getGroups;
@@ -44,6 +48,7 @@ class GroupController extends Controller
         $this->updateMemberships = $updateMemberships;
         $this->getAdminTeams = $getAdminTeams;
         $this->destroyGroupCasc = $destroyGroupCasc;
+        $this->searchGroups = $searchGroups;
     }
 
     public function index() : object
@@ -65,7 +70,7 @@ class GroupController extends Controller
         ? $flashMessage = 'Group added, invitations sent'
         : $flashMessage = 'Group added';
 
-        return Inertia::render('MyGroups', [
+        return redirect()->back()->with([
             'myGroups' => $this->getGroups->handle(auth()->id()),
             'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
@@ -95,6 +100,15 @@ class GroupController extends Controller
             'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
             'flash' => ['message' => 'Group deleted'] 
+        ]);
+    }
+
+    public function search(SearchGroupRequest $string)
+    {
+        session(['searchData' => null]);
+
+        return redirect()->back()->with([
+            'searchResults' => [session(['searchData' => $this->searchGroups->handle($string->searchString)])]
         ]);
     }
 }

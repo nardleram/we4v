@@ -77,9 +77,4 @@ class ProjectController extends Controller
             'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Project updated']]);
     }
-
-    private function cmp($a, $b)
-    {
-        return strcmp($a["group_name"], $b["group_name"]);
-    }
 }

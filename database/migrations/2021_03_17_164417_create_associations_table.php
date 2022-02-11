@@ -15,12 +15,12 @@ class CreateAssociationsTable extends Migration
     {
         Schema::create('associations', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('requested_of')->references('id')->on('users');
-            $table->foreignUuid('requested_by')->references('id')->on('users');
-            $table->tinyInteger('status')->default(0);
+            $table->boolean('status')->default(0);
             $table->timestamp('confirmed_at')->nullable();
             $table->timestamps();
-
+            
+            $table->foreignUuid('requested_of')->references('id')->on('users');
+            $table->foreignUuid('requested_by')->references('id')->on('users');
             $table->unique(['requested_by', 'requested_of']);
         });
     }

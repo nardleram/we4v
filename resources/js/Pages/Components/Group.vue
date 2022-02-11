@@ -19,7 +19,7 @@
 
         <div v-if="displayDetails" class="col-start-1 col-end-13 mt-3">
             <div v-if="group.groupMembers">
-                <h4 class="text-sm font-regular text-we4vGrey-200">Members</h4>
+                <h4 class="text-sm font-semibold text-we4vGrey-200">Group members</h4>
                 <div class="bg-we4vBg text-sm font-normal rounded my-2 px-2 pt-2 flex flex-col flex-wrap items-start justify-between">
                     <div v-for="(member, memberKey) in group.groupMembers" :key="memberKey">
                         <div class="flex flex-row mb-2 items-center">
@@ -41,7 +41,7 @@
             </div>
 
             <div v-if="group.teams">
-                <h4 class="text-sm font-regular text-we4vGrey-200 mt-2">Teams</h4>
+                <h4 class="text-sm font-semibold text-we4vGrey-200 mt-4">Teams</h4>
                 <div v-for="(team, teamKey) in group.teams" :key="teamKey" class="w-full flex bg-we4vBg text-sm font-normal text-we4vGrey-800 rounded my-2 p-2 max-h-48 overflow-y-scroll">
 
                     <div id="teamDeetz" class="w-5/6">

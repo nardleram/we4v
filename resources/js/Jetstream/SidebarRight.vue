@@ -10,14 +10,14 @@
                     </div>
                 </div>
 
-                <h4 v-if="!updated" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} cordially invites you to join the {{ type }} </h4>
-                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} has updated the details of your membership of the {{ type }} </h4>
+                <h4 v-if="!updated" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
+                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} cordially invites you to join the {{ type }} </h4>
                 <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
 
                 <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
                 <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
                 <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
-                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupRequester ? groupRequester : teamRequester }} invites you to be the {{ type }}’s administrator.</h5>
+                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} also asks that you become the {{ type }}’s administrator.</h5>
                 
                 <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
                 @click="storeInviteResponse(inviteData, true)">
@@ -260,6 +260,7 @@ export default {
             groupDescription,
             groupId,
             groupName,
+            groupOwner,
             groupRequester,
             groupRole,
             hydrateInviteModal,
@@ -288,6 +289,7 @@ export default {
             taskUserId,
             teamFunction,
             teamName,
+            teamOwner,
             teamId,
             teamRequester,
             teamRole,
@@ -395,6 +397,7 @@ export default {
             geogArea,
             groupId,
             groupName,
+            groupOwner,
             groupDescription,
             groupRequester,
             groupRole,
@@ -430,6 +433,7 @@ export default {
             teamFunction,
             teamId,
             teamName,
+            teamOwner,
             teamRequester,
             teamRole,
             type,

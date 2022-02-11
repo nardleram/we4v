@@ -22,35 +22,35 @@
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create a new project</h4>
 
                                     <div>
-                                        <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">new project name</label>
-                                        <input v-model="projectName" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="projectName" placeholder="E.g.: My Dastardly Plan">
+                                        <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">new project name (required)<span class="text-red-600">*</span></label>
+                                        <input @blur="checkIfUserMaySubmit('project')" v-model="projectName" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="projectName" placeholder="E.g.: My Dastardly Plan">
                                     </div>
 
                                     <div>
-                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="groupName">describe project</label>
-                                        <input v-model="projectDescription" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="projectDescription" placeholder="E.g.: Subdue all humanity using only my dark genius">
+                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="groupName">describe project (required)<span class="text-red-600">*</span></label>
+                                        <input @blur="checkIfUserMaySubmit('project')" v-model="projectDescription" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="projectDescription" placeholder="E.g.: Subdue all humanity using only my dark genius">
                                     </div>
 
                                     <div class="flex flex-row justify-between">
                                         <div class="w-justUnderHalf">
-                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date</label>
-                                            <input v-model="projectStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
+                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date (required)<span class="text-red-600">*</span></label>
+                                            <input @blur="checkIfUserMaySubmit('project')" v-model="projectStartDate" id="projectStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
                                         </div>
                                         <div class="w-justUnderHalf">
-                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date</label>
-                                            <input v-model="projectEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
+                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date (required)<span class="text-red-600">*</span></label>
+                                            <input @blur="checkIfUserMaySubmit('project')" v-model="projectEndDate" id="projectEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
                                         </div>
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Select group</h4>
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign project to a group (required)<span class="text-red-600">*</span></h4>
                                     <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
                                         <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
-                                            <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <input @click="checkIfProjectGroupSelected()" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}<span v-if="group.am_admin" class="text-we4vOrange font-semibold">*</span></label>
                                         </div>
                                     </div>
                                     
-                                    <button-grey @click="submitProjectData()">Save project</button-grey>
+                                    <button-grey @click="submitProjectData()" id="submitForm">Save project</button-grey>
                                 </template>
                             </Form>
                         </div>
@@ -88,11 +88,13 @@
                                         <input v-model="projectInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Reassign project</h4>
-                                    <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
-                                        <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
-                                            <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
-                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                    <div v-if="projectTasks.length === 0">
+                                        <h4 class="text-we4vBlue font-semibold text-sm mt-4">Reassign project</h4>
+                                        <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
+                                            <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
+                                                <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -121,31 +123,31 @@
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create task for <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
 
                                     <div>
-                                        <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="taskName">task name</label>
-                                        <input v-model="taskName" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="taskName" placeholder="E.g.: Design casing for anti-grav drive">
+                                        <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="taskName">task name (required)<span class="text-red-600">*</span></label>
+                                        <input @blur="checkIfUserMaySubmit('task')" v-model="taskName" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" id="taskName" placeholder="E.g.: Design casing for anti-grav drive">
                                     </div>
 
                                     <div>
-                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="taskDescription">describe the task</label>
-                                        <input v-model="taskDescription" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight mt-4 font-medium" type="text" id="taskDescription" placeholder="E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)">
+                                        <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="taskDescription">describe the task (required)<span class="text-red-600">*</span></label>
+                                        <input @blur="checkIfUserMaySubmit('task')" v-model="taskDescription" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight mt-4 font-medium" type="text" id="taskDescription" placeholder="E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)">
                                     </div>
 
                                     <div class="flex flex-row justify-between">
                                         <div class="w-justUnderHalf">
-                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date</label>
-                                            <input v-model="taskStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
+                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">start date (required)<span class="text-red-600">*</span></label>
+                                            <input @blur="checkIfUserMaySubmit('task')" v-model="taskStartDate" id="taskStartDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select start date">
                                         </div>
                                         <div class="w-justUnderHalf">
-                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date</label>
-                                            <input v-model="taskEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
+                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="endDate">end date (required)<span class="text-red-600">*</span></label>
+                                            <input @blur="checkIfUserMaySubmit('task')" v-model="taskEndDate" id="taskEndDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select end date">
                                         </div>
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member / whole team / team member</h4>
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member / whole team / team member (required)<span class="text-red-600">*</span></h4>
 
                                     <group-team-assignment :groupData="projectGroupData" :taskableId="null" :taskableType="null" :assignee="null" :userId="null" @send-task-data="onSendTaskData"/>
 
-                                    <button-grey @click="submitTaskData()">Assign task</button-grey>
+                                    <button-grey @click="submitTaskData()" id="submitForm">Assign task</button-grey>
                                 </template>
                             </Form>
                         </div>
@@ -246,7 +248,7 @@
                     </template>
                 </Title>
 
-                <button-blue v-if="$page.props.myGroups.length > 0" @click="showProjectModal = true; showBackdrop = true">Create a new project</button-blue>
+                <button-blue v-if="$page.props.myGroups.length > 0" @click="showProjectModal = true; showBackdrop = true; checkIfUserMaySubmit('project')">Create a new project</button-blue>
 
                 <button-grey v-else>
                     <a :href="route('mygroups', $page.props.authUser.id)">
@@ -339,6 +341,9 @@ export default {
         const {
             amOutside, 
             amInside,
+            checkIfProjectGroupSelected,
+            checkIfTaskAssigneeSelected,
+            checkIfUserMaySubmit,
             clearModal,
             edit,
             mode,
@@ -360,6 +365,7 @@ export default {
             projectName,
             projectNotes,
             projectStartDate,
+            projectTasks,
             showBackdrop,
             showEditAdminTaskModal,
             showEditProjectModal,
@@ -388,6 +394,8 @@ export default {
         const projectNoteBody = ref(null)
 
         const onSendTaskData = function (taskData) {
+            checkIfTaskAssigneeSelected()
+
             taskableId.value = taskData.taskableId
             taskableType.value = taskData.taskableType
             userId.value = taskData.userId
@@ -484,6 +492,9 @@ export default {
         return {
             amOutside,
             amInside,
+            checkIfProjectGroupSelected,
+            checkIfTaskAssigneeSelected,
+            checkIfUserMaySubmit,
             clearModal,
             edit,
             mode,
@@ -507,6 +518,7 @@ export default {
             projectNoteBody,
             projectNotes,
             projectStartDate,
+            projectTasks,
             showBackdrop,
             showEditAdminTaskModal,
             showEditProjectModal,

@@ -13,6 +13,7 @@ const groupMemberRoles = ref([])
 const groupMembers = ref([])
 const groupMembersEdit = ref([])
 const groupName = ref(null)
+const groupOwner = ref(null)
 const groupRole = ref(null)
 const groupRequester = ref(null)
 const inviteData = ref([])
@@ -22,12 +23,16 @@ const projectDescription = ref(null)
 const projectGroupData = ref([])
 const projectGroupId = ref(null)
 const projectGroupName = ref(null)
+const projectGroupSelected = ref(false)
 const projectId = ref(null)
 const projectName = ref(null)
 const projectNotes = ref([])
+const projectTasks = ref([])
 const projectStartDate = ref(null)
 const projectEndDate = ref(null)
 const projectInputEndDate = ref(null)
+const roleFieldsAccountedFor = ref(false)
+const selectedAssoc = ref(null)
 const selectedGroupAssociates = ref([])
 const selectedTeamAssociates = ref([])
 const showBackdrop = ref(false)
@@ -38,6 +43,7 @@ const showEditProjectModal = ref(false)
 const showEditTaskModal = ref(false)
 const showEditTeamModal = ref(false)
 const showEditVoteModal = ref(false)
+const showNetworkModal = ref(false)
 const showPendingVoteModal = ref(false)
 const showProjectModal = ref(false)
 const showTaskModal = ref(false)
@@ -48,6 +54,7 @@ const tAdmin = ref(false)
 const taskableId = ref(null)
 const taskableType = ref(null)
 const taskAssignee = ref(null)
+const taskAssigneeSelected = ref(false)
 const taskCompleted = ref(false)
 const taskDescription = ref(null)
 const taskEndDate = ref(null)
@@ -76,6 +83,7 @@ const teamRole = ref(null)
 const type = ref(null)
 const updated = ref(false)
 const userId = ref(null)
+const userMaySubmitForm = ref(false)
 const voteClosingDate = ref(null)
 const voteInputClosingDate = ref(null)
 const voteElements = ref([])
@@ -99,6 +107,155 @@ const activateUserTaskModal = (task) => {
     taskUserId.value = task.task_user_id
     showUserTaskModal.value = true
     showBackdrop.value = true
+}
+
+const checkIfProjectGroupSelected = () => {
+    if (document.querySelector('input[name="group"]:checked').value) {
+        projectGroupSelected.value = true
+    }
+
+    checkIfUserMaySubmit('project')
+}
+
+const checkIfTaskAssigneeSelected = () => {
+    if (document.querySelector('input[name="task"]:checked').value) {
+        taskAssigneeSelected.value = true
+    }
+
+    checkIfUserMaySubmit('task')
+}
+
+const checkIfRoleInputFieldsFilled = () => {
+    let myVals
+    let emptyField = false
+    let numFieldsFilled = 0
+    edit.value
+    ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
+    : myVals = document.querySelectorAll('input.invitedAssocs')
+
+    for (const myVal of myVals) {
+        if (myVal.checked) {
+            let elem = document.getElementById(myVal.value)
+            if (!elem.value) {
+                emptyField = true
+            } else {
+                elem.style.border = 'solid 1px rgb(110, 108, 108)'
+                numFieldsFilled++
+            }
+        }
+    }
+
+    emptyField
+    ? roleFieldsAccountedFor.value = false
+    : roleFieldsAccountedFor.value = true
+
+    if (mode.value === 'team') {
+        numFieldsFilled > 0 ? roleFieldsAccountedFor.value = true : roleFieldsAccountedFor.value = false
+    }
+
+    checkIfUserMaySubmit(mode.value)
+}
+
+const checkIfUserMaySubmit = (mode) => {
+    let elIdName
+    let elIdDesc
+    let elIdStart
+    let elIdEnd
+    let name = false
+    let description = false
+    let start = false
+    let end = false
+    let requiredFormFields = false
+
+    if (mode === 'group') {
+        elIdName = 'groupName'
+        elIdDesc = 'groupDescription'
+    } 
+    
+    if (mode === 'team') {
+        elIdName = 'teamName'
+        elIdDesc = 'teamFunction'
+    }
+
+    if (mode === 'project') {
+        elIdName = 'projectName'
+        elIdDesc = 'projectDescription'
+        elIdStart = 'projectStartDate'
+        elIdEnd = 'projectEndDate'
+    }
+
+    if (mode === 'task') {
+        elIdName = 'taskName'
+        elIdDesc = 'taskDescription'
+        elIdStart = 'taskStartDate'
+        elIdEnd = 'taskEndDate'
+    }
+
+    setTimeout(function() {
+        document.getElementById(elIdName).value
+        ? name = true
+        : name = false
+        
+        document.getElementById(elIdDesc).value
+        ? description = true
+        : description = false
+
+        if (mode === 'project' || mode === 'task') {
+            document.getElementById(elIdStart).value
+            ? start = true
+            : start = false
+            
+            document.getElementById(elIdEnd).value
+            ? end = true
+            : end = false
+        }
+
+        if (mode === 'group' || mode === 'team') {
+            name && description
+            ? requiredFormFields = true
+            : requiredFormFields = false
+        }
+
+        if (mode === 'project' || mode === 'task') {
+            name && description && start && end
+            ? requiredFormFields = true
+            : requiredFormFields = false
+        }
+
+        if (mode === 'group') {
+            let myVals
+            let checked
+            edit.value
+            ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
+            : myVals = document.querySelectorAll('input.invitedAssocs')
+
+            for (const myVal of myVals) {
+                myVal.checked
+                ? checked = true
+                : null
+            }
+
+            checked 
+            ? null
+            : roleFieldsAccountedFor.value = true
+        }
+        
+        if ((requiredFormFields && roleFieldsAccountedFor.value) || 
+            (requiredFormFields && projectGroupSelected.value) ||
+            (requiredFormFields && taskAssigneeSelected.value)) {
+            document.getElementById("submitForm").disabled = false
+            document.getElementById("submitForm").classList.remove('text-we4vGrey-200')
+            document.getElementById("submitForm").classList.add('text-we4vGrey-600')
+            document.getElementById("submitForm").classList.add('hover:bg-we4vGrey-100')
+            document.getElementById("submitForm").classList.add('cursor-pointer')
+        } else {
+            document.getElementById("submitForm").disabled = true
+            document.getElementById("submitForm").classList.remove('text-we4vGrey-600')
+            document.getElementById("submitForm").classList.remove('hover:bg-we4vGrey-100')
+            document.getElementById("submitForm").classList.add('text-we4vGrey-200')
+            document.getElementById("submitForm").classList.add('cursor-default')
+        }
+    }, 50)
 }
 
 const clearModal = () => {
@@ -185,6 +342,8 @@ const hydrateInviteModal = (req) => {
 
     if (req.type === 'group') {
         gAdmin.value = req.gAdmin
+        console.log('From manageModals.js, req.groupOwner: '+req.groupOwner)
+        groupOwner.value = req.groupOwner
         groupName.value = req.groupName
         groupId.value = req.groupId
         groupDescription.value = req.groupDesc
@@ -197,6 +356,7 @@ const hydrateInviteModal = (req) => {
 
     if (req.type === 'team') {
         tAdmin.value = req.tAdmin
+        teamOwner.value = req.teamOwner
         teamName.value = req.teamName
         teamId.value = req.teamId
         teamFunction.value = req.teamFunc
@@ -220,11 +380,12 @@ const nowInside = () => {
 }
 
 const onActivateEditGroupModal = (group) => {
+    groupMembersEdit.value = [] // Very sticky clingy critter; force emptying here
     groupId.value = group.group_id
     groupName.value = group.group_name
     groupDescription.value = group.group_description
     geogArea.value = group.geog_area
-    groupMembers.value = group.groupMembers
+    groupMembers.value = group.groupMembers ? group.groupMembers : []
     edit.value = true
     showBackdrop.value = true
     showGroupModal.value = true
@@ -237,7 +398,8 @@ const onActivateEditProjectModal = (project) => {
     projectGroupId.value = project.project_group_id
     projectGroupName.value = project.project_group_name
     projectName.value = project.project_name
-    projectNotes.value =  project.notes
+    projectNotes.value = project.notes
+    projectTasks.value = project.tasks 
     projectEndDate.value = project.project_end_date
     projectInputEndDate.value = project.project_input_end_date
     projectStartDate.value = project.project_start_date
@@ -328,6 +490,8 @@ const onActivatePendingVoteModal = (vote) => {
 }
 
 const onActivateTaskModal = (project) => {
+    checkIfUserMaySubmit('task')
+
     usePage().props.value.myGroups.forEach(mygroup => {
         if (mygroup.group_id === project.project_group_id) {
             projectGroupData.value.push(mygroup)
@@ -341,6 +505,7 @@ const onActivateTaskModal = (project) => {
 }
 
 const onActivateTeamModal = (group) => {
+    checkIfUserMaySubmit('team')
     groupId.value = group.group_id
     groupName.value = group.group_name
     groupDescription.value = group.group_description
@@ -364,6 +529,10 @@ const manageModals = () => {
         activateUserTaskModal,
         amOutside, 
         amInside,
+        checkIfProjectGroupSelected,
+        checkIfRoleInputFieldsFilled,
+        checkIfTaskAssigneeSelected,
+        checkIfUserMaySubmit,
         clearModal,
         edit,
         gAdmin,
@@ -375,6 +544,7 @@ const manageModals = () => {
         groupMembers,
         groupMembersEdit,
         groupName,
+        groupOwner,
         groupRequester,
         groupRole,
         hydrateInviteModal,
@@ -403,6 +573,8 @@ const manageModals = () => {
         projectName,
         projectNotes,
         projectStartDate,
+        projectTasks,
+        selectedAssoc,
         selectedGroupAssociates,
         selectedTeamAssociates,
         showBackdrop,
@@ -413,6 +585,7 @@ const manageModals = () => {
         showEditVoteModal,
         showGroupModal,
         showInviteModal,
+        showNetworkModal,
         showPendingVoteModal,
         showProjectModal,
         showTaskModal,
@@ -451,6 +624,7 @@ const manageModals = () => {
         type,
         updated,
         userId,
+        userMaySubmitForm,
         voteClosingDate,
         voteInputClosingDate,
         voteElements,

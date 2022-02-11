@@ -52,6 +52,7 @@ module.exports = {
                 'we4vCommentPic': '5%',
                 'we4vCommentText': '95%',
                 'justUnderHalf': '49%',
+                'searchTabWidth': '23.5%',
             },
             maxHeight: {
                 '600': '600px',

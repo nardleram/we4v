@@ -48,6 +48,12 @@ class HandleInertiaRequests extends Middleware
             : $myImages = 0;
 
         return array_merge(parent::share($request), [
+            'csrf_token' => csrf_token(),
+
+            'searchResults' => [
+                'searchData' => fn () => $request->session()->get('searchData')
+            ],
+            
             'authUser' => fn () => $request->user()
                 ? $request->user()->only('id', 'email', 'name', 'surname', 'username')
                 : null,
@@ -90,6 +96,15 @@ class HandleInertiaRequests extends Middleware
                     $myAssociatesIds = array_diff($allAssociates, array(auth()->id()));
 
                     $myAssociates = $getUserData->getUsers($myAssociatesIds);
+
+                    $loop = 0;
+                    
+                    foreach($myAssociates as $myAssociate) {
+                        if(!$myAssociate->path) {
+                            $myAssociates[$loop]['path'] = 'images/nobody.png';
+                        }
+                        ++$loop;
+                    }
 
                     return $myAssociates;
                 },
@@ -168,16 +183,16 @@ class HandleInertiaRequests extends Middleware
                                 array_push($teamIds, $member->membershipable_id);
                             }
                         };
-
+                        
                         $rawGroups = Group::whereIn('groups.id', $groupIds)
-                            ->join('users AS Us1', function ($join) {
+                            ->leftJoin('users AS Us1', function ($join) {
                                 $join->on('Us1.id', '=', 'groups.owner');
                             })
-                            ->join('memberships AS Me', function ($join) {
+                            ->leftJoin('memberships AS Me', function ($join) {
                                 $join->on('Me.membershipable_id', '=', 'groups.id')
                                 ->where('Me.user_id', auth()->id());
                             })
-                            ->join('users AS Us2', function ($join) {
+                            ->leftJoin('users AS Us2', function ($join) {
                                 $join->on('Us2.id', '=', 'Me.updated_by');
                             })
                             ->select([
@@ -197,14 +212,14 @@ class HandleInertiaRequests extends Middleware
                             ->get();
                         
                         $rawTeams = Team::whereIn('teams.id', $teamIds)
-                            ->join('users', function ($join) {
+                            ->leftJoin('users', function ($join) {
                                 $join->on('users.id', '=', 'teams.owner');
                             })
-                            ->join('memberships AS Me', function ($join) {
+                            ->leftJoin('memberships AS Me', function ($join) {
                                 $join->on('Me.membershipable_id', '=', 'teams.id')
                                 ->where('Me.user_id', auth()->id());
                             })
-                            ->join('users AS Us2', function ($join) {
+                            ->leftJoin('users AS Us2', function ($join) {
                                 $join->on('Us2.id', '=', 'Me.updated_by');
                             })
                             ->select([

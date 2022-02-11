@@ -34,7 +34,7 @@ class CompileTeamsArray
                 $teams[$teamCount]['teamMembers'][$teamMemberCount]['admin'] = $rawTeam->member_admin;
                 $teams[$teamCount]['teamMembers'][$teamMemberCount]['confirmed'] = $rawTeam->member_confirmed;
                 $teams[$teamCount]['teamMembers'][$teamMemberCount]['invited'] = true;
-                $teams[$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawTeam->path;
+                $teams[$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawTeam->path ? $rawTeam->path : 'images/nobody.png';
                 ++$teamMemberCount;
             }
             

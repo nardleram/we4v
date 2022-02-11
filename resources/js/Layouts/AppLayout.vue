@@ -24,11 +24,6 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('myarticles', $page.props.authUser.id)" :active="route().current('myarticles')">
-                                Articles
-                            </jet-nav-link>
-                        </div>
-                        <div>
                             <jet-nav-link :href="route('mygroups', $page.props.authUser.id)" :active="route().current('mygroups')">
                                 Groups
                             </jet-nav-link>
@@ -36,6 +31,11 @@
                         <div>
                             <jet-nav-link :href="route('myprojects', $page.props.authUser.id)" :active="route().current('myprojects')">
                                 Projects
+                            </jet-nav-link>
+                        </div>
+                        <div>
+                            <jet-nav-link :href="route('myarticles', $page.props.authUser.id)" :active="route().current('myarticles')">
+                                Articles
                             </jet-nav-link>
                         </div>
                         <div>
@@ -145,13 +145,14 @@
         <!-- Page Content -->
         <main class="flex flex-1 overflow-y-hidden pt-16">
             <sidebar-left />
+            <SearchTabs />
             <slot name="centre"></slot>
             <sidebar-right />
         </main>
 
         <!-- Modal Portal -->
-        <portal-target name="modal" multiple>
-        </portal-target>
+        <!-- <portal-target name="modal" multiple>
+        </portal-target> -->
     </div>
 </template>
 
@@ -166,6 +167,7 @@
     import SidebarRight from '@/Jetstream/SidebarRight'
     import FlashMessage from '../Pages/Components/FlashMessage'
     import ErrorMessage from '../Pages/Components/ErrorMessage'
+    import SearchTabs from '../Pages/Components/SearchTabs'
 
     export default {
         components: {
@@ -179,6 +181,7 @@
             SidebarRight,
             FlashMessage,
             ErrorMessage,
+            SearchTabs,
         },
 
         data() {

@@ -26,10 +26,10 @@ class GetGroups
             $join->on('groups.id', '=', 'memberships.membershipable_id')
             ->orOn('teams.id', '=', 'memberships.membershipable_id');
         })
-        ->join('users', function ($join) {
+        ->leftJoin('users', function ($join) {
             $join->on('memberships.user_id', '=', 'users.id');
         })
-        ->join('images', function ($join) {
+        ->leftJoin('images', function ($join) {
             $join->on('users.id', '=', 'imageable_id')
             ->where('images.imageable_type', 'App\Models\User')
             ->where('images.format', 'profile');

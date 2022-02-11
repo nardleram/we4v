@@ -7,17 +7,17 @@ use Illuminate\Http\Request;
 
 class UpdateAssociation
 {
-    public function accept(Request $request) : int
+    public function accept(Request $request) : void
     {
-        return Association::where('id', $request->id)
+        Association::where('id', $request->id)
             ->update([
                 'confirmed_at' => now(),
                 'status' => 1
             ]);
     }
 
-    public function reject(Request $request) : int
+    public function reject(Request $request) : void
     {
-        return Association::where('id', $request->id)->delete();
+        Association::where('id', $request->id)->delete();
     }
 }

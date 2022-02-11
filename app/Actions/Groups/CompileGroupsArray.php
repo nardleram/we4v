@@ -24,6 +24,9 @@ class CompileGroupsArray
                 $teamCount = 0;
                 $groupMemberCount = 0;
                 $teamMemberCount = 0;
+                if ($rawGroup->team_id) {
+                    $currentTeamId = $rawGroup->team_id;
+                }
             }
 
             if ($rawGroup->membership_type === 'App\Models\Team' && ($currentTeamId !== $rawGroup->team_id) && $loop > 0) {
@@ -49,6 +52,7 @@ class CompileGroupsArray
                 $groups[$groupCount]['teams'][$teamCount]['team_name'] = $rawGroup->team_name;
                 $groups[$groupCount]['teams'][$teamCount]['team_function'] = $rawGroup->team_function;
                 $groups[$groupCount]['teams'][$teamCount]['group_id'] = $rawGroup->group_id;
+                $groups[$groupCount]['teams'][$teamCount]['currentTeamId'] = $currentTeamId;
             }
 
             // Assign users and groups (members) to correct teams and/or groups
@@ -59,7 +63,7 @@ class CompileGroupsArray
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['username'] = $rawGroup->username;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['role'] = $rawGroup->role;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['confirmed'] = $rawGroup->confirmed;
-                        $groups[$groupCount]['groupMembers'][$groupMemberCount]['path'] = $rawGroup->path;
+                        $groups[$groupCount]['groupMembers'][$groupMemberCount]['path'] = $rawGroup->path ? $rawGroup->path : 'images/nobody.png';
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['admin'] = $rawGroup->admin;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['declined'] = $rawGroup->declined;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['user_id'] = $rawGroup->user_id;
@@ -82,14 +86,22 @@ class CompileGroupsArray
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['admin'] = $rawGroup->admin;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['declined'] = $rawGroup->declined;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['user_id'] = $rawGroup->user_id;
-                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawGroup->path;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawGroup->path ? $rawGroup->path : 'images/nobody.png';
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['invited'] = true;
                     ++$teamMemberCount;
                 }
             }
 
             $currentGroupId = $rawGroup->group_id;
-            $currentTeamId = $rawGroup->team_id;
+
+            if ($loop === 0) {
+                $currentTeamId = $rawGroup->team_id;
+            }
+            
+            if ($rawGroup->team_id && $rawGroup->membershipable_type === 'App\\Models\\Team' && $loop > 0) {
+                $currentTeamId = $rawGroup->team_id;
+            }
+
             ++$loop;
         }
         
