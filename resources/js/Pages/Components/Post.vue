@@ -2,7 +2,7 @@
     <div class="text-we4vGrey-800 bg-white p-3 flex flex-col flex-1 shadow-md mb-2">
         <div class="flex flex-1">
             <div class="mr-3 h-12 w-12">
-                <inertia-link :href="route('user-show', post.posted_by)" as="button">
+                <inertia-link :href="route('user-show', post.slug)" as="button">
                     <img :src="'/'+post.user_profile_pic" :alt="post.name" class="rounded-full object-cover h-10 w-10">
                 </inertia-link>
             </div>
@@ -49,7 +49,7 @@
                 <div v-for="(comment, commentKey) in post.comments" :key="commentKey">
                     <div class="flex flex-1">
                         <div class="mr-3 w-1/12">
-                            <inertia-link :href="route('user-show', comment.commented_by)" as="button">
+                            <inertia-link :href="route('user-show', comment.slug)" as="button">
                                 <img :src="'/'+comment.user_profile_pic" :alt="comment.commented_by" class="rounded-full w-8 h-8 object-cover">
                             </inertia-link>
                         </div>

@@ -28,12 +28,16 @@ class UpdateTaskRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'nullable|uuid',
             'end_date' => 'required|date',
-            'user_id' => 'nullable|uuid',
             'taskable_id' => 'required|uuid',
             'taskable_type' => 'required|string|max:20',
+            'membershipable_id' => 'required|uuid',
+            'membershipable_type' => 'required|string|max:20',
             'completed' => 'required|boolean',
-            'note' => 'array|nullable'
+            'taskNote' => 'array|nullable',
+            'projectNote' => 'array|nullable',
+            'members' => 'array|nullable'
         ];
     }
 }

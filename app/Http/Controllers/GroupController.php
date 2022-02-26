@@ -20,33 +20,33 @@ class GroupController extends Controller
 {
     private $getGroups;
     private $getAdminGroups;
+    private $getAdminTeams;
     private $storeGroup;
     private $storeMemberships;
     private $updateGroup;
     private $updateMemberships;
-    private $getAdminTeams;
     private $destroyGroupCasc;
     private $searchGroups;
 
     public function __construct(
         GetGroups $getGroups,
         GetAdminGroups $getAdminGroups,
+        GetAdminTeams $getAdminTeams,
         StoreGroup $storeGroup,
         StoreMemberships $storeMemberships,
         UpdateGroup $updateGroup,
         UpdateMemberships $updateMemberships,
-        GetAdminTeams $getAdminTeams,
         DestroyGroupCascade $destroyGroupCasc,
         SearchGroups $searchGroups
     )
     {
         $this->getGroups = $getGroups;
         $this->getAdminGroups = $getAdminGroups;
+        $this->getAdminTeams = $getAdminTeams;
         $this->storeGroup = $storeGroup;
         $this->storeMemberships = $storeMemberships;
         $this->updateGroup = $updateGroup;
         $this->updateMemberships = $updateMemberships;
-        $this->getAdminTeams = $getAdminTeams;
         $this->destroyGroupCasc = $destroyGroupCasc;
         $this->searchGroups = $searchGroups;
     }

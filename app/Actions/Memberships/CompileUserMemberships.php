@@ -2,9 +2,9 @@
 
 namespace App\Actions\Memberships;
 
-class compileUserMemberships{
+class CompileUserMemberships{
     
-    public function compileUserMemberships($rawMemberships) : array
+    public function CompileUserMemberships($rawMemberships) : array
     {
         return [];
     }

@@ -25,7 +25,6 @@ class CreateMembershipsTable extends Migration
             $table->timestamps();
 
             $table->foreignUuid('user_id')->references('id')->on('users')->nullable();
-            $table->foreignUuid('group_id')->references('id')->on('groups')->nullable();
         });
     }
 

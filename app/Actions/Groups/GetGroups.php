@@ -29,6 +29,9 @@ class GetGroups
         ->leftJoin('users', function ($join) {
             $join->on('memberships.user_id', '=', 'users.id');
         })
+        ->leftJoin('users AS Us2', function ($join) {
+            $join->on('memberships.updated_by', '=', 'Us2.id');
+        })
         ->leftJoin('images', function ($join) {
             $join->on('users.id', '=', 'imageable_id')
             ->where('images.imageable_type', 'App\Models\User')
@@ -43,13 +46,13 @@ class GetGroups
             'teams.name as team_name',
             'teams.function as team_function',
             'memberships.user_id as member_user_id',
-            'memberships.group_id as member_group_id',
             'memberships.membershipable_type as membership_type',
             'memberships.role as role',
             'memberships.confirmed as confirmed',
             'memberships.is_admin as admin',
             'memberships.deleted_at as declined',
             'users.username as username',
+            'Us2.username as updated_by',
             'users.id as user_id',
             'images.path as path' 
         ])
@@ -59,12 +62,12 @@ class GetGroups
             'memberships.is_admin',
             'memberships.membershipable_type',
             'memberships.user_id',
-            'memberships.group_id',
             'memberships.role',
             'memberships.confirmed',
             'memberships.deleted_at',
             'users.username',
             'users.id',
+            'Us2.username',
             'images.path'
         ])
         ->orderBy('groups.name')

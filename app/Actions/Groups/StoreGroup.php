@@ -3,7 +3,6 @@
 namespace App\Actions\Groups;
 
 use App\Models\Group;
-use App\Models\Membership;
 use Illuminate\Http\Request;
 
 class StoreGroup

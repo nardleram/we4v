@@ -23,7 +23,7 @@ class GetAdminTeams
         ->where('confirmed', true)
         ->where('user_id', $userId)
         ->where('membershipable_type', 'App\\Models\\Team')
-        ->get('membershipable_id as team_id');
+        ->get('membershipable_id AS team_id');
 
         $rawTeams = Team::whereIn('teams.id', $rawTeamIds)
         ->leftJoin('groups', function ($join) {

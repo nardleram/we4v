@@ -28,6 +28,8 @@ const projectId = ref(null)
 const projectName = ref(null)
 const projectNotes = ref([])
 const projectTasks = ref([])
+const projectTeamData = ref([])
+const projectTeamName = ref(null)
 const projectStartDate = ref(null)
 const projectEndDate = ref(null)
 const projectInputEndDate = ref(null)
@@ -35,6 +37,7 @@ const roleFieldsAccountedFor = ref(false)
 const selectedAssoc = ref(null)
 const selectedGroupAssociates = ref([])
 const selectedTeamAssociates = ref([])
+const selectedTeamMembers = ref([])
 const showBackdrop = ref(false)
 const showGroupModal = ref(false)
 const showInviteModal = ref(false)
@@ -53,7 +56,6 @@ const showVoteModal = ref(false)
 const tAdmin = ref(false)
 const taskableId = ref(null)
 const taskableType = ref(null)
-const taskAssignee = ref(null)
 const taskAssigneeSelected = ref(false)
 const taskCompleted = ref(false)
 const taskDescription = ref(null)
@@ -68,8 +70,10 @@ const taskOwner = ref(null)
 const taskProjectId = ref(null)
 const taskRecipientType = ref(null)
 const taskStartDate = ref(null)
+const taskTeamData = ref([])
 const taskTeamName = ref([])
-const taskUserId = ref(null)
+const taskMembers = ref([])
+const taskProjectName = ref(null)
 const teamAdmins = ref([])
 const teamFunction = ref(null)
 const teamId = ref(null)
@@ -81,7 +85,7 @@ const teamOwner = ref(null)
 const teamRequester = ref(null)
 const teamRole = ref(null)
 const type = ref(null)
-const updated = ref(false)
+const updated_by = ref(false)
 const userId = ref(null)
 const userMaySubmitForm = ref(false)
 const voteClosingDate = ref(null)
@@ -96,21 +100,24 @@ const activateUserTaskModal = (task) => {
     taskableType.value = task.taskable_type
     taskCompleted.value = task.completed
     taskId.value = task.id
+    taskProjectId.value = task.project_id
     taskName.value = task.name
     taskDescription.value = task.description
     taskEndDate.value = task.end_date
     taskGroupName.value = task.group_name
     taskInputEndDate.value = task.input_end_date
     taskOwner.value = task.owner
-    taskNotes.value = task.notes
+    taskMembers.value = task.task_members
+    taskNotes.value = task.task_notes
+    projectNotes.value = task.project_notes
     taskTeamName.value = task.team_name
-    taskUserId.value = task.task_user_id
+    taskProjectName.value = task.project_name
     showUserTaskModal.value = true
     showBackdrop.value = true
 }
 
 const checkIfProjectGroupSelected = () => {
-    if (document.querySelector('input[name="group"]:checked').value) {
+    if (document.querySelector('input[name="groupOrTeam"]:checked').value) {
         projectGroupSelected.value = true
     }
 
@@ -118,9 +125,13 @@ const checkIfProjectGroupSelected = () => {
 }
 
 const checkIfTaskAssigneeSelected = () => {
-    if (document.querySelector('input[name="task"]:checked').value) {
-        taskAssigneeSelected.value = true
-    }
+    let myVals = document.querySelectorAll('input.selectedMembers')
+    
+    myVals.forEach(myVal => {
+        if (myVal.checked) {
+            taskAssigneeSelected.value = true
+        }
+    })
 
     checkIfUserMaySubmit('task')
 }
@@ -192,18 +203,35 @@ const checkIfUserMaySubmit = (mode) => {
     }
 
     setTimeout(function() {
-        document.getElementById(elIdName).value
-        ? name = true
-        : name = false
-        
-        document.getElementById(elIdDesc).value
-        ? description = true
-        : description = false
+        if (mode !== 'task' && edit.value) {
+            document.getElementById(elIdName).value
+            ? name = true
+            : name = false
+            
+            document.getElementById(elIdDesc).value
+            ? description = true
+            : description = false
+        } else if (mode === 'task' && edit.value) {
+            name = true
+            description = true
+        } else {
+            document.getElementById(elIdName).value
+            ? name = true
+            : name = false
+            
+            document.getElementById(elIdDesc).value
+            ? description = true
+            : description = false
+        }
 
         if (mode === 'project' || mode === 'task') {
-            document.getElementById(elIdStart).value
-            ? start = true
-            : start = false
+            if (!edit.value) {
+                document.getElementById(elIdStart).value
+                ? start = true
+                : start = false
+            } else {
+                start = true
+            }
             
             document.getElementById(elIdEnd).value
             ? end = true
@@ -282,12 +310,13 @@ const clearModal = () => {
     projectInputEndDate.value = null
     projectName.value = null
     projectStartDate.value = null
+    projectTeamData.value = []
     selectedGroupAssociates.value = []
     selectedTeamAssociates.value = []
+    selectedTeamMembers.value = []
     tAdmin.value = false
     taskableId.value = null
     taskableType.value = null
-    taskAssignee.value = null
     taskCompleted.value = false
     taskDescription.value = null
     taskEndDate.value = null
@@ -298,10 +327,12 @@ const clearModal = () => {
     taskName.value = null
     taskNotes.value = []
     taskProjectId.value = null
+    taskProjectName.value = null
     taskRecipientType.value = null
     taskStartDate.value = null
+    taskTeamData.value = []
     taskTeamName.value = null
-    taskUserId.value = null
+    taskMembers.value = []
     teamAdmins.value = []
     teamFunction.value = null
     teamId.value = null
@@ -326,6 +357,7 @@ const clearModal = () => {
     showBackdrop.value = false
     teamMembersEdit.value = []
     userId.value = null
+    updated_by.value = null
     voteClosingDate.value = null
     voteElements.value = []
     voteId.value = null
@@ -342,7 +374,6 @@ const hydrateInviteModal = (req) => {
 
     if (req.type === 'group') {
         gAdmin.value = req.gAdmin
-        console.log('From manageModals.js, req.groupOwner: '+req.groupOwner)
         groupOwner.value = req.groupOwner
         groupName.value = req.groupName
         groupId.value = req.groupId
@@ -351,7 +382,7 @@ const hydrateInviteModal = (req) => {
         groupRole.value = req.gRole
         groupRequester.value = req.groupRequester
         groupMembers.value = req.groupMembers
-        updated.value = req.updated
+        updated_by.value = req.groupRequester
     }
 
     if (req.type === 'team') {
@@ -362,7 +393,7 @@ const hydrateInviteModal = (req) => {
         teamFunction.value = req.teamFunc
         teamRole.value = req.tRole
         teamRequester.value = req.teamRequester
-        updated.value = req.updated
+        updated_by.value = req.teamRequester
     }
 
     showBackdrop.value = true
@@ -397,9 +428,10 @@ const onActivateEditProjectModal = (project) => {
     projectId.value = project.project_id
     projectGroupId.value = project.project_group_id
     projectGroupName.value = project.project_group_name
+    projectTeamName.value = project.project_team_name
     projectName.value = project.project_name
-    projectNotes.value = project.notes
-    projectTasks.value = project.tasks 
+    projectNotes.value = project.notes ? project.notes : []
+    projectTasks.value = project.tasks ? project.tasks : []
     projectEndDate.value = project.project_end_date
     projectInputEndDate.value = project.project_input_end_date
     projectStartDate.value = project.project_start_date
@@ -411,18 +443,18 @@ const onActivateEditProjectModal = (project) => {
 const onActivateEditAdminTaskModal = (task) => {
     taskCompleted.value = task.task_completed
     taskId.value = task.task_id
-    taskProjectId.value = task.task_project_id
+    taskProjectId.value = task.project_id
     taskName.value = task.task_name
-    taskNotes.value = task.task_notes
+    projectNotes.value = task.project_notes ? task.project_notes : null
+    taskNotes.value = task.task_notes ? task.task_notes : null
     taskDescription.value = task.task_description
-    taskAssignee.value = task.team_name
     taskRecipientType.value = 'team'
     taskEndDate.value = task.task_end_date
     taskStartDate.value = task.task_start_date
     taskInputEndDate.value = task.task_input_end_date
     taskableId.value = task.team_id
     taskableType.value = 'App\\Models\\Team'
-    taskUserId.value = null
+    taskMembers.value = task.selected_team_members
     edit.value = true
     showBackdrop.value = true
     showEditAdminTaskModal.value = true
@@ -435,12 +467,17 @@ const onActivateEditTaskModal = (task) => {
             taskGroupData.value.push(mygroup)
         }
     })
-    taskAssignee.value = task.assignee
+    usePage().props.value.myAdminTeams.forEach(myteam => {
+        if (myteam.team_id === task.taskable_id) {
+            taskTeamData.value.push(myteam)
+        }
+    })
     taskCompleted.value = task.task_completed
     taskId.value = task.task_id
-    taskProjectId.value = task.task_project_id
+    taskProjectId.value = task.project_id
     taskName.value = task.task_name
-    taskNotes.value = task.notes
+    projectNotes.value = task.project_notes ? task.project_notes : []
+    taskNotes.value = task.notes ? task.notes : []
     taskDescription.value = task.task_description
     taskRecipientType.value = task.recipient_type
     taskEndDate.value = task.task_end_date
@@ -448,7 +485,23 @@ const onActivateEditTaskModal = (task) => {
     taskInputEndDate.value = task.task_input_end_date
     taskableId.value = task.taskable_id
     taskableType.value = task.taskable_type
-    taskUserId.value = task.task_user_id
+    if (task.team_members) {
+        task.team_members.forEach(member => {
+            taskMembers.value.push({ 
+                username: member.task_member_username, 
+                created_at: member.task_member_created_at,
+                user_id: member.task_member_user_id,
+            })
+        }) 
+    } else if (task.selected_task_members) {
+        task.selected_task_members.forEach(member => {
+            taskMembers.value.push({ 
+                username: member.task_member_username, 
+                created_at: member.task_member_created_at,
+                user_id: member.task_member_user_id,
+            })
+        }) 
+    }
     edit.value = true
     showBackdrop.value = true
     showEditTaskModal.value = true
@@ -495,6 +548,11 @@ const onActivateTaskModal = (project) => {
     usePage().props.value.myGroups.forEach(mygroup => {
         if (mygroup.group_id === project.project_group_id) {
             projectGroupData.value.push(mygroup)
+        }
+    })
+    usePage().props.value.myAdminTeams.forEach(myteam => {
+        if (myteam.team_id === project.project_team_id) {
+            projectTeamData.value.push(myteam)
         }
     })
     projectDescription.value = project.project_description
@@ -574,9 +632,12 @@ const manageModals = () => {
         projectNotes,
         projectStartDate,
         projectTasks,
+        projectTeamData,
+        projectTeamName,
         selectedAssoc,
         selectedGroupAssociates,
         selectedTeamAssociates,
+        selectedTeamMembers,
         showBackdrop,
         showEditAdminTaskModal,
         showEditProjectModal,
@@ -595,7 +656,6 @@ const manageModals = () => {
         tAdmin,
         taskableId,
         taskableType,
-        taskAssignee,
         taskCompleted,
         taskDescription,
         taskEndDate,
@@ -607,10 +667,12 @@ const manageModals = () => {
         taskNotes,
         taskOwner,
         taskProjectId,
+        taskProjectName,
         taskRecipientType,
         taskStartDate,
+        taskTeamData,
         taskTeamName,
-        taskUserId,
+        taskMembers,
         teamAdmins,
         teamFunction,
         teamId,
@@ -622,7 +684,7 @@ const manageModals = () => {
         teamRequester,
         teamRole,
         type,
-        updated,
+        updated_by,
         userId,
         userMaySubmitForm,
         voteClosingDate,

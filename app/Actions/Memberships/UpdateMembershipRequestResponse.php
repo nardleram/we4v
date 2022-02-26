@@ -4,7 +4,7 @@ namespace App\Actions\Memberships;
 
 use App\Models\Membership;
 
-class StoreMembershipRequestResponse
+class UpdateMembershipRequestResponse
 {
     public function handle($request) : string
     {

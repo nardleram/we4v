@@ -24,7 +24,7 @@ class StoreTaskRequest extends FormRequest
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'project_id' => 'required|uuid',
-            'user_id' => 'nullable|uuid',
+            'members' => 'nullable|array',
             'taskable_id' => 'required|uuid',
             'taskable_type' => 'required|string|max:20',
         ];

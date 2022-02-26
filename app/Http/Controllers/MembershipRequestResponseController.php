@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Memberships\StoreMembershipRequestResponse;
-use App\Http\Requests\StoreMembershipRequestResponseRequest;
+use App\Actions\Memberships\UpdateMembershipRequestResponse;
+use App\Http\Requests\UpdateMembershipRequestResponseRequest;
 
 class MembershipRequestResponseController extends Controller 
 {
     private $storeMembershipRequestResponse;
 
-    public function __construct(StoreMembershipRequestResponse $storeMembershipRequestResponse)
+    public function __construct(UpdateMembershipRequestResponse $updateMembershipRequestResponse)
     {
-        $this->storeMembershipRequestResponse = $storeMembershipRequestResponse;
+        $this->updateMembershipRequestResponse = $updateMembershipRequestResponse;
     }
 
-    public function store(StoreMembershipRequestResponseRequest $request) : object
+    public function update(UpdateMembershipRequestResponseRequest $request) : object
     {
-        $flashMessage = $this->storeMembershipRequestResponse->handle($request);
+        $flashMessage = $this->updateMembershipRequestResponse->handle($request);
 
         return redirect()->back()->with(['flash' => ['message' => $flashMessage]]);
     }

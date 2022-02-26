@@ -12,7 +12,8 @@ class UpdateProject
         return Project::where('id', $request->id)
             ->update([
                 'end_date' => $request->end_date,
-                'group_id' => $request->group_id
+                'group_id' => $request->group_id,
+                'team_id' => $request->team_id,
             ]);
     }
 }

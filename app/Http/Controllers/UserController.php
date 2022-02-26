@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use App\Actions\Users\SearchUsers;
 use App\Actions\Posts\GetUserPosts;
 use App\Actions\Users\GetUserImages;
-use App\Actions\Users\SearchUsers;
 use Illuminate\Support\Facades\Hash;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\ProfileRequest;
@@ -70,6 +71,7 @@ class UserController extends Controller
             'name' => $request->name,
             'surname' => $request->surname,
             'username' => $request->username,
+            'slug' => Str::slug($request->username),
             'email' => $request->email
         ]);
 

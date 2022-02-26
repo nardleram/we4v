@@ -16,6 +16,7 @@ class StoreProject
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'group_id' => $request->group_id,
+            'team_id' => $request->team_id,
         ]);
     }
 }

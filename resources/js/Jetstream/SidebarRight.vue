@@ -10,14 +10,14 @@
                     </div>
                 </div>
 
-                <h4 v-if="!updated" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
-                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupRequester ? groupRequester : teamRequester }} cordially invites you to join the {{ type }} </h4>
+                <h4 v-if="!updated_by" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
+                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ updated_by }} has changed your membership details for the {{ type }} </h4>
                 <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
 
                 <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
                 <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
                 <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
-                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} also asks that you become the {{ type }}’s administrator.</h5>
+                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }}’s administrator.</h5>
                 
                 <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
                 @click="storeInviteResponse(inviteData, true)">
@@ -63,7 +63,7 @@
 
     <teleport to="#projectModals">
         <Modal :show="showUserTaskModal" >
-            <div v-if="showUserTaskModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+            <div v-if="showUserTaskModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
                 <div class="flex justify-end">
                     <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
                         <div @click="showUserTaskModal = false; clearModal()">
@@ -73,29 +73,30 @@
                 </div>
 
                 <div>
-                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskOwner }} assigned task <span class="italic text-we4vGrey-600">{{ taskName }}</span> to 
-                        <span v-if="taskUserId === $page.props.authUser.id" class="italic text-we4vGrey-600">you</span>
-                        <span v-if="!taskUserId && taskTeamName" class="italic text-we4vGrey-600">{{ taskTeamName }}</span>
-                        <span v-if="!taskUserId && taskTeamName" class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">, one of the teams you are in</span>.</h4>
-                    <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p>
+                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
+                    <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p></h4>
                     <p class="text-we4vGrey-500 text-sm">Description: <span class="italic font-medium">{{ taskDescription }}</span></p>
+                    <p class="text-we4vGrey-500 text-sm">From project: <span class="italic font-medium">{{ taskProjectName }}</span></p>
+                    <div class="flex flex-wrap">
+                        <p class="text-we4vGrey-500 text-sm">Fellow task members: </p>
+                        <p v-for="(member, memberKey) in taskMembers" :key="memberKey" class="text-we4vGrey-500 text-sm italic font-medium mx-2">{{ member.username}}</p>
+                    </div>
                 </div>
-
 
                 <div v-if="taskNotes">
-                    <Notes :notes="taskNotes" />
+                    <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
                 </div>
 
-                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
+                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a task note</h5>
                 <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+
+                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a project note</h5>
+                <textarea v-model="projectNoteBody" name="projectNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none mb-3"></textarea>
 
                 <input v-model="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" >
                 <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskCompleted }}">Task completed</label>
 
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-                @click="updateTask()">
-                    Update task
-                </button>
+                <button-grey @click="updateTask()" id="submitForm">Update task</button-grey>
                 
             </div>
         </Modal>
@@ -213,6 +214,7 @@ import Memberships from '../Pages/Components/MyMemberships'
 import Notes from '../Pages/Components/Notes'
 import Modal from '../Pages/Components/Modal'
 import manageModals from '../Pages/Composables/manageModals'
+import ButtonGrey from '../Jetstream/ButtonGrey.vue'
 import { watch, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-vue3'
@@ -221,6 +223,7 @@ export default {
     name: 'SidebarRight',
 
     components: {
+        ButtonGrey,
         PendingAssocReqs,
         PendingMembReqs,
         PendingVotes,
@@ -270,6 +273,7 @@ export default {
             nowOutside, 
             onActivatePendingVoteModal,
             onClickOutside,
+            projectNotes,
             showInviteModal,
             showPendingVoteModal,
             showUserTaskModal,
@@ -282,11 +286,13 @@ export default {
             taskGroupName,
             taskId,
             taskInputEndDate,
+            taskMembers,
             taskName,
             taskNotes,
             taskOwner,
+            taskProjectId,
+            taskProjectName,
             taskTeamName,
-            taskUserId,
             teamFunction,
             teamName,
             teamOwner,
@@ -294,7 +300,7 @@ export default {
             teamRequester,
             teamRole,
             type,
-            updated,
+            updated_by,
             voteClosingDate,
             voteElements,
             voteId,
@@ -305,6 +311,7 @@ export default {
         const showUnansweredInvites = ref(false)
         const showMembReqs = ref(false)
         const taskNoteBody = ref(null)
+        const projectNoteBody = ref(null)
 
         const storeInviteResponse = async (inviteData, res) => {
             if (inviteData[0].type === 'group') {
@@ -321,7 +328,7 @@ export default {
             }
 
             try {
-                await Inertia.post('/memberships/accept-reject', payload)
+                await Inertia.patch('/memberships/accept-reject', payload)
                 props.errors = null
             } catch(err) {
                 props.errors = err
@@ -355,20 +362,29 @@ export default {
         }
 
         const updateTask = async function () {
-            let note = {
+            let taskNote = {
                 'body': taskNoteBody.value,
                 'noteable_id': taskId.value,
                 'noteable_type': 'App\\Models\\Task'
             }
 
+            let projectNote = {
+                'body': projectNoteBody.value,
+                'noteable_id': taskProjectId.value,
+                'noteable_type': 'App\\Models\\Project'
+            }
+
             let payload = {
                 'id': taskId.value,
                 'completed': taskCompleted.value,
+                'membershipable_type': 'App\\Models\\Task',
+                'membershipable_id': taskId.value,
                 'taskable_id': taskableId.value,
                 'taskable_type': taskableType.value,
                 'end_date': taskInputEndDate.value,
-                'user_id': usePage().props.value.authUser.id,
-                'note': note
+                'taskNote': taskNote,
+                'projectNote': projectNote,
+                'members': []
             }
             
             try {
@@ -380,6 +396,7 @@ export default {
             
             clearModal()
             taskNoteBody.value = null
+            projectNoteBody.value = null
         }
 
         watch(amOutside, () => {
@@ -403,11 +420,13 @@ export default {
             groupRole,
             hydrateInviteModal,
             inviteData,
+            mode,
             nowInside, 
             nowOutside,
             onActivatePendingVoteModal,
             onClickOutside,
-            mode,
+            projectNoteBody,
+            projectNotes,
             showInviteModal,
             showMembReqs,
             showPendingVoteModal,
@@ -423,12 +442,14 @@ export default {
             taskGroupName,
             taskId,
             taskInputEndDate,
+            taskMembers,
             taskName,
             taskNoteBody,
             taskNotes,
             taskOwner,
+            taskProjectId,
+            taskProjectName,
             taskTeamName,
-            taskUserId,
             tAdmin,
             teamFunction,
             teamId,
@@ -437,7 +458,7 @@ export default {
             teamRequester,
             teamRole,
             type,
-            updated,
+            updated_by,
             updateTask,
             voteClosingDate,
             voteElements,

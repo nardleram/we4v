@@ -5,6 +5,8 @@
         <jet-validation-errors class="mb-4" />
 
         <form @submit.prevent="submit">
+            <input type="hidden" name="_token" :value="csrf">
+
             <div>
                 <jet-label for="name" value="Name" />
                 <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
@@ -85,7 +87,9 @@
                     email: '',
                     password: '',
                     password_confirmation: '',
+                    slug: '',
                     terms: false,
+                    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 })
             }
         },

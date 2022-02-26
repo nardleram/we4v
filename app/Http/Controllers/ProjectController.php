@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Actions\Notes\StoreNote;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Tasks\GetAdminTasks;
+use App\Actions\Teams\GetAdminTeams;
 use App\Actions\Projects\GetProjects;
 use App\Actions\Groups\GetAdminGroups;
 use App\Actions\Projects\StoreProject;
@@ -21,18 +22,21 @@ class ProjectController extends Controller
     private $storeProject;
     private $updateProject;
     private $storeNote;
+    private $getAdminTeams;
 
     public function __construct(
         GetProjects $getProjects, 
         GetAdminTasks $getAdminTasks,
+        GetAdminTeams $getAdminTeams,
         GetGroups $getGroups, 
         GetAdminGroups $getAdminGroups,
-        StoreProject $storeProject, 
+        StoreProject $storeProject,
         UpdateProject $updateProject, 
         StoreNote $storeNote)
     {
         $this->getProjects = $getProjects;
         $this->getAdminTasks = $getAdminTasks;
+        $this->getAdminTeams = $getAdminTeams;
         $this->getGroups = $getGroups;
         $this->getAdminGroups = $getAdminGroups;
         $this->storeProject = $storeProject;
@@ -48,7 +52,8 @@ class ProjectController extends Controller
                 $this->getGroups->handle(auth()->id()), 
                 $this->getAdminGroups->handle(auth()->id())
             ),
-            'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
+            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
         ]);
     }
 
@@ -58,8 +63,12 @@ class ProjectController extends Controller
 
         return redirect()->back()->with([
             'myProjects' => $this->getProjects->handle(auth()->id()),
-            'myGroups' => $this->getGroups->handle(auth()->id()),
-            'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
+            'myGroups' => array_merge(
+                $this->getGroups->handle(auth()->id()), 
+                $this->getAdminGroups->handle(auth()->id())
+            ),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
+            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Project created']]);
     }
 
@@ -73,8 +82,12 @@ class ProjectController extends Controller
 
         return redirect()->back()->with([
             'myProjects' => $this->getProjects->handle(auth()->id()),
-            'myGroups' => $this->getGroups->handle(auth()->id()),
-            'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
+            'myGroups' => array_merge(
+                $this->getGroups->handle(auth()->id()), 
+                $this->getAdminGroups->handle(auth()->id())
+            ),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
+            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Project updated']]);
     }
 }

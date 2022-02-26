@@ -44,7 +44,7 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('user-show', $page.props.authUser.username)" :active="route().current('user-show') && $page.props.authUser.id === $page.props.user.id">
+                            <jet-nav-link :href="route('user-show', $page.props.authUser.slug)" :active="route().current('user-show') && $page.props.authUser.id === $page.props.user.id">
                                 Self
                             </jet-nav-link>
                         </div>

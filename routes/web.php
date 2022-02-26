@@ -48,7 +48,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     Route::get('/users/{user}/profile', [UserController:: class, 'showProfile'])
         ->name('myprofile')->middleware(['auth']);
 
-    Route::get('/users/{user:username}/self', [UserController::class, 'show'])
+    Route::get('/users/{user:slug}/self', [UserController::class, 'show'])
         ->name('user-show')->middleware(['auth']);
 
     Route::patch('/users/{user}/update', [UserController:: class, 'update'])
@@ -105,7 +105,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
     Route::patch('/myteams/update', [TeamController::class, 'update'])
         ->name('updateTeam')->middleware(['auth']);
     
-    Route::post('/memberships/accept-reject', [MembershipRequestResponseController::class, 'store'])
+    Route::patch('/memberships/accept-reject', [MembershipRequestResponseController::class, 'update'])
         ->name('acceptRejectMembership')->middleware(['auth']);
 
     Route::get('/myprojects', [ProjectController::class, 'index'])

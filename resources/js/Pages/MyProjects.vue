@@ -42,11 +42,19 @@
                                         </div>
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign project to a group (required)<span class="text-red-600">*</span></h4>
-                                    <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign project to a group or (administrated) team (required)<span class="text-red-600">*</span></h4>
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Groups</h5>
+                                    <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between mb-2">
                                         <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
-                                            <input @click="checkIfProjectGroupSelected()" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <input @click="checkIfProjectGroupSelected()" :value="group.group_id" name="groupOrTeam" id="group" class="rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}<span v-if="group.am_admin" class="text-we4vOrange font-semibold">*</span></label>
+                                        </div>
+                                    </div>
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Teams</h5>
+                                    <div v-if="myAdminTeams" class="flex flex-wrap max-w-full justify-between">
+                                        <div v-for="(team, teamKey) in $page.props.myAdminTeams" :key="teamKey" class="min-w-1/3">
+                                            <input @click="checkIfProjectGroupSelected()" :value="team.team_id" name="groupOrTeam" id="team" class="rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
                                         </div>
                                     </div>
                                     
@@ -73,11 +81,11 @@
 
                                     <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
                                         <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ projectDescription }}</p>
-                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assigned to: </span>{{ projectGroupName }}</p>
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assigned to: </span>{{ projectGroupName ? projectGroupName : projectTeamName }}</p>
                                     </div>
 
-                                    <div v-if="projectNotes">
-                                        <Notes :notes="projectNotes" />
+                                    <div>
+                                        <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
                                     </div>
 
                                     <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
@@ -88,12 +96,21 @@
                                         <input v-model="projectInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
                                     </div>
 
-                                    <div v-if="projectTasks.length === 0">
+                                    <div v-if="projectTasks.length === 0" class="mb-3">
                                         <h4 class="text-we4vBlue font-semibold text-sm mt-4">Reassign project</h4>
+                                        <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Groups</h5>
                                         <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between">
                                             <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
-                                                <input :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
+                                                <input id="group" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio" :checked="projectGroupId === group.group_id">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                            </div>
+                                        </div>
+
+                                        <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Teams</h5>
+                                        <div v-if="myAdminTeams" class="flex flex-wrap max-w-full justify-between">
+                                            <div v-for="(team, teamKey) in $page.props.myAdminTeams" :key="teamKey" class="min-w-1/3">
+                                                <input id="team" :value="team.team_id" name="groupOrTeam" class="rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -143,9 +160,9 @@
                                         </div>
                                     </div>
 
-                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member / whole team / team member (required)<span class="text-red-600">*</span></h4>
+                                    <h4 class="text-we4vBlue font-semibold text-sm mt-4">Assign task to group member(s) / whole team / team member(s) (required)<span class="text-red-600">*</span></h4>
 
-                                    <group-team-assignment :groupData="projectGroupData" :taskableId="null" :taskableType="null" :assignee="null" :userId="null" @send-task-data="onSendTaskData"/>
+                                    <group-team-assignment :groupData="projectGroupData" :teamData="projectTeamData" :taskableId="null" :taskableType="null" :assignees="[]" :selectedTeamMembers="selectedTeamMembers" @send-task-data="onSendTaskData"/>
 
                                     <button-grey @click="submitTaskData()" id="submitForm">Assign task</button-grey>
                                 </template>
@@ -169,29 +186,28 @@
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
                                     <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
                                         <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
-                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>{{ taskAssignee }} ({{ taskRecipientType }})</p>
                                     </div>
 
-                                    <div v-if="taskNotes">
-                                        <Notes :notes="taskNotes" />
+                                    <div>
+                                        <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
                                     </div>
 
                                     <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
                                     <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
 
-                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Reassign task</h5>
+                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Change task-assignment settings</h5>
 
-                                    <group-team-assignment :groupData="taskGroupData" :taskableId="null" :taskableType="null" :assignee="taskAssignee"/>
+                                    <group-team-assignment :groupData="taskGroupData" :teamData="taskTeamData" :taskableId="taskableId" :taskableType="taskableType" :assignees="taskMembers" @send-task-data="onSendTaskData"/>
 
                                     <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
                                     <div class="w-justUnderHalf mb-4">
-                                        <input v-model="taskInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                                        <input v-model="taskInputEndDate" id="taskEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
                                     </div>
 
                                     <input :value="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="taskCompleted">
                                     <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskId }}">Task completed</label>
 
-                                    <button-grey @click="submitTaskData()">Update task</button-grey>
+                                    <button-grey @click="submitTaskData()" id="submitForm">Update task</button-grey>
                                 </template>
                             </Form>
                         </div>
@@ -213,7 +229,7 @@
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
                                     <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
                                         <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
-                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>{{ taskAssignee }} (team)</p>
+                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>(team)</p>
                                     </div>
 
                                     <div v-if="taskNotes">
@@ -280,11 +296,11 @@
                         Click a task name or its edit icon to edit a task.
                     </template>
                 </Subtitle>
-                <div v-if="myAdminTasks.length > 0" class="w-full m-0 m-auto">
+                <!-- <div v-if="myAdminTasks.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Task v-for="(task, taskKey) in myAdminTasks" :key="taskKey" :task="task" @activate-edit-admin-task-modal="onActivateEditAdminTaskModal"/>
                     </div>
-                </div>
+                </div> -->
             </div>
         </template>
     </app-layout>
@@ -333,6 +349,7 @@ export default {
     props: [
         'myProjects',
         'myAdminTasks',
+        'myAdminTeams',
         'myGroups',
         'errors'
     ],
@@ -366,6 +383,8 @@ export default {
             projectNotes,
             projectStartDate,
             projectTasks,
+            projectTeamData,
+            projectTeamName,
             showBackdrop,
             showEditAdminTaskModal,
             showEditProjectModal,
@@ -373,7 +392,6 @@ export default {
             showProjectModal,
             showTaskModal,
             taskableId,
-            taskAssignee,
             taskableType,
             taskCompleted,
             taskDescription,
@@ -386,19 +404,22 @@ export default {
             taskProjectId,
             taskRecipientType,
             taskStartDate,
-            taskUserId,
+            taskTeamData,
+            taskMembers,
             userId
         } = manageModals()
 
         const taskNoteBody = ref(null)
         const projectNoteBody = ref(null)
+        const updatedTaskMembers = ref([])
+        const error = ref(false)
+        const flashMessage = ref(false)
 
-        const onSendTaskData = function (taskData) {
+        const onSendTaskData = (taskData) => {
             checkIfTaskAssigneeSelected()
-
             taskableId.value = taskData.taskableId
             taskableType.value = taskData.taskableType
-            userId.value = taskData.userId
+            updatedTaskMembers.value = taskData.taskMemberships
         }
 
         const submitProjectData = async function () {
@@ -410,16 +431,43 @@ export default {
                 'noteable_type': 'App\\Models\\Project'
             }
             : null
+            
+            let selectedGroup = null
+            let selectedTeam = null
+            // Below only works in edit mode if input[id="team"]:checked works,
+            // when, e.g., project has no task and can therefore be reassigned.
+            if (edit.value && projectTasks.value.length === 0) {
+                if (document.querySelector('input[id="group"]:checked')) {
+                    selectedGroup = document.querySelector('input[id="group"]:checked').value
+                }
+                if (document.querySelector('input[id="team"]:checked')) {
+                    selectedTeam = document.querySelector('input[id="team"]:checked').value
+                }
+            }
+            if (!edit.value) {
+                if (document.querySelector('input[id="group"]:checked')) {
+                    selectedGroup = document.querySelector('input[id="group"]:checked').value
+                }
+                if (document.querySelector('input[id="team"]:checked')) {
+                    selectedTeam = document.querySelector('input[id="team"]:checked').value
+                }
+            }
 
-            let selectedGroup = document.querySelector('input[name="group"]:checked').value
+            if (!selectedGroup && !selectedTeam) {
+                usePage().props.value.errors = { 'Error': 'Neither group nor team selected! Project not updated.' }
+                error.value = true
+            }
+            
             let payload = {
                 'owner': usePage().props.value.authUser.id,
                 'name': projectName.value,
                 'description': projectDescription.value,
                 'start_date': projectStartDate.value,
                 'end_date': projectEndDate.value,
-                'group_id': selectedGroup,
-                'note': note
+                'group_id': selectedGroup ? selectedGroup: null,
+                'team_id': selectedTeam ? selectedTeam: null,
+                'note': note,
+                '_token': usePage().props.value.csrf_token
             }
 
             if (edit.value) {
@@ -428,12 +476,19 @@ export default {
             }
 
             try {
-                edit.value
-                ? await Inertia.patch('/myprojects/update', payload)
-                : await Inertia.post('/myprojects/store', payload)
-                props.errors = null
+                if (edit.value && !error.value) {
+                    await Inertia.patch('/myprojects/update', payload)
+                    flashMessage.value = true
+                    props.errors = null
+                }
+                if (!edit.value && !error.value) {
+                    await Inertia.post('/myprojects/store', payload)
+                    flashMessage.value = true
+                    props.errors = null
+                }
             } catch (err) {
                 props.errors = err
+                error.value = true
             }
             
             clearModal()
@@ -441,9 +496,9 @@ export default {
         }
 
         const submitTaskData = async function () {
-            let note = {}
+            let taskNote = {}
             edit.value
-            ? note = {
+            ? taskNote = {
                 'body': taskNoteBody.value,
                 'noteable_id': taskId.value,
                 'noteable_type': 'App\\Models\\Task'
@@ -460,20 +515,24 @@ export default {
                 'end_date': taskEndDate.value,
                 'taskable_id': taskableId.value,
                 'taskable_type': taskableType.value,
-                'project_id': projectId.value,
-                'user_id': userId.value,
-                'note': note
+                'membershipable_type': 'App\\Models\\Task',
+                'membershipable_id': taskId.value,
+                'project_id': taskProjectId.value,
+                'members': updatedTaskMembers.value,
+                'taskNote': taskNote,
+                'projectNote': [],
+                '_token': usePage().props.value.csrf_token
             }
             
             if (edit.value) {
                 payload.end_date = taskInputEndDate.value
-                payload.user_id = taskUserId.value
             }
             
             try {
                 edit.value
                 ? await Inertia.patch('/mytasks/update', payload)
                 : await Inertia.post('/mytasks/store', payload) 
+                flashMessage.value = true
                 props.errors = null
             } catch (err) {
                 props.errors = err
@@ -487,6 +546,19 @@ export default {
             if (amOutside.value && !amInside.value) {
                 document.body.addEventListener('click', onClickOutside, true)
             }
+        })
+
+        watch(error, () => {
+            setTimeout(() => { 
+                usePage().props.value.errors = {} 
+                error.value = false 
+            }, 2500)
+        })
+
+        watch(flashMessage, () => {
+            setTimeout(() => {
+                usePage().props.value.jetstream.flash.message = ''
+            }, 2500 )
         })
 
         return {
@@ -519,6 +591,8 @@ export default {
             projectNotes,
             projectStartDate,
             projectTasks,
+            projectTeamData,
+            projectTeamName,
             showBackdrop,
             showEditAdminTaskModal,
             showEditProjectModal,
@@ -529,7 +603,6 @@ export default {
             submitTaskData,
             taskableId,
             taskableType,
-            taskAssignee,
             taskCompleted,
             taskDescription,
             taskEndDate,
@@ -542,7 +615,8 @@ export default {
             taskProjectId,
             taskRecipientType,
             taskStartDate,
-            taskUserId,
+            taskTeamData,
+            taskMembers,
             userId
         }
     }

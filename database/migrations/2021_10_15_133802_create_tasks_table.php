@@ -21,7 +21,6 @@ class CreateTasksTable extends Migration
             $table->timestamps();
 
             $table->foreignUuid('owner')->references('id')->on('users');
-            $table->foreignUuid('user_id')->references('id')->on('users')->nullable();
             $table->foreignUuid('project_id')->references('id')->on('projects');
         });
     }

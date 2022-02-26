@@ -67,6 +67,7 @@ class CompileGroupsArray
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['admin'] = $rawGroup->admin;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['declined'] = $rawGroup->declined;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['user_id'] = $rawGroup->user_id;
+                        $groups[$groupCount]['groupMembers'][$groupMemberCount]['updated_by'] = $rawGroup->updated_by;
                         $groups[$groupCount]['groupMembers'][$groupMemberCount]['invited'] = true;
                         ++$groupMemberCount;
                     }
@@ -86,6 +87,7 @@ class CompileGroupsArray
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['admin'] = $rawGroup->admin;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['declined'] = $rawGroup->declined;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['user_id'] = $rawGroup->user_id;
+                    $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['updated_by'] = $rawGroup->updated_by;
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['path'] = $rawGroup->path ? $rawGroup->path : 'images/nobody.png';
                     $groups[$groupCount]['teams'][$teamCount]['teamMembers'][$teamMemberCount]['invited'] = true;
                     ++$teamMemberCount;

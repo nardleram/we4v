@@ -2,7 +2,7 @@
     <div class="p-1 text-right flex flex-1 items-center justify-between mb-2">
         <div class="flex items-center">
             <div>
-                <inertia-link :href="route('user-show', req.requester)" as="button">
+                <inertia-link :href="route('user-show', req.slug_requester)" as="button">
                     <img :src="'/'+req.requester_profile_photo" :alt="req.requester" 
                     class="rounded-full object-cover w-10 h-10">
                 </inertia-link>
@@ -11,7 +11,7 @@
                 <connection-dots class="h-10 w-10"/>
             </div>
             <div class="z-0 -ml-2">
-                <inertia-link :href="route('user-show', req.requestee)" as="button">
+                <inertia-link :href="route('user-show', req.slug_requestee)" as="button">
                     <img :src="'/'+req.requestee_profile_photo" :alt="req.requestee" 
                     class="rounded-full object-cover w-10 h-10">
                 </inertia-link>

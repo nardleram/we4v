@@ -9,6 +9,8 @@
         </div>
 
         <form @submit.prevent="submit">
+            <input type="hidden" name="_token" :value="csrf">
+
             <div class="mt-2">
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus />
@@ -71,7 +73,8 @@
                 form: this.$inertia.form({
                     email: '',
                     password: '',
-                    remember: false
+                    remember: false,
+                    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 })
             }
         },

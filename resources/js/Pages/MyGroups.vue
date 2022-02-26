@@ -273,7 +273,7 @@ import ModalBackdrop from './Components/ModalBackdrop'
 import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
 import manageModals from '../Pages/Composables/manageModals'
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 import FlashMessage from '../Pages/Components/FlashMessage'
@@ -349,6 +349,9 @@ export default {
             userMaySubmitForm
         } = manageModals()
 
+        const error = ref(false)
+        const flashMessage = ref(false)
+
         const submitGroupData = async function () {
             let members = []
             let role
@@ -398,8 +401,10 @@ export default {
                 edit.value
                 ? await Inertia.patch('/mygroups/update', payload)
                 : await Inertia.post('/mygroups/store', payload)
+                flashMessage.value = true
                 props.errors = null
             } catch (err) {
+                error.value = true
                 props.errors = err
             }
 
@@ -456,8 +461,10 @@ export default {
                 edit.value
                 ? await Inertia.patch('/myteams/update', payload)
                 : await Inertia.post('/myteams/store', payload)
+                flashMessage.value = true
                 props.errors = null
             } catch (err) {
+                error.value = true
                 props.errors = err
             }
 
@@ -599,6 +606,19 @@ export default {
             let elem = document.getElementById(selectedAssoc.value)
             elem.style.border = 'solid 1px rgb(220, 38, 38)'
 
+        })
+
+        watch(error, () => {
+            setTimeout(() => { 
+                usePage().props.value.errors = {} 
+                error.value = false 
+            }, 2500)
+        })
+
+        watch(flashMessage, () => {
+            setTimeout(() => {
+                usePage().props.value.jetstream.flash.message = ''
+            }, 2500 )
         })
 
         return {

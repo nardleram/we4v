@@ -21,22 +21,27 @@
         </div>
 
         <div v-if="results.length > 0" class="mt-3 bg-we4vBg p-1 rounded-md text-xs text-we4vGrey-700 max-h-80 overflow-y-scroll">
-            <h5 class="text-we4vBlue font-semibold text-sm tracking-tight mb-1">Search results</h5>
+            <h5 class="text-we4vBlue font-semibold text-sm tracking-tight mb-3">Search results</h5>
             <div v-for="(result, resultKey) in results" :key="resultKey">
-                <div class="flex flex-row flex-nowrap w-full">
-                    <div class="text-xs w-1/4 text-we4vGrey-700">{{ result.name }}</div>
-                    <div v-if="result.surname" class="w-1/4">{{ result.surname }}</div>
-                    <div v-if="result.username" class="w-1/4">{{ result.username }}</div>
-                    <div v-if="result.description" class="w-1/4">{{ result.description }}</div>
-                    <div v-if="result.geog_area" class="w-1/4">{{ result.geog_area }}</div>
+                <div class="flex flex-row flex-nowrap w-full tracking-tight hover:bg-we4vGrey-200 py-2 items-center max-h-96 overflow-y-scroll rounded-sm">
+                    <div v-if="result.description" class="w-1/3 font-medium">{{ result.name }}</div>
+                    <div v-if="result.surname" class="text-xs w-1/3 font-medium pl-1">{{ result.name }} {{ result.surname }}</div>
+                    <div v-if="result.username" class="w-1/3 italic">{{ result.username }}</div>
+                    <div v-if="result.username" class="w-1/3">
+                        <inertia-link :href="route('user-show', result.username)" as="button">
+                            <img v-if="result.path" :src="'/'+result.path" alt="" class="rounded-full w-7 h-7 object-cover ml-6">
+                            <img v-if="!result.path" :src="'/images/nobody.png'" alt="" class="rounded-full w-7 h-7 object-cover ml-6">
+                        </inertia-link>
+                    </div>
+                    <div v-if="result.geog_area" class="w-3/5 pl-1 italic">{{ result.geog_area }}</div>
                 </div>
             </div>
         </div>
 
         <div v-if="emptySetReturned" class="mt-3 bg-we4vBg p-1 rounded-md">
-            <h5 class="text-red-700 font-semibold text-sm tracking-tight mb-1">Nothing found!</h5>
+            <h5 class="text-red-700 font-semibold text-sm tracking-tight mb-3">Nothing found!</h5>
             <p class="text-xs text-we4vGrey-700">
-                Sorry. No results returned for that search.
+                Sorry. No results returned from that search string.
             </p>
         </div>
     </div>
@@ -60,6 +65,7 @@ export default {
     ],
 
     setup(props) {
+        const selectedTab = ref(null)
         const name = ref('users')
         const label = ref('search users')
         const placeholder = ref('enter search string')
@@ -84,6 +90,8 @@ export default {
         })
 
         const handleClick = (tab) => {
+            selectedTab.value = tab
+            emptySetReturned.value = false
             results.value = []
             name.value = tab
             label.value = 'search '+tab
@@ -166,6 +174,7 @@ export default {
         }
 
         return {
+            selectedTab,
             name,
             label,
             placeholder,

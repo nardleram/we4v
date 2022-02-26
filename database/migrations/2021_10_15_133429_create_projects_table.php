@@ -24,7 +24,8 @@ class CreateProjectsTable extends Migration
             $table->timestamps();
 
             $table->foreignUuid('owner')->references('id')->on('users');
-            $table->foreignUuid('group_id')->references('id')->on('groups');
+            $table->foreignUuid('group_id')->references('id')->on('groups')->nullable();
+            $table->foreignUuid('team_id')->references('id')->on('teams')->nullable();
         });
     }
 

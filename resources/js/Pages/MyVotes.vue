@@ -155,7 +155,7 @@ import ModalBackdrop from './Components/ModalBackdrop'
 import manageModals from './Composables/manageModals'
 import FlashMessage from '../Pages/Components/FlashMessage'
 import ErrorMessage from '../Pages/Components/ErrorMessage'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 
@@ -203,6 +203,8 @@ export default {
         const voteEl = ref(null)
         const voteEls = ref([])
         const voteable_type = ref(null)
+        const error = ref(false)
+        const flashMessage = ref(false)
 
         const addVoteEl = () => {
             if (!voteEls.value.includes(voteEl.value)) {
@@ -231,6 +233,7 @@ export default {
 
             try {
                 await Inertia.post('/myvotes/store', payload)
+                flashMessage.value = true
                 props.errors = null
 
                 usePage().props.value.myvotes.elements.forEach(element => {
@@ -238,6 +241,7 @@ export default {
                 })
 
             } catch (err) {
+                error.value = true
                 props.errors = err
             }
 
@@ -294,6 +298,19 @@ export default {
                 ++loop.value
             })
         }
+
+        watch(error, () => {
+            setTimeout(() => { 
+                usePage().props.value.errors = {} 
+                error.value = false 
+            }, 2500)
+        })
+
+        watch(flashMessage, () => {
+            setTimeout(() => {
+                usePage().props.value.jetstream.flash.message = ''
+            }, 2500 )
+        })
 
         addTeamMembersToGroupVoters()
         addAuthUserToVoters()

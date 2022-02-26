@@ -30,7 +30,8 @@ class UpdateProjectRequest extends FormRequest
         return [
             'owner' => 'required|uuid',
             'end_date' => 'nullable|date',
-            'group_id' => 'required|uuid',
+            'group_id' => 'nullable|uuid',
+            'team_id' => 'nullable|uuid',
             'id' => 'required|uuid'
         ];
     }

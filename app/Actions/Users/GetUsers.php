@@ -15,7 +15,7 @@ class GetUsers
                     ->where('images.format', '=', 'profile')
                     ->where('images.imageable_type', '=', 'App\Models\User');
             }) 
-            ->select('users.id as user_id', 'name', 'surname', 'username', 'images.path as path')
+            ->select('users.id as user_id', 'name', 'surname', 'username', 'slug', 'images.path as path')
             ->get();
     }
 }

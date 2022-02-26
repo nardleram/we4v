@@ -14,7 +14,7 @@ class Article extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['title', 'body', 'user_id'];
+    protected $fillable = ['title', 'slug', 'body', 'user_id'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';

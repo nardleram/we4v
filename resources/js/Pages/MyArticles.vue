@@ -1,4 +1,6 @@
 <template>
+    <flash-message></flash-message>
+    <error-message></error-message>
     <modal-backdrop :show="showBackdrop">
     </modal-backdrop>
     <app-layout>
@@ -12,6 +14,7 @@
                         This is where you share your professional acumen, be it academic, or artistic/literary, or your experise in a trade, etc. More importantly, this is where you share <span class="italic">what you are</span>, which you seek to offer the world in the interests of the world.
                     </template>
                 </Title>
+                
             </div>
         </template>
     </app-layout>
@@ -21,10 +24,13 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Title from '@/Jetstream/SectionTitle'
 import ButtonBlue from '../Jetstream/ButtonBlue'
-import FlashMessage from './Components/FlashMessage'
 import ModalBackdrop from './Components/ModalBackdrop'
 import manageModals from '../Pages/Composables/manageModals'
+import { watch, ref } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
+import { usePage } from '@inertiajs/inertia-vue3'
+import FlashMessage from '../Pages/Components/FlashMessage'
+import ErrorMessage from '../Pages/Components/ErrorMessage'
 
 export default {
     name: 'MyArticles',
@@ -34,7 +40,8 @@ export default {
         Title,
         ModalBackdrop,
         ButtonBlue,
-        FlashMessage
+        FlashMessage,
+        ErrorMessage
     },
 
     setup() {
@@ -48,7 +55,31 @@ export default {
             showBackdrop,
         } = manageModals()
 
-        return { amInside, amOutside, clearModal, nowInside, nowOutside, onClickOutside, showBackdrop }
+        const error = ref(false)
+        const flashMessage = ref(false)
+
+        watch(error, () => {
+            setTimeout(() => { 
+                usePage().props.value.errors = {} 
+                error.value = false 
+            }, 2500)
+        })
+
+        watch(flashMessage, () => {
+            setTimeout(() => {
+                usePage().props.value.jetstream.flash.message = ''
+            }, 2500 )
+        })
+
+        return { 
+            amInside, 
+            amOutside, 
+            clearModal,
+            editor,
+            nowInside, 
+            nowOutside, 
+            onClickOutside, 
+            showBackdrop }
     }
     
 }

@@ -111,7 +111,7 @@ export default {
 
         const deleteGroup = async function (id) {
             let deleteOk = true
-            if (this.group.members || this.group.teams) {
+            if (props.group.members || props.group.teams) {
                 deleteOk = false
             }
             deleteOk

@@ -101,6 +101,7 @@ class GetTalkboardPosts
                 foreach ($users as $user) {
                     if (($rawPost->comment_posted_by === $user->user_id) && ($currentCommentId !== $rawPost->comment_id)) {
                         $posts[$postCount]['comments'][$commentCount]['commented_by'] = $user->username;
+                        $posts[$postCount]['comments'][$commentCount]['slug'] = $user->slug;
                         $posts[$postCount]['comments'][$commentCount]['user_id'] = $user->user_id;
                         $user->path
                             ? $posts[$postCount]['comments'][$commentCount]['user_profile_pic'] = $user->path
@@ -118,6 +119,7 @@ class GetTalkboardPosts
                     foreach ($users as $user) {
                         if ($rawPost->posted_by === $user->user_id) {
                             $posts[$postCount]['posted_by'] = $user->username;
+                            $posts[$postCount]['slug'] = $user->slug;
                             $posts[$postCount]['user_id'] = $user->user_id;
                             $user->path
                                 ? $posts[$postCount]['user_profile_pic'] = $user->path
@@ -136,6 +138,7 @@ class GetTalkboardPosts
                 foreach ($users as $user) {
                     if ($rawPost->posted_by === $user->user_id) {
                         $posts[$postCount]['posted_by'] = $user->username;
+                        $posts[$postCount]['slug'] = $user->slug;
                         $user->path
                             ? $posts[$postCount]['user_profile_pic'] = $user->path
                             : $posts[$postCount]['user_profile_pic'] = 'images/nobody.png';

@@ -15,6 +15,8 @@
         <jet-validation-errors class="mb-4" />
 
         <form @submit.prevent="submit">
+            <input type="hidden" name="_token" :value="csrf">
+            
             <div>
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus />
@@ -52,7 +54,8 @@
         data() {
             return {
                 form: this.$inertia.form({
-                    email: ''
+                    email: '',
+                    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 })
             }
         },

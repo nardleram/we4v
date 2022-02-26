@@ -55,7 +55,7 @@ class HandleInertiaRequests extends Middleware
             ],
             
             'authUser' => fn () => $request->user()
-                ? $request->user()->only('id', 'email', 'name', 'surname', 'username')
+                ? $request->user()->only('id', 'email', 'name', 'surname', 'username', 'slug')
                 : null,
 
             'userProfileImages' => function () use($request, $myImages)
@@ -105,7 +105,7 @@ class HandleInertiaRequests extends Middleware
                         }
                         ++$loop;
                     }
-
+                    
                     return $myAssociates;
                 },
             
@@ -123,7 +123,7 @@ class HandleInertiaRequests extends Middleware
                     }
                     
                     if (count($assoc_ids) > 0) {
-                        $users = User::whereIn('id', $assoc_ids)->get(['id', 'username']);
+                        $users = User::whereIn('id', $assoc_ids)->get(['id', 'username', 'slug']);
                         
                         $profile_pics = Image::whereIn('imageable_id', $assoc_ids)
                             ->where('format', 'profile')
@@ -143,11 +143,13 @@ class HandleInertiaRequests extends Middleware
                             for ($u = 0; $u < count($users); ++$u) {
                                 if ($assocs[$a]->requested_by === $users[$u]->id) {
                                     $pending_reqs[$a]['requester'] = $users[$u]->username;
+                                    $pending_reqs[$a]['slug_requester'] = $users[$u]->slug;
                                     $pending_reqs[$a]['requested_by'] = $assocs[$a]->requested_by;
                                     $pending_reqs[$a]['id'] = $assocs[$a]->id;
                                 }
                                 if ($assocs[$a]->requested_of === $users[$u]->id) {
                                     $pending_reqs[$a]['requestee'] = $users[$u]->username;
+                                    $pending_reqs[$a]['slug_requestee'] = $users[$u]->slug;
                                     $pending_reqs[$a]['requested_of'] = $assocs[$a]->requested_of;
                                 }
                             }
@@ -253,9 +255,6 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
                             $membReqs[$membCount]['gAdmin'] = $rawGroup->g_admin;
-                            $rawGroup['g_updated'] > $rawGroup['g_created']
-                            ? $membReqs[$membCount]['updated'] = true
-                            : $membReqs[$membCount]['updated'] = false;
                             ++$membCount;
                         }
 
@@ -270,9 +269,6 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
                             $membReqs[$membCount]['tAdmin'] = $rawTeam->t_admin;
-                            $rawTeam['t_updated'] > $rawTeam['t_created']
-                            ? $membReqs[$membCount]['updated'] = true
-                            : $membReqs[$membCount]['updated'] = false;
                             ++$membCount;
                         }
                         
@@ -292,9 +288,11 @@ class HandleInertiaRequests extends Middleware
 
             'myOpenTasks' => function ()
             {
-                $membIds = Membership::getMemberships4Tasks();
+                $taskMembershipDetails = Membership::getTaskMemberships(auth()->id());
+                
+                $taskUsernameDetails = Task::getTaskUsers($taskMembershipDetails);
 
-                return Task::getOpenTasks($membIds);
+                return Membership::compileTaskMembershipDetails($taskMembershipDetails, $taskUsernameDetails);
             },
 
             'myMemberships' => function ()
