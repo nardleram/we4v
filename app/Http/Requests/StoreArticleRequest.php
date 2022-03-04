@@ -13,6 +13,10 @@ class StoreArticleRequest extends FormRequest
      */
     public function authorize()
     {
+        if (auth()->id()) {
+            return true;
+        }
+
         return false;
     }
 
@@ -24,7 +28,10 @@ class StoreArticleRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'synopsis' => 'required|string',
+            'body' => 'required|string',
+            'tags' => 'nullable|array'
         ];
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="grid gap-1 grid-cols-12 grid-rows-projectBox text-we4vBg bg-we4vGrey-800 p-2 w-full rounded shadow-md mb-1 tracking-tight">
         <div @click="$emit('activateTaskModal', project)" class="col-start-1 col-end-11 text-sm font-semibold text-we4vBlue content-center items-center cursor-pointer pt-1 max-h-16">
-            <p>{{ project.project_name }} <span class="text-we4vGrey-200 font-light text-xs italic">(assigned to <span class="font-normal">{{ project.project_group_name ? project.project_group_name : project.project_team_name }}</span>)</span></p>
+            <p class="text-we4vBlue mt-0">{{ project.project_name }} <span class="text-we4vGrey-200 font-light text-xs italic">(assigned to <span class="font-normal">{{ project.project_group_name ? project.project_group_name : project.project_team_name }}</span>)</span></p>
             <p class="text-xs font-light text-we4vGrey-200 italic my-1">{{ project.project_description }}</p>
             <p class="text-we4vGrey-300">Project timeframe: {{ project.project_start_date }} <i class="fa fa-arrow-right"></i> {{ project.project_end_date }} – 
                 <span v-if="project.project_deadline_passed" class="text-red-600 font-semibold uppercase">Deadline passed</span>

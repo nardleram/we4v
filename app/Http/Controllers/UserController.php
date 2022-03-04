@@ -58,7 +58,7 @@ class UserController extends Controller
 
         $user = $this->getUserImages->handle($user);
 
-        return Inertia::render('Show', [
+        return Inertia::render('UserShow', [
             'posts' => $posts,
             'posts_status' => 'success',
             'user' => $user,

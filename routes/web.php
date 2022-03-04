@@ -43,92 +43,102 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/talkboard', function () {
     return Inertia::render('Talkboard');
 })->name('home');
 
-Route::group(['middleware' => config('fortify.middleware', ['web'])], function () {
+// Route::group(['middleware' => config('fortify.middleware', ['web'])], function () {
+Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::get('/users/{user}/profile', [UserController:: class, 'showProfile'])
-        ->name('myprofile')->middleware(['auth']);
+        ->name('myprofile');
 
     Route::get('/users/{user:slug}/self', [UserController::class, 'show'])
-        ->name('user-show')->middleware(['auth']);
+        ->name('user-show');
 
     Route::patch('/users/{user}/update', [UserController:: class, 'update'])
-        ->name('updateProfile')->middleware(['auth']);
+        ->name('updateProfile');
     
     Route::patch('/users/{user}/updatePassword', [UserController:: class, 'updatePassword'])
-        ->name('updatePassword')->middleware(['auth']);
+        ->name('updatePassword');
     
     Route::post('/users/search', [UserController:: class, 'search'])
-        ->name('searchUsers')->middleware((['auth']));
+        ->name('searchUsers');
 
     Route::post('/images/store', [ImagesController::class, 'store'])
-        ->name('storeImage')->middleware(['auth']);
+        ->name('storeImage');
 
     Route::get('myarticles', [ArticleController::class, 'index'])
-        ->name('myarticles')->middleware(['auth']);
+        ->name('myarticles');
+
+    Route::post('/articles/store', [ArticleController::class, 'store'])
+        ->name('storeArticle');
+
+    Route::get('/articles/{article:slug}/show', [ArticleController::class, 'show'])
+        ->name('article-show');
     
     Route::post('/approvals/store', [ApprovalController::class, 'store'])
-        ->name('storeApproval')->middleware(['auth']);
+        ->name('storeApproval');
     
     Route::post('/comments/store', [CommentController::class, 'store'])
-        ->name('storeComment')->middleware(['auth']);
+        ->name('storeComment');
 
     Route::get('talkboard', [PostController::class, 'index'])
-        ->name('talkboard')->middleware(['auth']);
+        ->name('talkboard');
     
     Route::post('/posts/store', [PostController::class, 'store'])
-        ->name('storePost')->middleware(['auth']);
+        ->name('storePost');
 
     Route::post('/associate-request', [AssociateRequestController::class, 'store'])
-        ->name('assocReq')->middleware(['auth']);
+        ->name('assocReq');
     
     Route::post('/associate-request-response', [AssociateRequestResponseController::class, 'update'])
-        ->name('assocReqRes')->middleware(['auth']);
+        ->name('assocReqRes');
 
     Route::get('/mygroups', [GroupController::class, 'index'])
-        ->name('mygroups')->middleware(['auth']);
+        ->name('mygroups');
     
     Route::post('/mygroups/store', [GroupController::class, 'store'])
-        ->name('storeGroup')->middleware(['auth']);
+        ->name('storeGroup');
     
     Route::patch('/mygroups/update', [GroupController::class, 'update'])
-        ->name('updateGroup')->middleware(['auth']);
+        ->name('updateGroup');
         
     Route::delete('/mygroups/{group}/destroy', [GroupController::class, 'destroy'])
-        ->name('deleteGroup')->middleware(['auth']);
+        ->name('deleteGroup');
     
     Route::post('/groups/search', [GroupController:: class, 'search'])
-        ->name('searchGroups')->middleware((['auth']));
+        ->name('searchGroups');
 
     Route::post('/myteams/store', [TeamController::class, 'store'])
-        ->name('storeTeam')->middleware(['auth']);
+        ->name('storeTeam');
         
     Route::patch('/myteams/update', [TeamController::class, 'update'])
-        ->name('updateTeam')->middleware(['auth']);
+        ->name('updateTeam');
     
     Route::patch('/memberships/accept-reject', [MembershipRequestResponseController::class, 'update'])
-        ->name('acceptRejectMembership')->middleware(['auth']);
+        ->name('acceptRejectMembership');
 
     Route::get('/myprojects', [ProjectController::class, 'index'])
-        ->name('myprojects')->middleware(['auth']);
+        ->name('myprojects');
 
     Route::post('/myprojects/store', [ProjectController::class, 'store'])
-        ->name('storeProject')->middleware(['auth']);
+        ->name('storeProject');
         
     Route::patch('/myprojects/update', [ProjectController::class, 'update'])
-        ->name('updateProject')->middleware(['auth']);
+        ->name('updateProject');
 
     Route::post('/mytasks/store', [TaskController::class, 'store'])
-        ->name('storeTask')->middleware(['auth']);
+        ->name('storeTask');
     
     Route::patch('/mytasks/update', [TaskController::class, 'update'])
-        ->name('updateTask')->middleware(['auth']);
+        ->name('updateTask');
 
     Route::get('/myvotes', [VoteController::class, 'index'])
-        ->name('myvotes')->middleware(['auth']);
+        ->name('myvotes');
 
     Route::post('/myvotes/store', [VoteController::class, 'store'])
-        ->name('storeVote')->middleware(['auth']);
+        ->name('storeVote');
 
     Route::post('/cast-vote/store', [CastVoteController::class, 'store'])
-        ->name('castVote')->middleware(['auth']);
+        ->name('castVote');
+
+    Route::get('myarticlez', [ArticleController::class, 'indexx'])
+        ->name('myarticlez');
 });

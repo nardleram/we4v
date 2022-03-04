@@ -1,7 +1,7 @@
 <template>
     <div class="grid gap-1 grid-cols-12 grid-rows-groupBox text-we4vBg bg-we4vGrey-800 p-2 w-full rounded shadow-md mb-1 tracking-tight">
         <div @click="$emit('activateTeamModal', group)" class="col-start-1 col-end-11 text-sm font-semibold text-we4vBlue content-center items-center cursor-pointer pt-1 max-h-10">
-            <p>{{ group.group_name }} <span v-if="group.geog_area" class="text-we4vGrey-200 font-light text-xs italic">({{ group.geog_area }})</span> <span v-if="group.group_owner" class="text-we4vGrey-200 font-light text-xs italic"> – Owner: {{ owner }}</span></p>
+            <p class="text-we4vBlue mt-0">{{ group.group_name }} <span v-if="group.geog_area" class="text-we4vGrey-200 font-light text-xs italic">({{ group.geog_area }})</span> <span v-if="group.group_owner" class="text-we4vGrey-200 font-light text-xs italic"> – Owner: {{ owner }}</span></p>
             <p class="text-xs font-light text-we4vGrey-200 italic mt-1">{{ group.group_description }}</p>
         </div>
         <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-around p-0 content-center items-center max-h-10">

@@ -8,15 +8,15 @@
             </div>
             <div class="text-we4vBlue w-full font-semibold text-sm flex items-center justify-between">
                 <div>
-                    <p>{{ post.posted_by }}, {{ post.created_at }}</p>
+                    <p class="text-we4vBlue">{{ post.posted_by }}, {{ post.created_at }}</p>
                 </div>
                 <div>
-                    <p class="text-xs">{{ post.num_approvals }} approvals, {{ post.num_comments }} comments</p>
+                    <p class="text-we4vBlue text-xs">{{ post.num_approvals }} approvals, {{ post.num_comments }} comments</p>
                 </div>
             </div>
         </div>
         <div>
-            <p class="tracking-tight text-we4vPost">{{ post.body }}</p>
+            <p class="tracking-tight text-we4vPost text-we4vGrey-700">{{ post.body }}</p>
         </div>
         <div class="w-full mt-2" v-if="post.image">
             <img :src="'/'+post.image" alt="" class="object-cover mx-auto">
@@ -54,7 +54,7 @@
                             </inertia-link>
                         </div>
                         <div class="mb-3 w-11/12">
-                            <p class="-mb-1 text-we4vComment">{{ comment.body }}</p>
+                            <p class="-mb-1 text-we4vComment text-we4vGrey-700">{{ comment.body }}</p>
                             <small class="text-gray-400 tracking-tight text-xs">{{ comment.commented_by }}, {{ comment.commented_at }}</small>
                         </div>
                     </div>

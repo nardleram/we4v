@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Tag;
 use App\Traits\Uuids;
+use Mews\Purifier\Casts\CleanHtml;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,10 +15,15 @@ class Article extends Model
     use SoftDeletes;
     use Uuids;
 
-    protected $fillable = ['title', 'slug', 'body', 'user_id'];
+    protected $fillable = ['title', 'slug', 'body', 'user_id', 'synopsis'];
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+
+    protected $casts = [
+        'body' => CleanHtml::class
+    ];
+
 
     public function comments() 
     {
