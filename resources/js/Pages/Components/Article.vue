@@ -1,8 +1,7 @@
 <template>
-    <div class="mb-2">
-        <h4 class="text-sm font-semibold text-we4vGrey-600">{{ article.title }}</h4>
-        <p>{{ article.synopsis }}</p>
-        <jet-nav-link :href="route('article-show', article.slug)"><h3>Read article</h3></jet-nav-link>
+    <div class="mb-1 flex flex-nowrap flex-row w-full">
+        <jet-nav-link :href="route('article-show', article.slug)" class="w-3/12"><h4 class="text-sm font-semibold text-we4vDarkBlue hover:underline">{{ article.title }}</h4></jet-nav-link>
+        <p class="w-9/12 text-we4vGrey-500">{{ article.synopsis }}</p>
     </div>
 </template>
 

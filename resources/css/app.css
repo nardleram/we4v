@@ -13,7 +13,7 @@
     h2 {
         @apply text-xl;
         @apply text-we4vGrey-800;
-        @apply tracking-tight;
+        @apply tracking-tighter;
         @apply mb-4;
         @apply mt-2;
         @apply font-semibold;

@@ -30,8 +30,10 @@ class CommentRequest extends FormRequest
         return [
             'body' => 'required|string',
             'commentable_id' => 'required|uuid',
-            'commentable_type' => 'required|string|max:60',
-            'user_id' => 'required|uuid',
+            'commentable_type' => 'required|string|max:30',
+            'parent_id' => 'nullable|uuid',
+            'parent_type' => 'nullable|string|max:30',
+            'indent_level' => 'nullable|digits:1'
         ];
     }
 }

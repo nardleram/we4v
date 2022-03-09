@@ -16,10 +16,13 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('body');
-            $table->foreignUuid('user_id')->references('id')->on('users');
             $table->string('commentable_type');
             $table->uuid('commentable_id');
+            $table->uuid('parent_id')->nullable();
+            $table->integer('indent_class')->default(0);
             $table->timestamps();
+
+            $table->foreignUuid('user_id')->references('id')->on('users');
         });
     }
 

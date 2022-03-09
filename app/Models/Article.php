@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Tag;
 use App\Traits\Uuids;
+use DateTimeInterface;
 use Mews\Purifier\Casts\CleanHtml;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,7 +25,11 @@ class Article extends Model
         'body' => CleanHtml::class
     ];
 
-
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('D j M Y, h:m');
+    }
+    
     public function comments() 
     {
         return $this->morphMany(Comment::class, 'commentable');
@@ -37,7 +42,7 @@ class Article extends Model
 
     public function approvals()
     {
-        return $this->morphMany(Approval::class, 'approvalable');
+        return $this->morphMany(Approval::class, 'approvable');
     }
 
     public function tags()

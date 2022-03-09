@@ -74,6 +74,8 @@
                                         </div>
                                     </div>
 
+                                    <!-- Add input field for tags -->
+
                                     <button-grey @click="submitGroupData()" :type="submit" id="submitForm">
                                         <p v-if="!edit">Save group, send invites</p>
                                         <p v-else>Update group (send invites)</p>

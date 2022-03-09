@@ -87,8 +87,8 @@
                 this.$inertia.post('/approvals/store', {
                     'id': id,
                     'model': 'App\\Models\\Post'
-                });
-                if (this.post.user_likes_post) {
+                })
+                if (this.post.user_likes_post) { // User is therefore disapproving
                     this.post.user_likes_post = false;
                     --this.post.num_approvals;
                 } else {
@@ -102,7 +102,7 @@
                     'body': comment,
                     'commentable_id': post_id,
                     'commentable_type': 'App\\Models\\Post',
-                    'user_id': this.$page.props.authUser.id,
+                    'parent_id': null,
                 });
             },
         },

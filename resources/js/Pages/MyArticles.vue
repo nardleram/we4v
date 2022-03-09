@@ -43,7 +43,7 @@
 
                         <Menubar v-if="editor" :editor="editor"/>
 
-                        <editor-content id="editorDiv" :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2 focus: "/>
+                        <editor-content id="editorDiv" :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2"/>
 
                         <button-blue @click="submitArticle">Save article</button-blue>
                     </template>

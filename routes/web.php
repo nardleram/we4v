@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/articles/store', [ArticleController::class, 'store'])
         ->name('storeArticle');
 
-    Route::get('/articles/{article:slug}/show', [ArticleController::class, 'show'])
+    Route::get('/articles/{article:slug}', [ArticleController::class, 'show'])
         ->name('article-show');
     
     Route::post('/approvals/store', [ApprovalController::class, 'store'])
