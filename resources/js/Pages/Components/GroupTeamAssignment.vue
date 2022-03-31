@@ -17,7 +17,7 @@
         <div v-if="groupData[0].teams" class="w-full m-0 tracking-tight">
             <div v-for="(team, teamKey) in groupData[0].teams" :key="teamKey" class="grid gap-1 grid-cols-12 mt-2">
                 <div class="row-span-1 row-end-1 col-start-1 col-end-3">
-                    <h4 class="text-xs font-medium text-we4vBlue">Teams (from my groups)</h4>
+                    <h4 class="text-xs font-medium text-we4vBlue m-0 p-0">Teams (from my groups)</h4>
                 </div>
                 <div class="row-span-1 row-end-1 col-start-4 col-end-12">
                     <h4 class="text-xs font-medium text-we4vBlue m-0 p-0">Team members</h4>
@@ -44,7 +44,7 @@
     <div v-if="teamData[0]" class="w-full m-0 tracking-tight">
         <div v-for="(team, teamKey) in teamData" :key="teamKey" class="grid gap-1 grid-cols-12 mt-2 max-h-32 overflow-y-scroll">
             <div class="row-span-1 row-end-1 col-start-1 col-end-3">
-                <h4 class="text-xs font-medium text-we4vBlue">Teams<span class="text-we4vOrange font-bold">*</span></h4>
+                <h4 class="text-xs font-medium text-we4vBlue m-0 p-0">Teams<span class="text-we4vOrange font-bold">*</span></h4>
             </div>
             <div class="row-span-1 row-end-1 col-start-4 col-end-12">
                 <h4 class="text-xs font-medium text-we4vBlue m-0 p-0">Team members</h4>

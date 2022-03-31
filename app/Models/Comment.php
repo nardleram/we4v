@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuids;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Comment extends Model
 {
@@ -13,6 +14,7 @@ class Comment extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+    protected $casts = ['body' => CleanHtml::class];
 
     public function user()
     {

@@ -10,7 +10,7 @@
                     <!-- Logo -->
                     <div class="w-1/4 flex">
                         <div class="flex-shrink-0 flex items-center">
-                            <inertia-link :href="route('talkboard')">
+                            <inertia-link :href="route('about')">
                                 <jet-application-mark class="block h-9 w-auto" />
                             </inertia-link>
                         </div>

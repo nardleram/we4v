@@ -3,8 +3,10 @@ import { usePage } from '@inertiajs/inertia-vue3'
 
 const amInside = ref(false)
 const amOutside = ref(false)
+const assocCheckboxesAccountedFor = ref(false)
 const edit = ref(false)
 const geogArea = ref(null)
+const greyButtonEnabled = ref(false)
 const gAdmin = ref(false)
 const groupAdmins = ref([])
 const groupId = ref(null)
@@ -16,8 +18,14 @@ const groupName = ref(null)
 const groupOwner = ref(null)
 const groupRole = ref(null)
 const groupRequester = ref(null)
+const groupsNotInNetwork = ref([])
 const inviteData = ref([])
 const mode = ref(null)
+const networkId = ref(null)
+const networkDescription = ref(null)
+const networkGroups = ref([])
+const networkName = ref(null)
+const networkOwner = ref(null)
 const projectCompleted = ref(false)
 const projectDescription = ref(null)
 const projectGroupData = ref([])
@@ -34,7 +42,7 @@ const projectStartDate = ref(null)
 const projectEndDate = ref(null)
 const projectInputEndDate = ref(null)
 const roleFieldsAccountedFor = ref(false)
-const selectedAssoc = ref(null)
+const selectedAssoc = ref(false)
 const selectedGroupAssociates = ref([])
 const selectedTeamAssociates = ref([])
 const selectedTeamMembers = ref([])
@@ -42,15 +50,20 @@ const showBackdrop = ref(false)
 const showGroupModal = ref(false)
 const showInviteModal = ref(false)
 const showEditAdminTaskModal = ref(false)
+const showEditNetworkModal = ref(false)
 const showEditProjectModal = ref(false)
 const showEditTaskModal = ref(false)
 const showEditTeamModal = ref(false)
 const showEditVoteModal = ref(false)
+const showGroup = ref(false)
+const showNetworkInviteModal = ref(false)
 const showNetworkModal = ref(false)
 const showPendingVoteModal = ref(false)
 const showProjectModal = ref(false)
 const showTaskModal = ref(false)
 const showTeamModal = ref(false)
+const showTransferGroupModal = ref(false)
+const showTransferNetworkModal = ref(false)
 const showUserTaskModal = ref(false)
 const showVoteModal = ref(false)
 const tAdmin = ref(false)
@@ -95,6 +108,16 @@ const voteId = ref(null)
 const voteOwner = ref(null)
 const voteTitle = ref(null)
 
+const activateShowGroupModal = (group) => {
+    showBackdrop.value = false
+    groupId.value = group.id
+    groupName.value = group.name
+    groupDescription.value = group.description
+    geogArea.value = group.geog_area
+    groupOwner.value = group.owner
+    showBackdrop.value = true
+}
+
 const activateUserTaskModal = (task) => {
     taskableId.value = task.taskable_id
     taskableType.value = task.taskable_type
@@ -124,6 +147,55 @@ const checkIfProjectGroupSelected = () => {
     checkIfUserMaySubmit('project')
 }
 
+const checkIfRoleInputFieldsFilled = (user_id_role) => {
+    let myAssocVals
+    let myRoleVals
+    let emptyField = false
+    let fullFieldError = false
+    edit.value
+    ? myAssocVals = document.querySelectorAll('input.invitedAssocsEdit')
+    : myAssocVals = document.querySelectorAll('input.invitedAssocs')
+
+    for (const myVal of myAssocVals) {
+        if (myVal.checked) {
+            let elem = document.getElementById(myVal.value)
+            if (!elem.value) {
+                emptyField = true
+            } else {
+                elem.style.border = 'solid 1px rgb(81, 168, 186)'
+            }
+        }
+    }
+
+    edit.value
+    ? myRoleVals = document.querySelectorAll('input.assocRolesEdit')
+    : myRoleVals = document.querySelectorAll('input.assocRoles')
+    for (const myVal of myRoleVals) {
+        if (myVal.value) {
+            let elem = document.getElementById('checkbox_'+user_id_role)
+            !elem.checked
+            ? fullFieldError = true
+            : null
+        }
+    }
+
+    emptyField
+    ? roleFieldsAccountedFor.value = false
+    : roleFieldsAccountedFor.value = true
+
+    fullFieldError
+    ? assocCheckboxesAccountedFor.value = false
+    : assocCheckboxesAccountedFor.value = true
+
+    console.log('after checking values of role fields and checkboxes, we have roleFieldsAccountedFor : '+roleFieldsAccountedFor.value+', and assocCheckboxesAccountedFor: '+assocCheckboxesAccountedFor.value)
+
+    // if (mode.value === 'team') {
+    //     numFieldsFilled > 0 ? roleFieldsAccountedFor.value = true : roleFieldsAccountedFor.value = false
+    // }
+
+    checkIfUserMaySubmit(mode.value)
+}
+
 const checkIfTaskAssigneeSelected = () => {
     let myVals = document.querySelectorAll('input.selectedMembers')
     
@@ -134,37 +206,6 @@ const checkIfTaskAssigneeSelected = () => {
     })
 
     checkIfUserMaySubmit('task')
-}
-
-const checkIfRoleInputFieldsFilled = () => {
-    let myVals
-    let emptyField = false
-    let numFieldsFilled = 0
-    edit.value
-    ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
-    : myVals = document.querySelectorAll('input.invitedAssocs')
-
-    for (const myVal of myVals) {
-        if (myVal.checked) {
-            let elem = document.getElementById(myVal.value)
-            if (!elem.value) {
-                emptyField = true
-            } else {
-                elem.style.border = 'solid 1px rgb(110, 108, 108)'
-                numFieldsFilled++
-            }
-        }
-    }
-
-    emptyField
-    ? roleFieldsAccountedFor.value = false
-    : roleFieldsAccountedFor.value = true
-
-    if (mode.value === 'team') {
-        numFieldsFilled > 0 ? roleFieldsAccountedFor.value = true : roleFieldsAccountedFor.value = false
-    }
-
-    checkIfUserMaySubmit(mode.value)
 }
 
 const checkIfUserMaySubmit = (mode) => {
@@ -242,6 +283,10 @@ const checkIfUserMaySubmit = (mode) => {
             name && description
             ? requiredFormFields = true
             : requiredFormFields = false
+
+            !edit.value && mode === 'group'
+            ? assocCheckboxesAccountedFor.value = true 
+            : null
         }
 
         if (mode === 'project' || mode === 'task') {
@@ -268,20 +313,12 @@ const checkIfUserMaySubmit = (mode) => {
             : roleFieldsAccountedFor.value = true
         }
         
-        if ((requiredFormFields && roleFieldsAccountedFor.value) || 
+        if ((requiredFormFields && assocCheckboxesAccountedFor.value && roleFieldsAccountedFor.value) || 
             (requiredFormFields && projectGroupSelected.value) ||
             (requiredFormFields && taskAssigneeSelected.value)) {
-            document.getElementById("submitForm").disabled = false
-            document.getElementById("submitForm").classList.remove('text-we4vGrey-200')
-            document.getElementById("submitForm").classList.add('text-we4vGrey-600')
-            document.getElementById("submitForm").classList.add('hover:bg-we4vGrey-100')
-            document.getElementById("submitForm").classList.add('cursor-pointer')
+            greyButtonEnabled.value = true
         } else {
-            document.getElementById("submitForm").disabled = true
-            document.getElementById("submitForm").classList.remove('text-we4vGrey-600')
-            document.getElementById("submitForm").classList.remove('hover:bg-we4vGrey-100')
-            document.getElementById("submitForm").classList.add('text-we4vGrey-200')
-            document.getElementById("submitForm").classList.add('cursor-default')
+            greyButtonEnabled.value = false
         }
     }, 50)
 }
@@ -291,6 +328,7 @@ const clearModal = () => {
     amOutside.value = false
     edit.value = false
     gAdmin.value = false
+    greyButtonEnabled.value = false
     geogArea.value = null
     groupAdmins.value = []
     groupDescription.value = null
@@ -301,6 +339,11 @@ const clearModal = () => {
     groupName.value = null
     groupRequester.value = null
     groupRole.value = null
+    networkId.value = null
+    networkDescription.value = null
+    networkGroups.value = []
+    networkName.value = null
+    networkOwner.value = null
     projectCompleted.value = false
     projectDescription.value = null
     projectEndDate.value = null
@@ -346,7 +389,13 @@ const clearModal = () => {
     showEditTaskModal.value = false
     showEditTeamModal.value = false
     showEditVoteModal.value = false
+    showGroup.value = false
     showGroupModal.value = false
+    showNetworkModal.value = false
+    showNetworkInviteModal.value = false
+    showEditNetworkModal.value = false
+    showTransferGroupModal.value = false
+    showTransferNetworkModal.value = false
     showProjectModal.value = false
     showTaskModal.value = false
     showTeamModal.value = false
@@ -400,6 +449,25 @@ const hydrateInviteModal = (req) => {
     showInviteModal.value = true
 }
 
+const hydrateNetworkInviteModal = (req) => {
+    clearModal()
+
+    amOutside.value = true
+    type.value = req.type
+    inviteData.value.push(req)
+
+    networkId.value = req.networkId
+    networkName.value = req.networkName
+    networkDescription.value = req.networkDescription
+    networkOwner.value = req.username
+    groupName.value = req.groupName
+    groupId.value = req.groupId
+    groupDescription.value = req.groupDescription
+
+    showBackdrop.value = true
+    showNetworkInviteModal.value = true
+}
+
 const nowOutside = () => {
     amOutside.value = true
     amInside.value = false
@@ -411,18 +479,42 @@ const nowInside = () => {
 }
 
 const onActivateEditGroupModal = (group) => {
+    edit.value = true
+    checkIfUserMaySubmit('group')
+
     groupMembersEdit.value = [] // Very sticky clingy critter; force emptying here
     groupId.value = group.group_id
     groupName.value = group.group_name
     groupDescription.value = group.group_description
     geogArea.value = group.geog_area
     groupMembers.value = group.groupMembers ? group.groupMembers : []
-    edit.value = true
     showBackdrop.value = true
     showGroupModal.value = true
 }
 
+const onActivateEditNetworkModal = (network) => {
+    edit.value = true
+
+    usePage().props.value.myGroups.forEach(group => {
+        if (!groupsNotInNetwork.value.some(filteredGroup => filteredGroup.group_id === group.group_id)) {
+            if (!network.groups.some(nGroup => nGroup.group_id === group.group_id))
+            groupsNotInNetwork.value.push(group)
+        }
+    })
+
+    networkId.value = network.network_id
+    networkName.value = network.network_name
+    networkDescription.value = network.network_description
+    networkGroups.value = network.groups ? network.groups : []
+
+    showBackdrop.value = true
+    showEditNetworkModal.value = true
+}
+
 const onActivateEditProjectModal = (project) => {
+    edit.value = true
+    checkIfUserMaySubmit('project')
+
     projectCompleted.value = project.project_completed
     projectDescription.value = project.project_description
     projectId.value = project.project_id
@@ -435,12 +527,17 @@ const onActivateEditProjectModal = (project) => {
     projectEndDate.value = project.project_end_date
     projectInputEndDate.value = project.project_input_end_date
     projectStartDate.value = project.project_start_date
+
     showBackdrop.value = true
     showEditProjectModal.value = true
-    edit.value = true
 }
 
 const onActivateEditAdminTaskModal = (task) => {
+    edit.value = true
+    mode.value = 'task'
+
+    checkIfUserMaySubmit('task')
+
     taskCompleted.value = task.task_completed
     taskId.value = task.task_id
     taskProjectId.value = task.project_id
@@ -455,13 +552,17 @@ const onActivateEditAdminTaskModal = (task) => {
     taskableId.value = task.team_id
     taskableType.value = 'App\\Models\\Team'
     taskMembers.value = task.selected_team_members
-    edit.value = true
+
     showBackdrop.value = true
     showEditAdminTaskModal.value = true
-    mode.value = 'task'
 }
 
 const onActivateEditTaskModal = (task) => {
+    edit.value = true
+    mode.value = 'task'
+
+    checkIfUserMaySubmit('task')
+
     usePage().props.value.myGroups.forEach(mygroup => {
         if (mygroup.group_id === task.project_group_id) {
             taskGroupData.value.push(mygroup)
@@ -502,14 +603,16 @@ const onActivateEditTaskModal = (task) => {
             })
         }) 
     }
-    edit.value = true
+    
     showBackdrop.value = true
     showEditTaskModal.value = true
-    mode.value = 'task'
 }
 
 const onActivateEditTeamModal = (team) => {
     clearModal()
+    edit.value = true
+
+    checkIfUserMaySubmit('team')
 
     groupId.value = team.group_id
     teamId.value = team.team_id
@@ -517,18 +620,19 @@ const onActivateEditTeamModal = (team) => {
     teamFunction.value = team.team_function
     teamOwner.value = team.team_owner
     teamMembers.value = team.teamMembers
-    edit.value = true
     showBackdrop.value = true
     showEditTeamModal.value = true
 }
 
 const onActivateEditVoteModal = (vote) => {
+    edit.value = true
+
     voteTitle.value = vote.vote_title
     voteId.value = vote.vote_id
     voteInputClosingDate.value = vote.input_closing_date
+
     showBackdrop.value = true
     showEditVoteModal.value = true
-    edit.value = true
 }
 
 const onActivatePendingVoteModal = (vote) => {
@@ -574,6 +678,20 @@ const onActivateTeamModal = (group) => {
     mode.value = 'team'
 }
 
+const onActivateTransferGroupOwnership = (group) => {
+    groupId.value = group.group_id
+    groupName.value = group.group_name
+    showBackdrop.value = true
+    showTransferGroupModal.value = true
+}
+
+const onActivateTransferNetworkOwnership = (network) => {
+    networkId.value = network.network_id
+    networkName.value = network.network_name
+    showBackdrop.value = true
+    showTransferNetworkModal.value = true
+}
+
 const onClickOutside = () => {
     if (amOutside.value && !amInside.value) {
         clearModal()
@@ -584,6 +702,7 @@ const onClickOutside = () => {
 
 const manageModals = () => {
     return {
+        activateShowGroupModal,
         activateUserTaskModal,
         amOutside, 
         amInside,
@@ -594,8 +713,9 @@ const manageModals = () => {
         clearModal,
         edit,
         gAdmin,
-        groupAdmins,
         geogArea,
+        greyButtonEnabled,
+        groupAdmins,
         groupDescription,
         groupId,
         groupMemberRoles,
@@ -605,13 +725,21 @@ const manageModals = () => {
         groupOwner,
         groupRequester,
         groupRole,
+        groupsNotInNetwork,
         hydrateInviteModal,
+        hydrateNetworkInviteModal,
         inviteData,
         mode,
+        networkDescription,
+        networkId,
+        networkGroups,
+        networkName,
+        networkOwner,
         nowInside, 
         nowOutside,
         onActivateEditAdminTaskModal,
         onActivateEditGroupModal,
+        onActivateEditNetworkModal,
         onActivateEditProjectModal,
         onActivateEditTaskModal,
         onActivateEditTeamModal,
@@ -619,6 +747,8 @@ const manageModals = () => {
         onActivatePendingVoteModal,
         onActivateTaskModal, 
         onActivateTeamModal,
+        onActivateTransferGroupOwnership,
+        onActivateTransferNetworkOwnership,
         onClickOutside,
         projectCompleted,
         projectDescription,
@@ -640,17 +770,22 @@ const manageModals = () => {
         selectedTeamMembers,
         showBackdrop,
         showEditAdminTaskModal,
+        showEditNetworkModal,
         showEditProjectModal,
         showEditTaskModal,
         showEditTeamModal,
         showEditVoteModal,
+        showGroup,
         showGroupModal,
         showInviteModal,
+        showNetworkInviteModal,
         showNetworkModal,
         showPendingVoteModal,
         showProjectModal,
         showTaskModal,
         showTeamModal,
+        showTransferGroupModal,
+        showTransferNetworkModal,
         showUserTaskModal,
         showVoteModal,
         tAdmin,

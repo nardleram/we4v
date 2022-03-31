@@ -2,7 +2,7 @@
     <modal-backdrop :show="showBackdrop"></modal-backdrop>
     <app-layout>
         <template #centre>
-            <div class="w-1/2 p-3 max-h-screen overflow-x-hidden">
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <NewPost v-on:UpdatePosts="addPost($event)" />
                 <p v-if="posts_status != 'success'">Retrieving posts...</p>
                 <Post v-else v-for="(post, postKey) in posts" :key="postKey" :post="post" />

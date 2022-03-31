@@ -32,6 +32,12 @@ module.exports = {
                 we4vBlue: '#51A8BA',
                 we4vDarkBlue: '#33838E',
                 we4vModalBg: 'rgba(0,0,0,0.75)',
+                blue: {
+                    '500': '#51A8BA',
+                    '600': '#51A8BA',
+                    '700': '#33838E',
+                    '800': '#51A8BA',
+                },
                 we4vGrey: {
                     100: '#f7f7f4',
                     200: '#e3e2e2',
@@ -54,10 +60,16 @@ module.exports = {
                 'justUnderHalf': '49%',
                 'searchTabWidth': '23.5%',
             },
+            height: {
+                'max': 'max-content',
+                'fit': 'fit-content',
+                'backdrop': '100rem'
+            },
             maxHeight: {
                 '600': '600px',
             },
             minHeight: {
+                'menu-button': '30px',
                 '24': '96px',
                 '72': '288px',
             },
@@ -90,6 +102,10 @@ module.exports = {
                 'indent-8': '0 0 0 16rem',
                 'indent-9': '0 0 0 18rem',
                 'indent-10': '0 0 0 20rem',
+            },
+            margin: {
+                '1/4': '25%',
+                'tiny': '2px'
             },
             animation: {
                 'spin': 'spin 2s linear infinite'

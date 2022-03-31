@@ -19,6 +19,7 @@ class Membership extends Model
     protected $fillable = [
         'membershipable_id', 
         'membershipable_type', 
+        'created_at',
         'user_id', 
         'group_id', 
         'role', 
@@ -49,7 +50,6 @@ class Membership extends Model
     public static function getMemberships4Votes() : array
     {
         // Votes assigned to groups must also send invites to the associates in that group's teams.
-
         $ids = [];
 
         if (auth()->id()) {
@@ -218,43 +218,45 @@ class Membership extends Model
 
     public static function getUserMemberships($userId) : array
     {
-        $rawMemberships = DB::select("SELECT Me.id as membership_id,
-            Me.membershipable_type as membership_type,
-            Me.role as membership_role,
-            Me.is_admin as is_admin,
-            Gr.id as group_id,
-            Gr.name as group_name,
-            Te.name as team_name,
-            Te.id as team_id,
-            Us1.username as group_owner,
-            Us2.username as team_owner
-        FROM memberships Me
-        LEFT OUTER JOIN groups Gr
-        ON Gr.id = Me.membershipable_id
-        LEFT OUTER JOIN teams Te
-        ON Te.id = Me.membershipable_id
-        LEFT OUTER JOIN users Us1
-        ON Gr.owner = Us1.id
-        LEFT OUTER JOIN users Us2
-        ON Te.owner = Us2.id
-        WHERE Me.user_id = '$userId'
-        AND Me.confirmed = true
-        ");
+        $rawMemberships = Membership::where('memberships.user_id', $userId)
+            ->where('memberships.confirmed', true)
+            ->leftJoin('groups', function ($join) {
+                $join->on('groups.id', '=', 'memberships.membershipable_id');
+            })
+            ->leftJoin('teams', function ($join) {
+                $join->on('teams.id', '=', 'memberships.membershipable_id');
+            })
+            ->leftJoin('users AS Us1', function ($join) {
+                $join->on('Us1.id', '=', 'groups.owner');
+            })
+            ->leftJoin('users AS Us2', function ($join) {
+                $join->on('Us2.id', '=', 'teams.owner');
+            })
+            ->select([
+                'memberships.id as membership_id',
+                'memberships.membershipable_type as membership_type',
+                'memberships.role as membership_role',
+                'memberships.is_admin as is_admin',
+                'groups.id as group_id',
+                'groups.name as group_name',
+                'teams.name as team_name',
+                'teams.id as team_id',
+                'Us1.username as group_owner',
+                'Us1.slug as group_slug',
+                'Us2.username as team_owner',
+                'Us2.slug as team_slug'
+            ])->get();
 
         $memberships = [];
-        $loop = 0;
         $currentMembershipId = 0;
         $membershipCount = 0;
 
         foreach($rawMemberships as $rawMembership) {
             if ($rawMembership->membership_id !== $currentMembershipId) {
-                if ($loop > 0) {
-
-                }
-
                 if( $rawMembership->membership_type === 'App\\Models\\Group') {
                     $memberships[$membershipCount]['name'] = $rawMembership->group_name;
                     $memberships[$membershipCount]['owner'] = $rawMembership->group_owner;
+                    $memberships[$membershipCount]['slug'] = $rawMembership->group_slug;
                     $memberships[$membershipCount]['membership_role'] = $rawMembership->membership_role;
                     $memberships[$membershipCount]['admin'] = $rawMembership->is_admin;
                     $memberships[$membershipCount]['type'] = 'Group';
@@ -263,14 +265,13 @@ class Membership extends Model
                 if( $rawMembership->membership_type === 'App\\Models\\Team') {
                     $memberships[$membershipCount]['name'] = $rawMembership->team_name;
                     $memberships[$membershipCount]['owner'] = $rawMembership->team_owner;
+                    $memberships[$membershipCount]['slug'] = $rawMembership->team_slug;
                     $memberships[$membershipCount]['membership_role'] = $rawMembership->membership_role;
                     $memberships[$membershipCount]['admin'] = $rawMembership->is_admin;
                     $memberships[$membershipCount]['type'] = 'Team';
                 }
-                
             }
 
-            ++$loop;
             ++$membershipCount;
             $currentMembershipId = $rawMembership->membership_id;
         }

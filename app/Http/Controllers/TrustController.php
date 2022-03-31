@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class AffiliationController extends Controller
+class TrustController extends Controller
 {
     //
 }

@@ -8,20 +8,20 @@
 
             <div class="flex-1 flex mx-2">
                 <input v-model="postMessage"
-                type="text" name="body" class="w-full pl-4 text-we4vGrey-700 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:border-we4vBlue focus:shadow-outline text-sm tracking-tighter" placeholder="Add a post to your Talkboard">
+                type="text" name="body" class="w-full pl-4 text-we4vGrey-700 bg-we4vGrey-100 h-8 rounded-full focus:border-we4vBlue focus:shadow-outline text-sm tracking-tighter" placeholder="Add a post to your Talkboard">
                 <transition name="fade">
                     <button v-if="postMessage"
                         @click="postHandler" 
-                        class="bg-we4vGrey-100 rounded-full h-8 w-8 focus:outline-none focus:shadow-outline border border-we4vGrey-200 font-bold text-2xl text-we4vBlue ml-2 leading-2">
-                        +
+                        class="text-we4vBlue ml-3">
+                        <small class="dz-clickable"><i class="fas fa-save cursor-pointer text-xl text-we4vBlue"></i></small>
                     </button>
             
                 </transition>
             </div>
 
             <div class="w-10">
-                <button ref="postImage" class="dz-clickable text-xm tracking-tighter focus:outline-none focus:shadow-outline bg-we4vGrey-100 rounded-full h-10 w-10 border border-we4vGrey-200 cursor-pointer">
-                    <small class="dz-clickable">IMG</small>
+                <button ref="postImage" class="ml-2" :class="{ 'ml-4' : !postMessage  }">
+                    <small class="dz-clickable"><i class="far fa-image cursor-pointer text-xl text-we4vBlue"></i></small>
                 </button>
             </div>
 

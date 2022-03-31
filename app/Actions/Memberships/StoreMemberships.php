@@ -14,7 +14,7 @@ class StoreMemberships
                 'membershipable_type' => $request->membershipable_type,
                 'user_id' => $member['user_id'],
                 'role' => $member['role'],
-                'is_admin' => $member['admin'],
+                'is_admin' => $member['is_admin'],
                 'updated_by' => auth()->id()
             ]);
         }

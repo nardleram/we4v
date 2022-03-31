@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Articles\GetArticles;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -19,14 +20,19 @@ class UserController extends Controller
 {
     private $getUserPosts;
     private $searchUsers;
-    private $getUserArticles;
+    private $getArticles;
     private $getUserGroups;
     private $getUserProjects;
     private $getUserVotes;
     
-    public function __construct(GetUserPosts $getUserPosts, GetUserImages $getUserImages, SearchUsers $searchUsers)
+    public function __construct(
+        GetUserPosts $getUserPosts,
+        GetUserImages $getUserImages,
+        SearchUsers $searchUsers,
+        GetArticles $getArticles)
     {
         $this->getUserPosts = $getUserPosts;
+        $this->getArticles = $getArticles;
         $this->searchUsers = $searchUsers;
         $this->getUserImages = $getUserImages;
         // $getUserArticles
@@ -54,14 +60,11 @@ class UserController extends Controller
 
     public function show(User $user) : object
     {
-        $posts = $this->getUserPosts->handle($user);
-
-        $user = $this->getUserImages->handle($user);
-
         return Inertia::render('UserShow', [
-            'posts' => $posts,
+            'posts' => $this->getUserPosts->handle($user),
             'posts_status' => 'success',
-            'user' => $user,
+            'user' => $this->getUserImages->handle($user),
+            'myArticles' => $this->getArticles->handle($user->id)
         ]);
     }
 

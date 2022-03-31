@@ -40,8 +40,8 @@
                                 <td class="font-bold text-xs text-we4vGrey-400 mr-2">
                                     {{ task.task_name }}
                                 </td>
-                                <td class="font-regular text-xs" :class="task.task_days_remaining < 3 ? 'text-red-600 font-semibold' : 'text-we4vGrey-600'">
-                                    <p>{{task.task_start_date }} <i class="fa fa-arrow-right"></i> {{task.task_end_date }} / {{ task.task_days_remaining }}</p>
+                                <td>
+                                    <p class="text-xs tracking-tight font-light" :class="task.task_days_remaining < 3 ? 'text-red-600 font-semibold' : 'text-we4vGrey-600'">{{task.task_start_date }} <i class="fa fa-arrow-right"></i> {{task.task_end_date }} / {{ task.task_days_remaining }}</p>
                                 </td>
                                 <td>
                                     <div v-for="(member, memberKey) in task.selected_task_members" :key="memberKey">

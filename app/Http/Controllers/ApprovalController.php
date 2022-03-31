@@ -10,7 +10,6 @@ class ApprovalController extends Controller
     public function store(Request $request)
     {
         $approval = Approval::where('approvalable_id', $request->id)
-            ->where('approvalable_type', $request->model)
             ->where('user_id', auth()->id())
             ->first();
         

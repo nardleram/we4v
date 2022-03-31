@@ -28,11 +28,11 @@ class StoreTeamRequest extends FormRequest
     }
 
     public function messages()
-{
-    return [
-        'name.required' => 'Please enter the team’s name',
-        'members.required' => 'Please select at least one member for your team',
-        'function.required' => 'Please describe the team’s function',
-    ];
-}
+    {
+        return [
+            'name.required' => 'Please enter the team’s name',
+            'members.required' => 'Please select at least one member for your team',
+            'function.required' => 'Please describe the team’s function',
+        ];
+    }
 }

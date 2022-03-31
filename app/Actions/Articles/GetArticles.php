@@ -7,22 +7,33 @@ use Illuminate\Database\QueryException;
 
 class GetArticles
 {
-    public function handle($userId)
-    {
+    private $compileArticles;
 
-        return Article::where('articles.user_id', $userId)
-        ->leftJoin('users', function ($join) {
-            $join->on('users.id', '=', 'articles.user_id');
-        })
-        ->select([
-            'articles.title as title',
-            'articles.body as body',
-            'articles.created_at as created_at',
-            'articles.synopsis as synopsis',
-            'articles.slug as slug',
-            'users.name as name',
-            'users.surname as surname'
-        ])
-        ->get();
+    public function __construct(CompileArticles $compileArticles)
+    {
+        $this->compileArticles = $compileArticles;
+    }
+
+    public function handle($userId) : array
+    {
+        $articles = Article::where('articles.user_id', $userId)
+            ->leftJoin('tags', function ($join) {
+                $join->on('tags.tagable_id', '=', 'articles.id');
+            })
+            ->leftJoin('users', function ($join) {
+                $join->on('users.id', '=', 'articles.user_id');
+            })
+            ->select([
+                'articles.id AS id',
+                'articles.title AS title',
+                'articles.created_at AS created_at',
+                'articles.synopsis AS synopsis',
+                'articles.slug AS slug',
+                'tags.name AS tag',
+                'tags.id AS tag_id'
+            ])
+            ->get();
+        
+        return $this->compileArticles->compileArticles($articles);
     }
 }

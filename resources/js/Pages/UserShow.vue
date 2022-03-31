@@ -1,12 +1,14 @@
 <template>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
+
     <app-layout>
         <template #centre>
-            <div class="w-1/2 p-3 flex flex-col items-center max-h-screen overflow-x-hidden">
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <div class="relative mb-5">
                     <div class="w-full h-64 overflow-hidden">
                         <img :src="'/'+user.bkgrnd_image" alt="User background image">
                     </div>
-                    <div class="absolute flex items-center -mb-6 bottom-0 left-0 z-20">
+                    <div class="absolute flex items-center -mb-4 bottom-0 left-0 z-20">
                         <div class="w-24">
                             <img :src="'/'+user.profile_image" alt="User profile image" class="rounded-full object-cover shadow-md h-24 w-24">
                         </div>
@@ -39,15 +41,24 @@
                 </div>
 
                 <div class="w-full">
+                    <div v-if="myArticles.length > 0" class="w-full mt-8">
+                        <h4>My published articles</h4>
+                        <div class="text-we4vGrey-800 bg-white p-3 flex flex-col flex-1 shadow-md my-3">
+                            <Article v-for="(article, articleKey) in myArticles" :key="articleKey" :article="article" />
+                        </div>
+                    </div>
+
                     <p v-if="posts_status !== 'success'">Retrieving posts...</p>
                     <div class="text-center w-1/2" v-else-if="posts_status === 'success' && posts.length < 1">
-                        <p >No posts by {{ $page.props.user.username }} found.</p>
+                        <p>No posts by {{ $page.props.user.username }} found.</p>
                         <inertia-link v-if="$page.props.authUser.id === $page.props.user.id" :href="route('talkboard')" as="button">
                             <p class="text-we4vBlue font-bold cursor-pointer hover:underline">Add a post?</p>
                         </inertia-link>
                     </div>
-                    
-                    <Post class="text-left" v-else v-for="(post, postKey) in posts" :key="postKey" :post="post" />
+                    <div v-else>
+                        <h4>My posts</h4>
+                        <Post class="text-left" v-for="(post, postKey) in posts" :key="postKey" :post="post" />
+                    </div>
                 </div>
             </div>
         </template>
@@ -55,17 +66,23 @@
 </template>
 
 <script>
-import Post from './components/Post';
-import AppLayout from '@/Layouts/AppLayout';
+import Post from './components/Post'
+import AppLayout from '@/Layouts/AppLayout'
+import Article from '../Pages/Components/Article'
+import ModalBackdrop from '../Pages/Components/ModalBackdrop'
+import manageModals from '../Pages/Composables/manageModals'
 
 export default {
     name: 'Show',
 
     components: {
+        Article,
         Post,
         AppLayout,
+        ModalBackdrop,
     },
     props: [
+        'myArticles',
         'posts',
         'posts_status',
         'user',
@@ -76,6 +93,30 @@ export default {
             associationStatus: 'none',
             myResponseNeeded: false,
             show: false,
+        }
+    },
+
+    setup() {
+        const {
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
+        } = manageModals()
+
+        return {
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
         }
     },
 

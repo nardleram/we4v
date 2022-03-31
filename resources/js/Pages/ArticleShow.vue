@@ -1,21 +1,23 @@
 <template>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
+
     <app-layout>
         <template #centre>
 
-            <div class="w-1/2 p-3 flex flex-col max-h-screen overflow-x-hidden">
-                <h1 class="text-3xl">{{ article[0].title }}</h1>
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
+                <h1 class="text-3xl mb-1">{{ article[0].title }}</h1>
                 <small class="text-xs text-we4vGrey-500 italic mb-2">By <span class="font-semibold">{{ article[0].name }} {{ article[0].surname }}</span>, published {{ article[0].created_at }}</small>
                 
                 <div class="flex flex-row items-start justify-between">
-                    <div class="w-16 mr-5">
+                    <div class="w-16">
                         <inertia-link :href="route('user-show', article[0].userslug)" as="button">
                             <img class="h-12 w-12 rounded-full object-cover mb-3 cursor-pointer hover:shadow-md" :src="'/'+article[0].path" :alt="article[0].name + ' ' + article[0].surname" />
                         </inertia-link>
                     </div>
 
                     <div v-if="article[0]['tags'].length > 0" class="mr-5 w-6/12">
-                        <h5 class="text-we4vDarkBlue font-semibold text-sm">Article tags</h5>
-                        <div class="0 flex flex-row flex-wrap">
+                        <h5 class="text-we4vDarkBlue font-semibold text-sm mb-0 tracking-tight">Article tags</h5>
+                        <div class="flex flex-row flex-wrap">
                             <div v-for="(tag, tagKey) in article[0].tags" :key="tagKey">
                                 <small class="text-xs py-0 m-0 text-we4vGrey-500 mr-2 cursor-pointer hover:text-we4vGrey-600">#{{ tag.tag }}</small>
                             </div>
@@ -30,7 +32,7 @@
                 <div v-html="article[0].body" class="mb-2"></div>
                 <hr />
 
-                <button :class="[article[0].user_approves ? 'text-we4vBlue bg-we4vGrey-900 border-we4vBlue' : 'text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300']" class="font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 mt-4" @click="storeApproval(article[0].id)">
+                <button :class="[article[0].user_approves ? 'text-we4vBlue bg-we4vGrey-900 border-we4vBlue' : 'text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300']" class="font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 mt-4 mb-6" @click="storeApproval(article[0].id, 'article')">
                     <span v-if="article[0].user_approves">Approved</span>
                     <span v-else>Approve</span>
                 </button>
@@ -47,11 +49,12 @@
                     <button-grey @click="submitComment">Save comment</button-grey>
                 </div>
 
+                <!-- COMMENTS -->
                 <div v-if="article[0]['comments'].length > 0">
 
                     <h5 class="font-semibold mb-2 text-we4vGrey-700 tracking-tight">Comments</h5>
                     
-                    <div class="w-full m-0 flex flex-row flex-wrap">
+                    <div class="w-full m-0 flex flex-row flex-wrap mb-2">
                         <div v-for="(comment, commentKey) in article[0].comments" :key="commentKey" class="w-full">
                             <div class="flex w-full flex-row flex-wrap" :class="'p-indent-'+comment.indent_level">
                                 <div class="w-1/12">
@@ -59,17 +62,26 @@
                                         <img :src="'/'+comment.comment_path" :alt="comment.comment_author" class="rounded-full w-8 h-8 object-cover">
                                     </inertia-link>
                                 </div>
-                                <div class="mb-3 w-11/12 tracking-tight -mt-2">
-                                    <div v-html="comment.body" class="mb-1 text-we4vComment text-we4vGrey-700"></div>
-                                    <div class="flex flex-1 justify-between w-full">
-                                        <div class="text-gray-400 tracking-tight text-xs w-10/12">{{ comment.comment_author }}, {{ comment.commented_at }} <span v-if="comment.indent_level > 0">, reply to {{ comment.reply_to }}, {{ comment.parent_created_at }}</span></div>
+                                <div class="mb-3 w-11/12 tracking-tight flex flex-col justify-between">
+                                    <div class="w-full">
+                                        <div class="text-gray-400 tracking-tight text-xs w-10/12">{{ comment.comment_author }}, {{ comment.commented_at }}<span v-if="comment.indent_level > 0">, in reply to {{ comment.reply_to }}, {{ comment.parent_created_at }}</span></div>
+                                    </div>
+                                    <div v-html="comment.body" class="text-we4vComment text-we4vGrey-700 pr-3"></div>
+                                    <div class="flex flex-row items-start mb-2">
                                         <div 
                                             @click="reply = true;
                                                 commentId = comment.id; 
                                                 indentLevel = comment.indent_level; 
                                                 newEditor('<p>Reply to '+comment.comment_author+'</p>')" 
-                                            class="text-xs text-we4vGrey-500 cursor-pointer w-2/12 text-right pr-2">
-                                            <span class="text-we4vBlue hover:text-we4vDarkBlue">Reply</span>
+                                            class="text-xs text-we4vGrey-500 cursor-pointer mr-2">
+                                            <span class="text-we4vBlue hover:text-we4vDarkBlue">Reply to {{ comment.comment_author }}</span>
+                                        </div>
+                                        <div @click="storeApproval(comment.id, 'comment')" class="text-xs text-we4vBlue hover:text-we4vDarkBlue cursor-pointer mr-2">
+                                            <span v-if="comment.user_approves" class="text-we4vGrey-500 hover:text-we4vGrey-600">Approved</span>
+                                            <span v-else>Approve</span>
+                                        </div>
+                                        <div class="text-xs text-we4vGrey-500">
+                                            ({{ comment.num_approvals }} approvals)
                                         </div>
                                     </div>
                                 </div>
@@ -92,6 +104,8 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout'
 import Subtitle from '@/Jetstream/Subtitle'
+import ModalBackdrop from '../Pages/Components/ModalBackdrop'
+import manageModals from '../Pages/Composables/manageModals'
 import Menubar from '../Pages/Components/MenuBar'
 import ButtonGrey from '../Jetstream/ButtonGrey'
 import { watch, ref, onMounted, onBeforeUnmount } from 'vue'
@@ -117,6 +131,7 @@ export default {
         AppLayout,
         ButtonGrey,
         Subtitle,
+        ModalBackdrop,
         EditorContent,
         Menubar,
     },
@@ -127,6 +142,17 @@ export default {
     ],
 
     setup(props) {
+        const {
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
+        } = manageModals()
+
         const error = ref(false)
         const flashMessage = ref(false)
         const editor = ref(null)
@@ -188,10 +214,10 @@ export default {
             }
         }
 
-        const storeApproval = async function (id) {
+        const storeApproval = async function (id, model) {
             await Inertia.post('/approvals/store', {
                 'id': id,
-                'model': 'App\\Models\\Article'
+                'model': model === 'article' ? 'App\\Models\\Article' : 'App\\Models\\Comment'
             })
             if (props.article.user_approves) { // User is therefore disapproving
                 props.article.user_approves = false;
@@ -223,6 +249,14 @@ export default {
             commentId,
             newEditor,
             indentLevel,
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
         }
     }
 }

@@ -14,13 +14,14 @@ class SearchUsers
             $words = preg_split('/\s+/', $str, -1, PREG_SPLIT_NO_EMPTY);
 
             if (count($words) === 2) {
-                $results = User::where('name', 'like', $words[0])
-                    ->where('surname', 'like', $words[1])
+                $results = User::where('name', 'like', '%'.$words[0].'%')
+                    ->where('surname', 'like', '%'.$words[1].'%')
                     ->orWhere('username', 'like', $string)
                     ->select([
                         'users.name as name',
                         'users.surname as surname',
                         'users.username as username',
+                        'users.slug as slug',
                         'images.path as path',
                         'images.format as format'
                     ])
@@ -37,6 +38,7 @@ class SearchUsers
                         'users.name as name',
                         'users.surname as surname',
                         'users.username as username',
+                        'users.slug as slug',
                         'images.path as path',
                         'images.format as format'
                     ])
@@ -57,6 +59,7 @@ class SearchUsers
                     'users.name as name',
                     'users.surname as surname',
                     'users.username as username',
+                    'users.slug as slug',
                     'images.path as path',
                     'images.format as format'
                 ])

@@ -1,37 +1,38 @@
 <template>
     <flash-message></flash-message>
     <error-message></error-message>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
 
     <app-layout>
         <template #centre>
-            <div class="w-1/2 p-2 tracking-tight">
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <Title>
                     <template #title>
-                        My articles
+                        Articles
                     </template>
                 </Title>
 
                 <Subtitle>
                     <template #title>
-                        Write an article
+                        Compose a new article
                     </template>
                 </Subtitle>
 
                 <Form>
                     <template #form>
-                        <div class="mb-5">
-                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="title">title<span class="text-red-600">*</span></label>
-                            <input v-model="title" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="Article title">
+                        <div class="mb-3 -mt-3">
+                            <label class="pl-4 text-we4vBlue text-xs font-medium tracking-tight" for="title">Title<span class="text-red-600">*</span></label>
+                            <input v-model="title" class="w-full pl-4 py-5 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="Article title">
                         </div>
 
-                        <div class="mb-5">
-                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="groupName">synopsis<span class="text-red-600">*</span></label>
-                            <input v-model="synopsis" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="Article synopsis">
+                        <div class="mb-3">
+                            <label class="pl-4 text-we4vBlue text-xs font-medium tracking-tight" for="groupName">Synopsis<span class="text-red-600">*</span></label>
+                            <input v-model="synopsis" class="w-full pl-4 py-5 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="Article synopsis">
                         </div>
 
-                        <div id="tags" class="mb-3">
-                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">article tags (hit enter to add to your tag list)</label>
-                            <input @keydown.enter.prevent="addArticleTag" v-model="articleTag" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
+                        <div id="tags" class="mb-5">
+                            <label class="pl-4 text-we4vBlue text-xs font-medium tracking-tight" for="projectName">Article tags (hit enter to add to your tag list)</label>
+                            <input @keydown.enter.prevent="addArticleTag" v-model="articleTag" class="w-full pl-4 py-5 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
                         </div>
 
                         <h5 v-if="articleTags.length > 0" class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight ml-4">List of tags (click tag to remove any unwanted tag)</h5>
@@ -45,17 +46,13 @@
 
                         <editor-content id="editorDiv" :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2"/>
 
-                        <button-blue @click="submitArticle">Save article</button-blue>
+                        <button-grey @click="submitArticle">Save article</button-grey>
                     </template>
                 </Form>
 
-                <Subtitle>
-                    <template #title>
-                        My published articles
-                    </template>
-                </Subtitle> 
+                <div v-if="myArticles.length > 0" class="w-full m-0">
+                    <h4>My published articles</h4>
 
-                <div v-if="myArticles.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Article v-for="(article, articleKey) in myArticles" :key="articleKey" :article="article" />
                     </div>
@@ -70,9 +67,11 @@
 import AppLayout from '@/Layouts/AppLayout'
 import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
-import ButtonBlue from '../Jetstream/ButtonBlue'
+import ButtonGrey from '../Jetstream/ButtonGrey'
+import ModalBackdrop from '../Pages/Components/ModalBackdrop'
 import Form from '@/Jetstream/FormSection'
 import Menubar from '../Pages/Components/MenuBar'
+import manageModals from '../Pages/Composables/manageModals'
 import { watch, ref, onMounted, onBeforeUnmount } from 'vue'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-vue3'
@@ -97,10 +96,11 @@ export default {
 
     components: {
         AppLayout,
+        ModalBackdrop,
         EditorContent,
         Title,
         Subtitle,
-        ButtonBlue,
+        ButtonGrey,
         Form,
         Menubar,
         Article,
@@ -114,6 +114,17 @@ export default {
     ],
 
     setup(props) {
+        const {
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
+        } = manageModals()
+
         const error = ref(false)
         const flashMessage = ref(false)
         const articleTag = ref(null)
@@ -177,7 +188,7 @@ export default {
                 title.value = ''
                 synopsis.value = ''
                 articleTags.value = []
-                editor.value = null
+                editor.value.destroy()
                 editor.value = new Editor({
                     content: '<h2>Article subhead could go here (if needed)</h2><blockquote>Perhaps a quote to lend your work an air of gravitas?</blockquote><p>The body of your article might continue here and be far more engaging than this dummy text...</p><p>(Go right ahead! Delete all this dummy text and compose your own!)</p>',
                     extensions: [
@@ -222,6 +233,14 @@ export default {
             title,
             editor,
             submitArticle,
+            amOutside, 
+            amInside,
+            clearModal,
+            edit,
+            mode,
+            nowInside, 
+            nowOutside,
+            showBackdrop,
         }
     }
     

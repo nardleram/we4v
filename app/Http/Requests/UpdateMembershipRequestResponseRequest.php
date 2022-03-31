@@ -19,7 +19,8 @@ class UpdateMembershipRequestResponseRequest extends FormRequest
     {
         return [
             'membershipable_id' => 'required|uuid',
-            'confirmed' => 'required|boolean'
+            'confirmed' => 'required|boolean',
+            'group_id' => 'nullable|uuid'
         ];
     }
 }

@@ -8,7 +8,9 @@ class UpdateMembershipRequestResponse
 {
     public function handle($request) : string
     {
-        if ($request->confirmed) {
+        $success = '';
+
+        if ($request->confirmed && $request->user_id) {
             Membership::where('membershipable_id', $request->membershipable_id)
                 ->where('user_id', auth()->id())
                 ->update(array('confirmed' => $request->confirmed));
@@ -16,13 +18,31 @@ class UpdateMembershipRequestResponse
             $success = 'Invitation accepted';
         }
 
-        if (!$request->confirmed) {
+        if ($request->confirmed && $request->group_id) {
+            Membership::where('membershipable_id', $request->membershipable_id)
+                ->where('group_id', $request->group_id)
+                ->update(array('confirmed' => $request->confirmed));
+
+            $success = 'Invitation accepted';
+        }
+
+        if (!$request->confirmed && $request->user_id) {
             Membership::where('membershipable_id', $request->membershipable_id)
                 ->where('user_id', auth()->id())
                 ->delete();
             
             $success = 'Invitation declined';
             
+            // Dispatch email to requester here
+        }
+
+        if (!$request->confirmed && $request->group_id) {
+            Membership::where('membershipable_id', $request->membershipable_id)
+                ->where('group_id', $request->group_id)
+                ->delete();
+
+            $success = 'Invitation declined';
+
             // Dispatch email to requester here
         }
 

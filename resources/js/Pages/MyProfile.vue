@@ -1,7 +1,7 @@
 <template>
     <app-layout>
         <template #centre>
-            <div class="w-1/2 p-3 max-h-screen overflow-x-hidden">
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <Title>
                     <template #title>
                         {{ user.username }}’s profile page

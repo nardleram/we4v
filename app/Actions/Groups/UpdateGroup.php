@@ -10,7 +10,6 @@ class UpdateGroup
     public function handle(Request $request) : int
     {
         return Group::where('id', $request->membershipable_id)
-            ->where('owner', $request->owner)
             ->update([
                 'description' => $request->description,
                 'geog_area' => $request->geog_area,

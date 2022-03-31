@@ -31,6 +31,35 @@
         </Modal>
     </teleport>
 
+    <teleport to="#membRequestModals">
+        <Modal :show="showNetworkInviteModal" >
+            <div v-if="showNetworkInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                <div class="flex justify-end">
+                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                        <div @click="showNetworkInviteModal = false; clearModal()">
+                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                        </div>   
+                    </div>
+                </div>
+
+                <h4 class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ networkOwner }} cordially invites you to join your group <span class="text-we4vBlue">{{ groupName }}</span> to the network</h4>
+                
+                <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ networkName }}</h3>
+
+                <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ networkDescription }}</h5>
+                
+                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
+                @click="storeInviteResponse(inviteData, true)">
+                    Accept
+                </button>
+                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
+                @click="storeInviteResponse(inviteData, false)">
+                    Reject
+                </button>
+            </div>
+        </Modal>
+    </teleport>
+
     <teleport to="#pendingVoteModals">
         <Modal :show="showPendingVoteModal" >
             <div v-if="showPendingVoteModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
@@ -102,81 +131,133 @@
         </Modal>
     </teleport>
 
-    <div class="w-1/4 h-screen p-2 pt-4 bg-we4vGrey-800 text-we4vBg font-light">
-        <div class="text-l tracking-tight mb-1 text-right text-sm">Association requests: 
-            <span 
-            v-if="$page.props.myPendingAssocReqs.length > 0" class="text-xl font-extrabold text-we4vOrange cursor-pointer"
-            @click="showAssocReqs = !showAssocReqs">
-                +
-            </span>
-            <span v-else class="font-extrabold text-we4vGreen-500">
-                0
-            </span>
-        </div>
-        
-        <div v-if="showAssocReqs">
+    <div class="fixed top-16 right-0 w-1/4 h-screen p-2 pl-4 pt-4 bg-we4vGrey-800 text-we4vBg font-light">
+        <sidebar-right-element>
+            <template #title>
+                Association requests
+            </template>
+
+            <template #bell>
+                <span v-if="$page.props.myPendingAssocReqs.length > 0" class="font-extrabold text-we4vOrange cursor-pointer"
+                    @click="showAssocReqs = !showAssocReqs">
+                    <i class="far fa-bell text-sm"></i>
+                </span>
+
+                <span v-else class="font-extrabold text-we4vGrey-600 text-sm">
+                    <i class="far fa-bell"></i>
+                </span>
+            </template>
+        </sidebar-right-element>
+        <div v-if="showAssocReqs" class="w-full -mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl border-b border-we4vGrey-600">
             <pending-assoc-reqs v-for="(req, reqKey) in $page.props.myPendingAssocReqs" :key="reqKey" :req="req" />
         </div>
 
-        <div class="tracking-tight mb-1 text-right text-sm">Group & team invitations: 
-            <span 
-            v-if="$page.props.myPendingMembReqs.length > 0" class="text-xl font-extrabold text-we4vOrange cursor-pointer"
-            @click="showMembReqs = !showMembReqs">
-                +
-            </span>
-            <span v-else class="font-extrabold text-we4vGreen-500">
-                0
-            </span>
-        </div>
+        <sidebar-right-element>
+            <template #title>
+                Group/team invitations
+            </template>
 
-        <table v-if="showMembReqs" class="text-xs font-light tracking-tighter bg-we4vGrey-700 w-full mb-2 rounded-md">
-            <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
+            <template #bell>
+                <span v-if="$page.props.myPendingMembReqs.length > 0" class="text-sm font-extrabold text-we4vOrange cursor-pointer"
+                    @click="showMembReqs = !showMembReqs">
+                    <i class="far fa-bell"></i>
+                </span>
+
+                <span v-else class="font-extrabold text-we4vGrey-600 text-sm">
+                    <i class="far fa-bell"></i>
+                </span>
+            </template>
+        </sidebar-right-element>
+        <table v-if="showMembReqs" class="w-full -mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl border-b border-we4vGrey-600">
+            <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left text-xs">
                 <tr class="py-2 px1">
                     <th class="w-2/12 border border-we4vGrey-800 py-2 px-1">From</th>
                     <th class="w-4/12 border border-we4vGrey-800 py-2 px-1">Name</th>
                     <th class="w-1/2 border border-we4vGrey-800 py-2 px-1">Description</th>
                 </tr>
             </thead>
-            <tbody class="border border-we4vGrey-800 text-we4vGrey-100">
+            <tbody class="border-b rounded-bl-xl border-we4vGrey-800 text-we4vGrey-100">
                 <pending-memb-reqs @activate-invite-modal="hydrateInviteModal" v-for="(req, reqKey) in $page.props.myPendingMembReqs" :key="reqKey" :req="req" />
             </tbody>
         </table>
 
-        <div class="text-l tracking-tight mb-1 text-right text-sm">Pending votes:  
-            <span
-            v-if="Object.keys($page.props.myPendingVotes).length > 0" class="text-xl font-extrabold text-we4vOrange cursor-pointer"
-            @click="showPendingVotes = !showPendingVotes">
-                +
-            </span>
-            <span v-else class="font-extrabold text-we4vGreen-500">
-                0
-            </span>
-        </div>
-        <div v-if="showPendingVotes" class="bg-we4vGrey-700 p-2 rounded-md mb-2 max-h-48 overflow-y-scroll">
+        <sidebar-right-element>
+            <template #title>
+                Network requests
+            </template>
+
+            <template #bell>
+                 <span v-if="$page.props.myPendingNetworkReqs.length > 0" class="text-sm font-extrabold text-we4vOrange cursor-pointer"
+                    @click="showNetworkReqs = !showNetworkReqs">
+                    <i class="far fa-bell"></i>
+                </span>
+
+                <span v-else class="font-extrabold text-we4vGrey-600 text-sm">
+                    <i class="far fa-bell"></i>
+                </span>
+            </template>
+        </sidebar-right-element>
+        <table v-if="showNetworkReqs" class="w-full -mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl">
+            <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
+                <tr>
+                    <th class="text-xs w-1/3 border border-we4vGrey-800 pt-2 pb-1 px-1">From</th>
+                    <th class="text-xs w-1/3 border border-we4vGrey-800 pt-2 pb-1 px-1">Network</th>
+                    <th class="text-xs w-1/3 border border-we4vGrey-800 pt-2 pb-1 px-1">Group</th>
+                </tr>
+            </thead>
+            <tbody class="border border-we4vGrey-800 text-we4vGrey-100">
+                <pending-network-reqs @activate-network-invite-modal="hydrateNetworkInviteModal" v-for="(req, reqKey) in $page.props.myPendingNetworkReqs" :key="reqKey" :req="req" />
+            </tbody>
+        </table>
+
+        <sidebar-right-element>
+            <template #title>
+                Pending votes
+            </template>
+
+            <template #bell>
+                 <span v-if="Object.keys($page.props.myPendingVotes).length > 0" class="text-sm font-extrabold text-we4vOrange cursor-pointer"
+                    @click="showPendingVotes = !showPendingVotes">
+                    <i class="far fa-bell"></i>
+                </span>
+
+                <span v-else class="font-extrabold text-we4vGrey-600 text-sm">
+                    <i class="far fa-bell"></i>
+                </span>
+            </template>
+        </sidebar-right-element>
+        <div v-if="showPendingVotes" class="-mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl">
             <pending-votes @activate-pending-vote-modal="onActivatePendingVoteModal" v-for="(vote, voteKey) in $page.props.myPendingVotes" :key="voteKey" :vote="vote" />
         </div>
 
-        <h4 @click="showAssocs = !showAssocs" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Associates</h4>
-        <div v-if="showAssocs" class="mb-2">
+        <sidebar-right-element>
+            <template #title>
+                <span @click="showAssocs = !showAssocs" class="cursor-pointer">Associates</span>
+            </template>
+        </sidebar-right-element>
+        <div v-if="showAssocs" class="-mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl">
             <Associates />
         </div>
 
-        <h4 @click="showMembs = !showMembs" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Memberships</h4>
-        <div v-if="showMembs && $page.props.myMemberships.length" class="mb-2 max-h-48 overflow-y-scroll">
+        <sidebar-right-element>
+            <template #title>
+                <span @click="showMembs = !showMembs" class="cursor-pointer">Memberships</span>
+            </template>
+        </sidebar-right-element>
+        <div v-if="showMembs && Object.keys($page.props.myMemberships).length" class="-mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl max-h-48 overflow-y-scroll">
             <Memberships />
         </div>
-        <div v-if="showMembs && !$page.props.myMemberships.length" class="tracking-tight text-right -mt-2 mb-1">
+        <div v-if="showMembs && !Object.keys($page.props.myMemberships).length" class="tracking-tight text-right -mt-2 mb-1">
             <small class="text-we4vGrey-200 text-xs">You are not yet a member of any group or team</small>
         </div>
 
-        <h4 @click="showUnansweredInvites = !showUnansweredInvites" class="tracking-tight mb-1 text-right text-sm cursor-pointer">Open invitations</h4>
-        <div v-if="showUnansweredInvites" class="text-right -mt-2 mb-1">
-            <small class="text-we4vGrey-200 text-xs">To be completed</small>
-        </div>
-
-        <h4 @click="showTasks = !showTasks" class="text-l tracking-tight mb-1 text-right text-sm cursor-pointer">Assigned tasks</h4>
+        <sidebar-right-element>
+            <template #title>
+                <span @click="showTasks = !showTasks" class="cursor-pointer">Assigned tasks</span>
+            </template>
+        </sidebar-right-element>
         <div v-if="showTasks && Object.keys($page.props.myOpenTasks).length">
-            <table v-if="showTasks" class="text-xs font-light tracking-tighter bg-we4vGrey-700 w-full mb-2 rounded-md">
+            <table v-if="showTasks" class="text-xs font-light tracking-tighter bg-we4vGrey-900 w-full -mt-2 ml-3 -mr-2 mb-2 rounded-md">
                 <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
                     <tr>
                         <th class="w-3/12 border border-we4vGrey-800 py-2 px-1">From</th>
@@ -206,10 +287,13 @@
 </template>
 
 <script>
+import SidebarRightElement from '../Pages/Components/SidebarRightElement'
 import PendingAssocReqs from '../Pages/Components/PendingAssocReqs'
 import PendingMembReqs from '../Pages/Components/PendingMembReqs'
+import PendingNetworkReqs from '../Pages/Components/PendingNetworkReqs'
 import PendingVotes from '../Pages/Components/PendingVotes'
 import Associates from '../Pages/Components/MyAssociates'
+import Networks from '../Pages/Components/MyNetworks'
 import Memberships from '../Pages/Components/MyMemberships'
 import Notes from '../Pages/Components/Notes'
 import Modal from '../Pages/Components/Modal'
@@ -224,10 +308,13 @@ export default {
 
     components: {
         ButtonGrey,
+        SidebarRightElement,
         PendingAssocReqs,
         PendingMembReqs,
+        PendingNetworkReqs,
         PendingVotes,
         Associates,
+        Networks,
         Memberships,
         Modal,
         Notes,
@@ -235,9 +322,9 @@ export default {
 
     data: () => {
         return {
-            showAssocReqs: false,
             showAssocs: false,
             showMembs: false,
+            showNetworks: false,
             showTasks: false,
             showPendingVotes: false,
         }
@@ -267,14 +354,20 @@ export default {
             groupRequester,
             groupRole,
             hydrateInviteModal,
+            hydrateNetworkInviteModal,
             inviteData,
             mode,
+            networkDescription,
+            networkId,
+            networkName,
+            networkOwner,
             nowInside, 
             nowOutside, 
             onActivatePendingVoteModal,
             onClickOutside,
             projectNotes,
             showInviteModal,
+            showNetworkInviteModal,
             showPendingVoteModal,
             showUserTaskModal,
             tAdmin,
@@ -312,18 +405,34 @@ export default {
         const showMembReqs = ref(false)
         const taskNoteBody = ref(null)
         const projectNoteBody = ref(null)
+        const showAssocReqs = ref(false)
+        const showNetworkReqs = ref(false)
 
-        const storeInviteResponse = async (inviteData, res) => {
+        const storeInviteResponse = async (inviteData, response) => {
+            let payload = {}
+
             if (inviteData[0].type === 'group') {
-                var payload = {
+                payload = {
                     'membershipable_id': inviteData[0].groupId,
-                    'confirmed': res
+                    'confirmed': response,
+                    'user_id': usePage().props.value.authUser.id,
+                    'group_id': null,
                 }
             }
             if (inviteData[0].type === 'team') {
-                var payload = {
+                payload = {
                     'membershipable_id': inviteData[0].teamId,
-                    'confirmed': res
+                    'confirmed': response,
+                    'user_id': usePage().props.value.authUser.id,
+                    'group_id': null,
+                }
+            }
+            if (!inviteData[0].type) {
+                payload = {
+                    'membershipable_id': inviteData[0].networkId,
+                    'confirmed': response,
+                    'group_id': inviteData[0].groupId,
+                    'user_id': null
                 }
             }
 
@@ -335,6 +444,7 @@ export default {
             }
 
             showMembReqs.value = false
+            showNetworkReqs.value = false
             clearModal()
         }
 
@@ -419,16 +529,24 @@ export default {
             groupRequester,
             groupRole,
             hydrateInviteModal,
+            hydrateNetworkInviteModal,
             inviteData,
             mode,
+            networkDescription,
+            networkId,
+            networkName,
+            networkOwner,
             nowInside, 
             nowOutside,
             onActivatePendingVoteModal,
             onClickOutside,
             projectNoteBody,
             projectNotes,
+            showAssocReqs,
             showInviteModal,
+            showNetworkInviteModal,
             showMembReqs,
+            showNetworkReqs,
             showPendingVoteModal,
             showUnansweredInvites,
             showUserTaskModal,
@@ -470,3 +588,12 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    .fade-enter-active, .face-leave-active {
+        transition: opacity .7s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0; 
+    }
+</style>

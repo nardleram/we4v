@@ -13,6 +13,7 @@ use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
+use App\Models\Network;
 use Illuminate\Support\Facades\Session;
 
 class HandleInertiaRequests extends Middleware
@@ -279,6 +280,16 @@ class HandleInertiaRequests extends Middleware
                 return [];
             },
 
+            'myNetworks' => function ()
+            {
+                return Network::getMyNetworks();
+            },
+
+            'myPendingNetworkReqs' => function ()
+            {
+                return Group::getMyNetworkReqs();
+            },
+
             'myPendingVotes' => function ()
             {
                 $membIds = Membership::getMemberships4Votes();
@@ -289,7 +300,7 @@ class HandleInertiaRequests extends Middleware
             'myOpenTasks' => function ()
             {
                 $taskMembershipDetails = Membership::getTaskMemberships(auth()->id());
-                
+            
                 $taskUsernameDetails = Task::getTaskUsers($taskMembershipDetails);
 
                 return Membership::compileTaskMembershipDetails($taskMembershipDetails, $taskUsernameDetails);
@@ -297,7 +308,7 @@ class HandleInertiaRequests extends Middleware
 
             'myMemberships' => function ()
             {
-                if (request()->user()) {
+                if (auth()->id()) {
                     return Membership::getUserMemberships(auth()->id());
                 }
             },

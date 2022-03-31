@@ -2,20 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Memberships\StoreMemberships;
+use Illuminate\Http\Request;
+use App\Actions\Memberships\StoreMembership;
+use App\Actions\Memberships\DeleteMembership;
 use App\Http\Requests\StoreMembershipRequest;
-
-// Can delete this entire file methinks
 
 class MembershipController extends Controller
 {
-    public function store(StoreMembershipRequest $request, StoreMemberships $action)
+    private $storeMembership;
+    private $deleteMembership;
+
+    public function __construct(StoreMembership $storeMembership, DeleteMembership $deleteMembership)
     {
-        $action->handle($request, 27);
+        $this->storeMembership = $storeMembership;
+        $this->deleteMembership = $deleteMembership;
+    }
+
+    public function store(StoreMembershipRequest $request)
+    {
+        $this->storeMembership->handle($request);
 
         return redirect()->back()->with([
-            'mygroups' => $this->getGroups->handle(auth()->id()),
-            'flash' => ['message' => 'Invitation accepted.']
+            'flash' => ['message' => 'Invitation sent.']
+        ]);
+    }
+
+    public function destroy($id) : object
+    {
+        $this->deleteMembership->handle($id);
+
+        return redirect()->back()->with([
+            'flash' => ['message' => 'Membership deleted.']
         ]);
     }
 }

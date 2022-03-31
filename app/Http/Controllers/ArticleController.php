@@ -4,19 +4,28 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Article;
+use App\Actions\Tags\StoreTags;
 use App\Actions\Articles\GetArticle;
 use App\Actions\Articles\GetArticles;
 use App\Actions\Articles\StoreArticle;
-use App\Actions\Tags\StoreTags;
+use App\Actions\Articles\SearchArticles;
 use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\SearchArticleRequest;
 
 class ArticleController extends Controller
 {
-    public function __construct(GetArticles $getArticles, GetArticle $getArticle, StoreArticle $storeArticle, StoreTags $storeTags)
+    public function __construct(
+        GetArticles $getArticles,
+        GetArticle $getArticle,
+        StoreArticle $storeArticle,
+        StoreTags $storeTags,
+        SearchArticles $searchArticles
+        )
     {
         $this->getArticles = $getArticles;
         $this->getArticle = $getArticle;
         $this->storeArticle = $storeArticle;
+        $this->searchArticles = $searchArticles;
         $this->storeTags = $storeTags;
     }
 
@@ -43,6 +52,15 @@ class ArticleController extends Controller
         return redirect()->back()->with([
             'myArticles' => $this->getArticles->handle(auth()->id()),
             'flash' => ['message' => 'Article saved']
+        ]);
+    }
+
+    public function search(SearchArticleRequest $string)
+    {
+        session(['searchData' => null]);
+
+        return redirect()->back()->with([
+            'searchResults' => [session(['searchData' => $this->searchArticles->handle($string->searchString)])]
         ]);
     }
 }

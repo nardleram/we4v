@@ -1,4 +1,6 @@
 <template>
+    <login-register-flash></login-register-flash>
+
     <div class="m-auto w-96 mt-24">
         <jet-application-mark class="block w-96" />
 
@@ -7,32 +9,32 @@
         <form @submit.prevent="submit">
             <input type="hidden" name="_token" :value="csrf">
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="name" value="Name" />
                 <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
             </div>
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="surname" value="Surname" />
                 <jet-input id="surname" type="text" class="mt-1 block w-full" v-model="form.surname" required autofocus autocomplete="surname" />
             </div>
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="username" value="Username" />
                 <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus autocomplete="username" />
             </div>
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
             </div>
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="password" value="Password" />
                 <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="new-password" />
             </div>
 
-            <div>
+            <div class="mb-2">
                 <jet-label for="password_confirmation" value="Confirm Password" />
                 <jet-input id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required autocomplete="new-password" />
             </div>
@@ -61,45 +63,47 @@
 </template>
 
 <script>
-    import JetApplicationMark from '@/Jetstream/ApplicationMark'
-    import JetButtonBlue from '@/Jetstream/ButtonBlue'
-    import JetInput from '@/Jetstream/Input'
-    import JetCheckbox from "@/Jetstream/Checkbox";
-    import JetLabel from '@/Jetstream/Label'
-    import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import JetApplicationMark from '@/Jetstream/ApplicationMark'
+import JetButtonBlue from '@/Jetstream/ButtonBlue'
+import JetInput from '@/Jetstream/Input'
+import JetCheckbox from "@/Jetstream/Checkbox";
+import JetLabel from '@/Jetstream/Label'
+import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import LoginRegisterFlash from '../Components/LoginRegisterFlash'
 
-    export default {
-        components: {
-            JetApplicationMark,
-            JetButtonBlue,
-            JetInput,
-            JetCheckbox,
-            JetLabel,
-            JetValidationErrors
-        },
+export default {
+    components: {
+        JetApplicationMark,
+        JetButtonBlue,
+        JetInput,
+        JetCheckbox,
+        JetLabel,
+        JetValidationErrors,
+        LoginRegisterFlash
+    },
 
-        data() {
-            return {
-                form: this.$inertia.form({
-                    name: '',
-                    surname: '',
-                    username: '',
-                    email: '',
-                    password: '',
-                    password_confirmation: '',
-                    slug: '',
-                    terms: false,
-                    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                })
-            }
-        },
+    data() {
+        return {
+            form: this.$inertia.form({
+                name: '',
+                surname: '',
+                username: '',
+                email: '',
+                password: '',
+                password_confirmation: '',
+                slug: '',
+                terms: false,
+                _token: this.$page.props.csrf_token,
+            })
+        }
+    },
 
-        methods: {
-            submit() {
-                this.form.post(this.route('register'), {
-                    onFinish: () => this.form.reset('password', 'password_confirmation'),
-                })
-            }
+    methods: {
+        submit() {
+            this.form.post(this.route('register'), {
+                onFinish: () => this.form.reset('password', 'password_confirmation'),
+            })
         }
     }
+}
 </script>

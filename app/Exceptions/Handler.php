@@ -33,10 +33,6 @@ class Handler extends ExceptionHandler
                 return response()->view('users.notFound', [], 422);
             }
 
-            if ($request->path() === 'mygroups/{group}') {
-                return response()->view('groups.notFound', [], 422);
-            }
-
             if ($request->path() === 'mygroups/store') {
                 return response()->view('groups.notFound', [], 422);
             }
@@ -49,5 +45,24 @@ class Handler extends ExceptionHandler
                 return response()->view('articles.notFound', [], 422);
             }
         });
+    }
+
+    /**
+     * Prepare exception for rendering.
+     *
+     * @param  \Throwable  $e
+     * @return \Throwable
+     */
+    public function render($request, Throwable $e)
+    {
+        $response = parent::render($request, $e);
+
+        if ($response->status() === 419) {
+            return back()->with([
+                'flash' => ['message' => "This page has expired.\r\nPlease refresh the page and try again."],
+            ]);
+        }
+
+        return $response;
     }
 }

@@ -29,15 +29,18 @@ class GetAdminGroups
         ->leftJoin('teams', function ($join) {
             $join->on('groups.id', '=', 'teams.group_id');
         })
+        ->join('users AS Us1', function ($join) {
+            $join->on('groups.owner', '=', 'Us1.id');
+        })
         ->leftJoin('memberships', function ($join) {
             $join->on('groups.id', '=', 'memberships.membershipable_id')
             ->orOn('teams.id', '=', 'memberships.membershipable_id');
         })
-        ->join('users', function ($join) {
-            $join->on('memberships.user_id', '=', 'users.id');
+        ->join('users AS Us2', function ($join) {
+            $join->on('memberships.user_id', '=', 'Us2.id');
         })
         ->join('images', function ($join) {
-            $join->on('users.id', '=', 'imageable_id')
+            $join->on('Us2.id', '=', 'imageable_id')
             ->where('images.imageable_type', 'App\\Models\\User')
             ->where('images.format', 'profile');
         })
@@ -50,14 +53,16 @@ class GetAdminGroups
             'teams.id as team_id',
             'teams.name as team_name',
             'teams.function as team_function',
+            'memberships.id as membership_id',
             'memberships.user_id as member_user_id',
             'memberships.membershipable_type as membership_type',
             'memberships.role as role',
             'memberships.confirmed as confirmed',
             'memberships.is_admin as admin',
             'memberships.deleted_at as declined',
-            'users.username as username',
-            'users.id as user_id',
+            'Us1.username as group_owner_username',
+            'Us2.username as username',
+            'Us2.id as user_id',
             'images.path as path' 
         ])
         ->groupBy([
@@ -69,14 +74,16 @@ class GetAdminGroups
             'memberships.role',
             'memberships.confirmed',
             'memberships.deleted_at',
-            'users.username',
-            'users.id',
+            'Us1.username',
+            'Us2.username',
+            'Us2.id',
+            'memberships.id',
             'images.path'
         ])
         ->orderBy('groups.name')
         ->orderBy('teams.name')
         ->orderBy('memberships.is_admin', 'desc')
-        ->orderBy('users.username')
+        ->orderBy('Us2.username')
         ->get();
 
         return $this->compileGroupsArray->compileGroups($rawGroups, true);

@@ -8,6 +8,7 @@ use App\Actions\Teams\StoreTeam;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Teams\UpdateTeam;
 use App\Http\Requests\StoreTeamRequest;
+use App\Http\Requests\UpdateTeamRequest;
 use App\Actions\Teams\DestroyTeamCascade;
 use App\Actions\Memberships\StoreMemberships;
 use App\Actions\Memberships\UpdateMemberships;
@@ -20,7 +21,13 @@ class TeamController extends Controller
     private $updateTeam;
     private $updateMemberships;
 
-    public function __construct(StoreTeam $storeTeam, GetGroups $getGroups, StoreMemberships $storeMemberships, UpdateTeam $updateTeam, UpdateMemberships $updateMemberships)
+    public function __construct(
+        StoreTeam $storeTeam,
+        GetGroups $getGroups,
+        StoreMemberships $storeMemberships,
+        UpdateTeam $updateTeam,
+        UpdateMemberships $updateMemberships
+        )
     {
         $this->storeTeam = $storeTeam;
         $this->getGroups = $getGroups;
@@ -41,7 +48,7 @@ class TeamController extends Controller
         ]);
     }
 
-    public function update(StoreTeamRequest $request) : object
+    public function update(UpdateTeamRequest $request) : object
     {
         $this->updateTeam->handle($request);
 

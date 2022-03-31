@@ -7,18 +7,22 @@ use App\Models\Group;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Groups\StoreGroup;
 use App\Actions\Groups\UpdateGroup;
+use App\Actions\Groups\SearchGroups;
 use App\Actions\Teams\GetAdminTeams;
 use App\Actions\Groups\GetAdminGroups;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\SearchGroupRequest;
 use App\Actions\Groups\DestroyGroupCascade;
-use App\Actions\Groups\SearchGroups;
+use App\Actions\Groups\GetNetworkGroupMember;
 use App\Actions\Memberships\StoreMemberships;
+use App\Actions\Groups\TransferGroupOwnership;
 use App\Actions\Memberships\UpdateMemberships;
+use App\Http\Requests\TransferGroupOwnershipRequest;
 
 class GroupController extends Controller
 {
     private $getGroups;
+    private $getNetworkGroupMember;
     private $getAdminGroups;
     private $getAdminTeams;
     private $storeGroup;
@@ -27,9 +31,11 @@ class GroupController extends Controller
     private $updateMemberships;
     private $destroyGroupCasc;
     private $searchGroups;
+    private $transferGroupOwnership;
 
     public function __construct(
         GetGroups $getGroups,
+        GetNetworkGroupMember $getNetworkGroupMember,
         GetAdminGroups $getAdminGroups,
         GetAdminTeams $getAdminTeams,
         StoreGroup $storeGroup,
@@ -37,10 +43,12 @@ class GroupController extends Controller
         UpdateGroup $updateGroup,
         UpdateMemberships $updateMemberships,
         DestroyGroupCascade $destroyGroupCasc,
-        SearchGroups $searchGroups
+        SearchGroups $searchGroups,
+        TransferGroupOwnership $transferGroupOwnership
     )
     {
         $this->getGroups = $getGroups;
+        $this->getNetworkGroupMember = $getNetworkGroupMember;
         $this->getAdminGroups = $getAdminGroups;
         $this->getAdminTeams = $getAdminTeams;
         $this->storeGroup = $storeGroup;
@@ -49,6 +57,7 @@ class GroupController extends Controller
         $this->updateMemberships = $updateMemberships;
         $this->destroyGroupCasc = $destroyGroupCasc;
         $this->searchGroups = $searchGroups;
+        $this->transferGroupOwnership = $transferGroupOwnership;
     }
 
     public function index() : object
@@ -60,6 +69,20 @@ class GroupController extends Controller
         ]);
     }
 
+    public function show($id) : array
+    {
+        return $this->getNetworkGroupMember->handle($id);
+    }
+
+    public function search(SearchGroupRequest $string)
+    {
+        session(['searchData' => null]);
+
+        return redirect()->back()->with([
+            'searchResults' => [session(['searchData' => $this->searchGroups->handle($string->searchString)])]
+        ]);
+    }
+
     public function store(StoreGroupRequest $request) : object
     {
         $group = $this->storeGroup->handle($request);
@@ -67,7 +90,7 @@ class GroupController extends Controller
         $this->storeMemberships->handle($request, $group->id);
 
         count($request->members) > 0
-        ? $flashMessage = 'Group added, invitations sent'
+        ? $flashMessage = 'Group added, invitations sent to selected associates'
         : $flashMessage = 'Group added';
 
         return redirect()->back()->with([
@@ -88,7 +111,8 @@ class GroupController extends Controller
             'myGroups' => $this->getGroups->handle(auth()->id()),
             'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            'flash' => ['message' => 'Group updated']]);
+            'flash' => ['message' => 'Group updated']
+        ]);
     }
 
     public function destroy(Group $group) : object
@@ -103,12 +127,15 @@ class GroupController extends Controller
         ]);
     }
 
-    public function search(SearchGroupRequest $string)
+    public function transferOwnership (TransferGroupOwnershipRequest $request)
     {
-        session(['searchData' => null]);
+        $this->transferGroupOwnership->handle($request);
 
         return redirect()->back()->with([
-            'searchResults' => [session(['searchData' => $this->searchGroups->handle($string->searchString)])]
+            'myGroups' => $this->getGroups->handle(auth()->id()),
+            'myAdminGroups' => $this->getAdminGroups->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
+            'flash' => ['message' => 'Group ownership transfered']
         ]);
     }
 }

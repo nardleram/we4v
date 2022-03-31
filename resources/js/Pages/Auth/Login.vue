@@ -1,4 +1,6 @@
 <template>
+    <login-register-flash></login-register-flash>
+
     <div class="m-auto w-96 mt-24">
         <jet-application-mark class="block w-96" />
 
@@ -11,24 +13,24 @@
         <form @submit.prevent="submit">
             <input type="hidden" name="_token" :value="csrf">
 
-            <div class="mt-2">
+            <div class="mt-2 pb-4">
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus />
             </div>
 
-            <div class="mt-4">
+            <div class="mt-2 pb-4">
                 <jet-label for="password" value="Password" />
                 <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
             </div>
 
-            <div class="block mt-4">
+            <div class="block mt-2">
                 <label class="flex items-center">
                     <jet-checkbox name="remember" v-model:checked="form.remember" />
                     <span class="ml-2 text-xs tracking-tight text-we4vGrey-600">Remember me</span>
                 </label>
             </div>
 
-            <div class="mt-4">
+            <div class="mt-6">
                 <jet-button-blue class="w-full" :class="{ 'opacity-25': form.processing }" :type="submit" :disabled="form.processing">Log in</jet-button-blue>
             </div>
 
@@ -46,50 +48,54 @@
 </template>
 
 <script>
-    import JetApplicationMark from '@/Jetstream/ApplicationMark'
-    import JetButtonBlue from '@/Jetstream/ButtonBlue'
-    import JetInput from '@/Jetstream/Input'
-    import JetCheckbox from '@/Jetstream/Checkbox'
-    import JetLabel from '@/Jetstream/Label'
-    import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import JetApplicationMark from '@/Jetstream/ApplicationMark'
+import JetButtonBlue from '@/Jetstream/ButtonBlue'
+import JetInput from '@/Jetstream/Input'
+import JetCheckbox from '@/Jetstream/Checkbox'
+import JetLabel from '@/Jetstream/Label'
+import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import LoginRegisterFlash from '../Components/LoginRegisterFlash'
 
-    export default {
-        components: {
-            JetApplicationMark,
-            JetButtonBlue,
-            JetInput,
-            JetCheckbox,
-            JetLabel,
-            JetValidationErrors
-        },
+export default {
+    components: {
+        JetApplicationMark,
+        JetButtonBlue,
+        JetInput,
+        JetCheckbox,
+        JetLabel,
+        JetValidationErrors,
+        LoginRegisterFlash
+    },
 
-        props: {
-            canResetPassword: Boolean,
-            status: String
-        },
+    props: {
+        canResetPassword: Boolean,
+        status: String
+    },
 
-        data() {
-            return {
-                form: this.$inertia.form({
-                    email: '',
-                    password: '',
-                    remember: false,
-                    csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    data() {
+        return {
+            form: this.$inertia.form({
+                email: '',
+                password: '',
+                remember: false,
+                _token: this.$page.props.csrf_token,
+            })
+        }
+    },
+
+    methods: {
+        submit() {
+            this.form
+                .transform(data => ({
+                    ... data,
+                    remember: this.form.remember ? 'on' : ''
+                }))
+                .post(this.route('login'), {
+                    onFinish: () => {
+                        this.form.reset('password')
+                    },
                 })
-            }
-        },
-
-        methods: {
-            submit() {
-                this.form
-                    .transform(data => ({
-                        ... data,
-                        remember: this.form.remember ? 'on' : ''
-                    }))
-                    .post(this.route('login'), {
-                        onFinish: () => this.form.reset('password'),
-                    })
-            }
         }
     }
+}
 </script>

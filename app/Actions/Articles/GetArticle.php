@@ -17,11 +17,14 @@ class GetArticle
         ->leftJoin('tags', function ($join) {
             $join->on('articles.id', '=', 'tags.tagable_id');
         })
-        ->leftJoin('comments', function ($join) {
-            $join->on('articles.id', '=', 'comments.commentable_id');
-        })
         ->leftJoin('approvals', function ($join) {
             $join->on('approvalable_id', '=', 'articles.id');
+        })
+        ->leftJoin('comments', function ($join) {
+            $join->on('commentable_id', '=', 'articles.id');
+        })
+        ->leftJoin('approvals as Ap1', function ($join) {
+            $join->on('Ap1.approvalable_id', '=', 'comments.id');
         })
         ->join('users AS Us1', function ($join) {
             $join->on('Us1.id', '=', 'articles.user_id');
@@ -39,6 +42,9 @@ class GetArticle
             'articles.slug as slug',
             'approvals.id as approval_id',
             'approvals.user_id as approval_user_id',
+            'Ap1.id as comment_approval_id',
+            'Ap1.approvalable_id as approved_comment_id',
+            'Ap1.user_id as comment_approval_user_id',
             'tags.name as tag',
             'tags.id as tag_id',
             'Us1.name as name',
@@ -54,7 +60,8 @@ class GetArticle
             'Us1.surname',
             'Us1.slug',
             'Im1.path',
-            'approvals.id'
+            'approvals.id',
+            'Ap1.id'
         ])
         ->get();
 

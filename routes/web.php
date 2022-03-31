@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
@@ -12,9 +13,11 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\CastVoteController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
 use App\Http\Controllers\MembershipRequestResponseController;
@@ -39,12 +42,13 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/talkboard', function () {
-    return Inertia::render('Talkboard');
-})->name('home');
-
-// Route::group(['middleware' => config('fortify.middleware', ['web'])], function () {
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+
+    Route::get('/about', [HomeController::class, 'index'])
+        ->name('about');
+
+    Route::get('/about/showGroup/{id}', [HomeController::class, 'showgroup'])
+        ->name('showGroup');
 
     Route::get('/users/{user}/profile', [UserController:: class, 'showProfile'])
         ->name('myprofile');
@@ -72,18 +76,21 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::get('/articles/{article:slug}', [ArticleController::class, 'show'])
         ->name('article-show');
+
+    Route::post('/articles/search', [ArticleController:: class, 'search'])
+        ->name('searchArticles');
     
     Route::post('/approvals/store', [ApprovalController::class, 'store'])
         ->name('storeApproval');
-    
-    Route::post('/comments/store', [CommentController::class, 'store'])
-        ->name('storeComment');
 
     Route::get('talkboard', [PostController::class, 'index'])
         ->name('talkboard');
     
     Route::post('/posts/store', [PostController::class, 'store'])
         ->name('storePost');
+    
+    Route::post('/comments/store', [CommentController::class, 'store'])
+    ->name('storeComment');
 
     Route::post('/associate-request', [AssociateRequestController::class, 'store'])
         ->name('assocReq');
@@ -93,12 +100,18 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::get('/mygroups', [GroupController::class, 'index'])
         ->name('mygroups');
+
+    Route::get('/mygroups/show/{id}', [GroupController::class, 'show'])
+        ->name('showGroup');
     
     Route::post('/mygroups/store', [GroupController::class, 'store'])
         ->name('storeGroup');
     
     Route::patch('/mygroups/update', [GroupController::class, 'update'])
         ->name('updateGroup');
+
+    Route::patch('/mygroups/transfer', [GroupController::class, 'transferOwnership'])
+        ->name('transferGroup');
         
     Route::delete('/mygroups/{group}/destroy', [GroupController::class, 'destroy'])
         ->name('deleteGroup');
@@ -111,6 +124,21 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         
     Route::patch('/myteams/update', [TeamController::class, 'update'])
         ->name('updateTeam');
+
+    Route::post('/mynetworks/store', [NetworkController::class, 'store'])
+        ->name('storeNetwork');
+
+    Route::patch('/mynetworks/update', [NetworkController::class, 'update'])
+        ->name('updateNetwork');
+
+    Route::patch('/mynetworks/transfer', [NetworkController::class, 'transferOwnership'])
+        ->name('transferNetwork');
+
+    Route::post('/memberships/store', [MembershipController::class, 'store'])
+        ->name('storeMembership');
+
+    Route::delete('/memberships/{membership}/destroy', [MembershipController::class, 'destroy'])
+        ->name('storeMembership');
     
     Route::patch('/memberships/accept-reject', [MembershipRequestResponseController::class, 'update'])
         ->name('acceptRejectMembership');
@@ -138,7 +166,4 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::post('/cast-vote/store', [CastVoteController::class, 'store'])
         ->name('castVote');
-
-    Route::get('myarticlez', [ArticleController::class, 'indexx'])
-        ->name('myarticlez');
 });

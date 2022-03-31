@@ -15,4 +15,9 @@ class Affiliation extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+
+    public function affiliations() : object
+    {
+        return $this->belongsToMany(Group::class, 'affiliations', 'requested_of', 'requested_by');
+    }
 }

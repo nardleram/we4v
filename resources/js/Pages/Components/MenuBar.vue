@@ -33,7 +33,7 @@
         <button class="text-lg text-we4vGrey-700 px-2 mr-1 rounded-md border border-we4vGrey-300 bg-we4vGrey-100 tracking-tight hover:bg-we4vGrey-200 cursor-pointer" @click="editor.chain().focus().toggleOrderedList().run()" :class="{ 'is-active': editor.isActive('orderedList') }">
             <i class="fas fa-List-Ol"></i>Ol
         </button>
-        <button class="text-sm text-we4vGrey-700 px-2 mr-1 rounded-md border border-we4vGrey-300 bg-we4vGrey-100 tracking-tight hover:bg-we4vGrey-200 cursor-pointer h-7" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
+        <button class="text-sm text-we4vGrey-700 px-2 mr-1 rounded-md border border-we4vGrey-300 bg-we4vGrey-100 tracking-tight hover:bg-we4vGrey-200 cursor-pointer min-h-menu-button" @click="editor.chain().focus().toggleCodeBlock().run()" :class="{ 'is-active': editor.isActive('codeBlock') }">
             <i class="fas fa-File-Code"></i>codeblock
         </button>
     </div>

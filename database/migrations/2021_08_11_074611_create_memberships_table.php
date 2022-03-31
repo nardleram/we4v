@@ -20,11 +20,12 @@ class CreateMembershipsTable extends Migration
             $table->boolean('confirmed')->default(false);
             $table->uuid('membershipable_id');
             $table->string('membershipable_type');
-            $table->uuid('updated_by');
+            $table->uuid('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreignUuid('user_id')->references('id')->on('users')->nullable();
+            $table->foreignUuid('group_id')->references('id')->on('groups')->nullable();
         });
     }
 

@@ -41,16 +41,21 @@ class GetGroups
             'groups.name as group_name',
             'groups.id as group_id',
             'groups.description as group_description',
+            'groups.owner as group_owner',
             'groups.geog_area as geog_area',
+            'groups.created_at as group_created_at',
             'teams.id as team_id',
             'teams.name as team_name',
             'teams.function as team_function',
+            'teams.created_at as team_created_at',
+            'memberships.id as membership_id',
             'memberships.user_id as member_user_id',
             'memberships.membershipable_type as membership_type',
             'memberships.role as role',
             'memberships.confirmed as confirmed',
             'memberships.is_admin as admin',
             'memberships.deleted_at as declined',
+            'memberships.created_at as created_at',
             'users.username as username',
             'Us2.username as updated_by',
             'users.id as user_id',
@@ -59,12 +64,15 @@ class GetGroups
         ->groupBy([
             'groups.id',
             'teams.id',
-            'memberships.is_admin',
             'memberships.membershipable_type',
+            'memberships.id',
+            'memberships.is_admin',
             'memberships.user_id',
             'memberships.role',
             'memberships.confirmed',
             'memberships.deleted_at',
+            'memberships.created_at',
+            'groups.owner',
             'users.username',
             'users.id',
             'Us2.username',
@@ -72,6 +80,7 @@ class GetGroups
         ])
         ->orderBy('groups.name')
         ->orderBy('teams.name')
+        ->orderBy('memberships.membershipable_type')
         ->orderBy('memberships.is_admin', 'desc')
         ->orderBy('users.username')
         ->get();

@@ -6,6 +6,7 @@ use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Mews\Purifier\Casts\CleanHtml;
 
 class Post extends Model
 {
@@ -17,6 +18,7 @@ class Post extends Model
     public $incrementing = false;
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
+    protected $casts = ['body' => CleanHtml::class];
 
     public function user() : object
     {

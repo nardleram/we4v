@@ -11,6 +11,7 @@ class CreateNetworksTable extends Migration
         Schema::create('networks', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
+            $table->string('description');
             $table->softDeletes();
             $table->timestamps();
 

@@ -1,11 +1,11 @@
 <template>
     <flash-message></flash-message>
     <error-message></error-message>
-    <modal-backdrop :show="showBackdrop">
-    </modal-backdrop>
+    <modal-backdrop :show="showBackdrop"></modal-backdrop>
+    
     <app-layout>
         <template #centre>
-            <div class="w-1/2 p-3 max-h-screen overflow-x-hidden tracking-tight">
+            <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <teleport to="#voteModals">
                         <Modal :show="showVoteModal">
                             <div @mouseleave="nowOutside(); mode = 'vote'" @mouseenter="nowInside(); mode = 'vote'" v-if="showVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">

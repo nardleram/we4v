@@ -15,9 +15,8 @@
                 </div>
             </div>
         </div>
-        <div>
-            <p class="tracking-tight text-we4vPost text-we4vGrey-700">{{ post.body }}</p>
-        </div>
+        <div v-html="post.body" class="tracking-tight text-we4vPost text-we4vGrey-700"></div>
+
         <div class="w-full mt-2" v-if="post.image">
             <img :src="'/'+post.image" alt="" class="object-cover mx-auto">
         </div>
@@ -39,8 +38,8 @@
                 <transition name="fade">
                     <button v-if="commentBody"
                         @click="postComment(commentBody, post.post_id); commentBody = ''" 
-                        class="bg-we4vGrey-200 rounded-full h-8 w-8 border border-we4vGrey-200 font-bold text-2xl text-we4vBlue ml-2 leading-2">
-                        +
+                        class="text-we4vBlue ml-3">
+                        <small><i class="fas fa-save cursor-pointer text-xl text-we4vBlue"></i></small>
                     </button>
                 </transition>
                 <div @click="errors = false" class="w-9/12 text-sm font-bold mt-2 text-center m-auto rounded-lg py-1 shadow-md text-red-700 border-b-2 border-red-700 cursor-pointer" v-if="errors">{{ errors }}</div>
@@ -54,7 +53,7 @@
                             </inertia-link>
                         </div>
                         <div class="mb-3 w-11/12">
-                            <p class="-mb-1 text-we4vComment text-we4vGrey-700">{{ comment.body }}</p>
+                            <div v-html="comment.body" class="-mb-1 text-we4vComment text-we4vGrey-700"></div>
                             <small class="text-gray-400 tracking-tight text-xs">{{ comment.commented_by }}, {{ comment.commented_at }}</small>
                         </div>
                     </div>
