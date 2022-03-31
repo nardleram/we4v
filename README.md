@@ -2,8 +2,6 @@
 
 #### _A social-governance and direct-democracy online software that cements power to the local level, while enabling only information-sharing and administrative functionality to networked groups and teams spanning geographic regions larger than the local_.
 
-## Code-structure philosophy employed
-
 ### Philosophy
 Even though I'm using Laravel for the backend, I've avoided relying too much, if at all, on model relationships and the elegant, expressive code they afford, for my database queries. My goal has been to go to disk as little as possible ... for performance reasons. Hence the tortured scripts fetching complex data structures from multiple tables, and the formatting scripts – all in the App/Actions folder with model-name subfolders – that compile that complex data into arrays I return to InertiaJs/Vue. In other words, the philosophy I've chosen, in all my amateur enthusiasm, favours the end user and thus also response times over code maintainability _to some degree_. Code maintainability is very important to me, almost a joint top priority with usability, response times and resource efficiency, but I do sacrifice it to user satisfaction as just described.
 
