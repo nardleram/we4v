@@ -30,7 +30,7 @@
                                 </div>
 
                                 <div>
-                                    <Input :name="geogArea" :modelValue="geogArea" :label="'geographic area'" :placeholder="'Enter group’s geagraphic area (optional)'" :type="'text'" @update-model-value="geogArea = $event" />
+                                    <Input :name="geogArea" :modelValue="geogArea" :label="'geographic area'" :placeholder="'Enter group’s geagraphic area (optional)'" :type="'text'" @update-model-value="geogArea = $event" @check-if-user-may-submit="checkIfUserMaySubmit('group')" />
                                 </div>
 
                                 <h4  v-if="!edit" class="text-we4vBlue font-semibold text-sm mt-4">Invite associates to join your group (optional)</h4>
@@ -110,7 +110,7 @@
                                     </div>
                                 </div>
 
-                                <button-grey @click="submitTransferGroupData()" :type="'submit'" :disabled="!transferGroupSelected" :enabled="greyButtonEnabled">
+                                <button-grey @click="submitTransferGroupData()" :type="'submit'" :enabled="greyButtonEnabled">
                                     <span>Transfer group</span>
                                 </button-grey>
                             </template>
@@ -184,11 +184,11 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic text-we4vGrey-600">{{ teamName }}</span></h4>
 
                                 <div>
-                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" />
+                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <div>
-                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" />
+                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add/Remove associates to/from this team</h4>
@@ -208,11 +208,10 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <button id="submitForm" class="text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4"
-                                @click="submitTeamData()">
+                                
+                                <button-grey @click="submitTeamData()" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
                                     <span>Update team (send invites)</span>
-                                </button>
+                                </button-grey>
                             </template>
                         </Form>
                     </div>
@@ -317,7 +316,7 @@
                                 <div class="w-full flex flex-row flex-wrap max-h-44 overflow-y-scroll items-center justify-around">
                                     <div class="lg:w-1/4 md:w-1/3 sm:w-full mr-1 mb-2" v-for="(associate, associateKey) in $page.props.myAssociates" :key="associateKey">
                                         <div class="w-full flex flex-nowrap items-center justify-evenly">
-                                            <input :value="associate.user_id" name="transferToAssocs" type="radio">
+                                            <input @click="greyButtonEnabled = true" :value="associate.user_id" name="transferToAssocs" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 text-center" for="{{ associate.user_id }}">{{ associate.username }}</label>
                                             <img :src="'/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-2">
                                         </div>
@@ -334,7 +333,9 @@
 
                 <teleport to="#groupModals">
                     <div v-if="showNetworkGroupMember" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white top-28 left-1/4 w-1/2 rounded-md p-6 max-h-600 overflow-y-scroll">
-                        <div class="w-9/12 text-sm font-bold mb-2 text-center m-auto rounded-lg py-1 shadow-md text-red-700 border-b-2 border-red-700" v-if="errors.members">{{ errors.members }}</div>
+                        <div class="w-9/12 text-sm font-bold mb-2 text-center m-auto rounded-lg py-1 shadow-md text-red-700 border-b-2 border-red-700" v-if="errors.members">
+                            {{ errors.members }}
+                        </div>
 
                         <div class="flex justify-end">
                             <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
@@ -367,11 +368,11 @@
 
                                 <h5 class="w-full tracking-tight text-we4vBlue font-semibold text-sm mt-2">{{ team.team_name }}'s members</h5>
                                 <div class="flex flex-row mb-1 mt-2 items-center" v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey">
-                                <inertia-link @click="clearModal(); showNetworkGroupMember = false" class="mr-1" :href="route('user-show', teamMember.slug)" as="button">
-                                    <img :src="'/'+teamMember.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover ">
-                                </inertia-link>
-                                <small class="w-full tracking-tight text-we4vGrey-500 mr-3">{{ teamMember.username }}<span v-if="teamMember.admin" class="text-we4vOrange">*</span>, {{ teamMember.role }} <span v-if="!teamMember.confirmed" class="font-semibold text-we4vGrey-300">(TBC)</span></small>
-                            </div>
+                                    <inertia-link @click="clearModal(); showNetworkGroupMember = false" class="mr-1" :href="route('user-show', teamMember.slug)" as="button">
+                                        <img :src="'/'+teamMember.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover ">
+                                    </inertia-link>
+                                    <small class="w-full tracking-tight text-we4vGrey-500 mr-3">{{ teamMember.username }}<span v-if="teamMember.admin" class="text-we4vOrange">*</span>, {{ teamMember.role }} <span v-if="!teamMember.confirmed" class="font-semibold text-we4vGrey-300">(TBC)</span></small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -831,9 +832,8 @@ export default {
             teamName.vaue = data
         }
 
-        const addRemoveAssociate = (mode, user_id_role) => {
-            checkIfRoleInputFieldsFilled(user_id_role)
-            checkIfUserMaySubmit(mode)
+        const addRemoveAssociate = (mode) => {
+            checkIfRoleInputFieldsFilled()
 
             selectedGroupAssociates.value = []
             selectedTeamAssociates.value = []
@@ -909,7 +909,7 @@ export default {
             selectedAssoc.value = !selectedAssoc.value
             roleUserId.value = e.id
 
-            checkIfRoleInputFieldsFilled(e.id)
+            checkIfRoleInputFieldsFilled()
 
             if (mode.value === 'group') {
                 groupMemberRoles.value.push({id: e.id, role: e.value})

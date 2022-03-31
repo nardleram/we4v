@@ -139,6 +139,61 @@ const activateUserTaskModal = (task) => {
     showBackdrop.value = true
 }
 
+const checkAssocsAgainstRoles = () => {
+    let myAssocVals
+    let emptyField = false
+    let teamAssocs = 0
+
+    edit.value
+    ? myAssocVals = document.querySelectorAll('input.invitedAssocsEdit')
+    : myAssocVals = document.querySelectorAll('input.invitedAssocs')
+
+    for (const myAssoc of myAssocVals) {
+        if (myAssoc.checked) {
+            let elem = document.getElementById(myAssoc.value)
+            if (!elem.value) {
+                emptyField = true
+            } else {
+                elem.style.border = 'solid 1px rgb(81, 168, 186)'
+                
+                mode.value === 'team'
+                ? ++teamAssocs
+                : null
+            }
+        }
+    }
+
+    emptyField
+    ? roleFieldsAccountedFor.value = false
+    : roleFieldsAccountedFor.value = true
+
+    teamAssocs === 0 && mode.value === 'team'
+    ? roleFieldsAccountedFor.value = false
+    : null
+}
+
+const checkRolesAgainstAssocs = () => {
+    let myRoleVals
+    let uncheckedBox = false
+
+    edit.value 
+    ? myRoleVals = document.querySelectorAll('input.assocRolesEdit')
+    : myRoleVals = document.querySelectorAll('input.assocRoles')
+
+    for (const myRole of myRoleVals) {
+        if (myRole.value) {
+            let elem = document.getElementById('checkbox_'+myRole.id)
+            !elem.checked
+            ? uncheckedBox = true
+            : null
+        }
+    }
+
+    uncheckedBox
+    ? assocCheckboxesAccountedFor.value = false
+    : assocCheckboxesAccountedFor.value = true
+}
+
 const checkIfProjectGroupSelected = () => {
     if (document.querySelector('input[name="groupOrTeam"]:checked').value) {
         projectGroupSelected.value = true
@@ -147,52 +202,9 @@ const checkIfProjectGroupSelected = () => {
     checkIfUserMaySubmit('project')
 }
 
-const checkIfRoleInputFieldsFilled = (user_id_role) => {
-    let myAssocVals
-    let myRoleVals
-    let emptyField = false
-    let fullFieldError = false
-    edit.value
-    ? myAssocVals = document.querySelectorAll('input.invitedAssocsEdit')
-    : myAssocVals = document.querySelectorAll('input.invitedAssocs')
-
-    for (const myVal of myAssocVals) {
-        if (myVal.checked) {
-            let elem = document.getElementById(myVal.value)
-            if (!elem.value) {
-                emptyField = true
-            } else {
-                elem.style.border = 'solid 1px rgb(81, 168, 186)'
-            }
-        }
-    }
-
-    edit.value
-    ? myRoleVals = document.querySelectorAll('input.assocRolesEdit')
-    : myRoleVals = document.querySelectorAll('input.assocRoles')
-    for (const myVal of myRoleVals) {
-        if (myVal.value) {
-            let elem = document.getElementById('checkbox_'+user_id_role)
-            !elem.checked
-            ? fullFieldError = true
-            : null
-        }
-    }
-
-    emptyField
-    ? roleFieldsAccountedFor.value = false
-    : roleFieldsAccountedFor.value = true
-
-    fullFieldError
-    ? assocCheckboxesAccountedFor.value = false
-    : assocCheckboxesAccountedFor.value = true
-
-    console.log('after checking values of role fields and checkboxes, we have roleFieldsAccountedFor : '+roleFieldsAccountedFor.value+', and assocCheckboxesAccountedFor: '+assocCheckboxesAccountedFor.value)
-
-    // if (mode.value === 'team') {
-    //     numFieldsFilled > 0 ? roleFieldsAccountedFor.value = true : roleFieldsAccountedFor.value = false
-    // }
-
+const checkIfRoleInputFieldsFilled = () => {
+    checkRolesAgainstAssocs()
+    checkAssocsAgainstRoles()
     checkIfUserMaySubmit(mode.value)
 }
 
@@ -219,6 +231,9 @@ const checkIfUserMaySubmit = (mode) => {
     let end = false
     let requiredFormFields = false
 
+    checkRolesAgainstAssocs()
+    checkAssocsAgainstRoles()
+
     if (mode === 'group') {
         elIdName = 'groupName'
         elIdDesc = 'groupDescription'
@@ -244,15 +259,7 @@ const checkIfUserMaySubmit = (mode) => {
     }
 
     setTimeout(function() {
-        if (mode !== 'task' && edit.value) {
-            document.getElementById(elIdName).value
-            ? name = true
-            : name = false
-            
-            document.getElementById(elIdDesc).value
-            ? description = true
-            : description = false
-        } else if (mode === 'task' && edit.value) {
+        if (mode === 'task' && edit.value) {
             name = true
             description = true
         } else {
@@ -326,6 +333,7 @@ const checkIfUserMaySubmit = (mode) => {
 const clearModal = () => {
     amInside.value = false
     amOutside.value = false
+    assocCheckboxesAccountedFor.value = false
     edit.value = false
     gAdmin.value = false
     greyButtonEnabled.value = false
@@ -354,6 +362,7 @@ const clearModal = () => {
     projectName.value = null
     projectStartDate.value = null
     projectTeamData.value = []
+    roleFieldsAccountedFor.value = false
     selectedGroupAssociates.value = []
     selectedTeamAssociates.value = []
     selectedTeamMembers.value = []

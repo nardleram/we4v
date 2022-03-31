@@ -12,13 +12,13 @@ we4v's check-form-completion system is _very_ complicated indeed; I thought I'd 
 
 In manageModals.js, which is in `./resources/js/Pages/Composables/manageModals.js`, there are four methods handling the checking system I've set up to enable/disable each form's submit button, and apply the styles that indicate visually the enabled and disabled states, handled via the boolean variable `greyButtonEnabled`, which is passed to the relevant Vue component via a prop. (Forms in we4v are overwhelmingly delivered within modals.) These are the names of the relevant methods with descriptions:
 
-1. `checkIfUserMaySubmit(mode)`: Runs checks via `getElementById` blocks by taking a `mode` variable that carries strings such as 'group' or 'team' to set the CSS ids. Once all the boolean variables have been set, it then determines whether the relevant submit button should be enabled or disabled.
+1. `checkIfUserMaySubmit(mode)`: Runs checks using `getElementById` by taking a `mode` variable that carries strings such as 'group' or 'team' to set the CSS ids. Once all the boolean variables have been set, it then determines whether the relevant submit button should be enabled or disabled.
 
 2. `checkIfProjectGroupSelected()`: _Like it says on the tin_. When creating a new Project, it must be assigned to a Group to be submitted.
 
-3. `checkIfRoleInputFieldsFilled()`: Groups and Teams have members, and members (Associates) have roles. If, when clicking a checkbox to invite a specific Associate to join a Group or Team, the user fails to enter a string into the Role input field, the border of that field is coloured red and the submit button either remains disabled or is changed to disabled. This method plays a major role in that calculation.
+3. `checkIfRoleInputFieldsFilled()`: Groups and Teams have members, and members (Associates) have roles. If, when clicking a checkbox to invite a specific Associate to join a Group or Team, the user fails to enter a string into the Role input field, or fills the text field but fails to click its corresponding checkbox, the border of that field is coloured red and the submit button either remains disabled or is changed to disabled. This method plays a major role in that calculation. Thie method is a shell method, so to speak, that calls the workhorses `checkRolesAgainstAssocs()` and `checkAssocsAgainstRoles()`, before finally calling `checkIfUserMaySubmit(mode)` described in point 1. above.
 
-4. `checkIfTaskAssigneeSelected()`: As above, but for Tasks.
+4. `checkIfTaskAssigneeSelected()`: To be completed.
 
 Next up are the methods and variables in MyGroups.vue:
 
@@ -27,6 +27,10 @@ Next up are the methods and variables in MyGroups.vue:
 2. `onCollectMemberRoles()`: Every time a user exits focus from one the role input fields, this method is called. It toggles the boolean variable `selectedAssoc`, assigns a user_id to the variable `roleUserId`, then calls the method `checkIfRoleInputFieldsFilled(user_id)`. This latter method has to be called every time a determination must be made as to what colour border the role input field ought to display. The truthiness of `selectedAssoc` is needed for:
 
 3. `watch(selectedAssoc)`: Not strictly a method, but every time `selectedAssoc` changes state, this method has to be fired. It sets the role-input-field's border colour.
+
+Next up are the methods and variables in MyProjects.vue:
+
+(To be completed)
 
 Finally, the DOM data and triggers/variables therein:
 
