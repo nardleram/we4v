@@ -20,6 +20,7 @@ const groupRole = ref(null)
 const groupRequester = ref(null)
 const groupsNotInNetwork = ref([])
 const inviteData = ref([])
+const membershipId = ref(null)
 const mode = ref(null)
 const networkId = ref(null)
 const networkDescription = ref(null)
@@ -27,6 +28,7 @@ const networkGroups = ref([])
 const networkName = ref(null)
 const networkOwner = ref(null)
 const projectCompleted = ref(false)
+const projectCompletedAt = ref(null)
 const projectDescription = ref(null)
 const projectGroupData = ref([])
 const projectGroupId = ref(null)
@@ -37,6 +39,7 @@ const projectName = ref(null)
 const projectNotes = ref([])
 const projectTasks = ref([])
 const projectTeamData = ref([])
+const projectTeamId = ref(null)
 const projectTeamName = ref(null)
 const projectStartDate = ref(null)
 const projectEndDate = ref(null)
@@ -47,6 +50,7 @@ const selectedGroupAssociates = ref([])
 const selectedTeamAssociates = ref([])
 const selectedTeamMembers = ref([])
 const showBackdrop = ref(false)
+const showCompletedProjectModal = ref(false)
 const showGroupModal = ref(false)
 const showInviteModal = ref(false)
 const showEditAdminTaskModal = ref(false)
@@ -69,6 +73,7 @@ const showVoteModal = ref(false)
 const tAdmin = ref(false)
 const taskableId = ref(null)
 const taskableType = ref(null)
+const taskAssignee = ref(null)
 const taskAssigneeSelected = ref(false)
 const taskCompleted = ref(false)
 const taskDescription = ref(null)
@@ -104,9 +109,24 @@ const userMaySubmitForm = ref(false)
 const voteClosingDate = ref(null)
 const voteInputClosingDate = ref(null)
 const voteElements = ref([])
+const voteGroupName = ref(null)
 const voteId = ref(null)
 const voteOwner = ref(null)
+const voteResults = ref([])
+const voteTeamName = ref(null)
 const voteTitle = ref(null)
+
+const activateShowClosedVoteModal = (vote) => {
+    showBackdrop.value = false
+
+    voteTitle.value = vote.vote_title
+    voteClosingDate.value = vote.close_date
+    voteGroupName.value = vote.group_name
+    voteTeamName.value = vote.team_name
+    voteResults.value = vote.results
+
+    showBackdrop.value = true
+}
 
 const activateShowGroupModal = (group) => {
     showBackdrop.value = false
@@ -135,6 +155,8 @@ const activateUserTaskModal = (task) => {
     projectNotes.value = task.project_notes
     taskTeamName.value = task.team_name
     taskProjectName.value = task.project_name
+
+    greyButtonEnabled.value = true
     showUserTaskModal.value = true
     showBackdrop.value = true
 }
@@ -208,16 +230,19 @@ const checkIfRoleInputFieldsFilled = () => {
     checkIfUserMaySubmit(mode.value)
 }
 
-const checkIfTaskAssigneeSelected = () => {
+const checkIfTaskAssigneeSelected = (checkUser) => {
     let myVals = document.querySelectorAll('input.selectedMembers')
     
     myVals.forEach(myVal => {
         if (myVal.checked) {
             taskAssigneeSelected.value = true
+            greyButtonEnabled.value = true
         }
     })
 
-    checkIfUserMaySubmit('task')
+    checkUser
+    ? checkIfUserMaySubmit('task')
+    : null
 }
 
 const checkIfUserMaySubmit = (mode) => {
@@ -259,18 +284,13 @@ const checkIfUserMaySubmit = (mode) => {
     }
 
     setTimeout(function() {
-        if (mode === 'task' && edit.value) {
-            name = true
-            description = true
-        } else {
-            document.getElementById(elIdName).value
-            ? name = true
-            : name = false
-            
-            document.getElementById(elIdDesc).value
-            ? description = true
-            : description = false
-        }
+        document.getElementById(elIdName).value
+        ? name = true
+        : name = false
+        
+        document.getElementById(elIdDesc).value
+        ? description = true
+        : description = false
 
         if (mode === 'project' || mode === 'task') {
             if (!edit.value) {
@@ -300,6 +320,38 @@ const checkIfUserMaySubmit = (mode) => {
             name && description && start && end
             ? requiredFormFields = true
             : requiredFormFields = false
+
+            // These two are set to true when zero assocs and roles;
+            // set to false in the case of projects and tasks
+            assocCheckboxesAccountedFor.value = false
+            roleFieldsAccountedFor.value = false
+        }
+
+        if (mode === 'project' && edit.value && projectTasks.value.length === 0) {
+            if (document.querySelector('input[name="groupOrTeam"]:checked').value) {
+                projectGroupSelected.value = true
+            }
+        }
+
+        if ((mode === 'project' || mode === 'task') && edit.value) {
+            mode === 'project' && projectTasks.value
+            ? projectGroupSelected.value = true
+            : null
+
+            if (mode === 'task') {
+                let checked = false
+                let myVals = document.querySelectorAll('input.selectedMembers')
+
+                myVals.forEach(myVal => {
+                    myVal.checked
+                    ? checked = true
+                    : null
+                })
+    
+                checked
+                ? taskAssigneeSelected.value = true
+                : taskAssigneeSelected.value = false
+            }
         }
 
         if (mode === 'group') {
@@ -319,7 +371,7 @@ const checkIfUserMaySubmit = (mode) => {
             ? null
             : roleFieldsAccountedFor.value = true
         }
-        
+
         if ((requiredFormFields && assocCheckboxesAccountedFor.value && roleFieldsAccountedFor.value) || 
             (requiredFormFields && projectGroupSelected.value) ||
             (requiredFormFields && taskAssigneeSelected.value)) {
@@ -347,12 +399,14 @@ const clearModal = () => {
     groupName.value = null
     groupRequester.value = null
     groupRole.value = null
+    membershipId.value = null
     networkId.value = null
     networkDescription.value = null
     networkGroups.value = []
     networkName.value = null
     networkOwner.value = null
     projectCompleted.value = false
+    projectCompletedAt.value = null
     projectDescription.value = null
     projectEndDate.value = null
     projectGroupData.value = []
@@ -360,6 +414,7 @@ const clearModal = () => {
     projectId.value = null
     projectInputEndDate.value = null
     projectName.value = null
+    projectTeamId.value = null
     projectStartDate.value = null
     projectTeamData.value = []
     roleFieldsAccountedFor.value = false
@@ -393,6 +448,7 @@ const clearModal = () => {
     teamOwner.value = null
     teamRequester.value = null
     teamRole.value = null
+    showCompletedProjectModal.value = false
     showEditAdminTaskModal.value = false
     showEditProjectModal.value = false
     showEditTaskModal.value = false
@@ -418,8 +474,11 @@ const clearModal = () => {
     updated_by.value = null
     voteClosingDate.value = null
     voteElements.value = []
+    voteGroupName.value = null
     voteId.value = null
     voteOwner.value = null
+    voteResults.value = []
+    voteTeamName.value = null
     voteTitle.value = null
 }
 
@@ -441,6 +500,7 @@ const hydrateInviteModal = (req) => {
         groupRequester.value = req.groupRequester
         groupMembers.value = req.groupMembers
         updated_by.value = req.groupRequester
+        membershipId.value = req.membership_id
     }
 
     if (req.type === 'team') {
@@ -452,6 +512,7 @@ const hydrateInviteModal = (req) => {
         teamRole.value = req.tRole
         teamRequester.value = req.teamRequester
         updated_by.value = req.teamRequester
+        membershipId.value = req.membership_id
     }
 
     showBackdrop.value = true
@@ -522,12 +583,12 @@ const onActivateEditNetworkModal = (network) => {
 
 const onActivateEditProjectModal = (project) => {
     edit.value = true
-    checkIfUserMaySubmit('project')
 
     projectCompleted.value = project.project_completed
     projectDescription.value = project.project_description
     projectId.value = project.project_id
     projectGroupId.value = project.project_group_id
+    projectTeamId.value = project.project_team_id
     projectGroupName.value = project.project_group_name
     projectTeamName.value = project.project_team_name
     projectName.value = project.project_name
@@ -537,34 +598,36 @@ const onActivateEditProjectModal = (project) => {
     projectInputEndDate.value = project.project_input_end_date
     projectStartDate.value = project.project_start_date
 
+    checkIfUserMaySubmit('project')
+
     showBackdrop.value = true
     showEditProjectModal.value = true
 }
 
-const onActivateEditAdminTaskModal = (task) => {
-    edit.value = true
-    mode.value = 'task'
+// const onActivateEditAdminTaskModal = (task) => {
+//     edit.value = true
+//     mode.value = 'task'
 
-    checkIfUserMaySubmit('task')
+//     checkIfUserMaySubmit('task')
 
-    taskCompleted.value = task.task_completed
-    taskId.value = task.task_id
-    taskProjectId.value = task.project_id
-    taskName.value = task.task_name
-    projectNotes.value = task.project_notes ? task.project_notes : null
-    taskNotes.value = task.task_notes ? task.task_notes : null
-    taskDescription.value = task.task_description
-    taskRecipientType.value = 'team'
-    taskEndDate.value = task.task_end_date
-    taskStartDate.value = task.task_start_date
-    taskInputEndDate.value = task.task_input_end_date
-    taskableId.value = task.team_id
-    taskableType.value = 'App\\Models\\Team'
-    taskMembers.value = task.selected_team_members
+//     taskCompleted.value = task.task_completed
+//     taskId.value = task.task_id
+//     taskProjectId.value = task.project_id
+//     taskName.value = task.task_name
+//     projectNotes.value = task.project_notes ? task.project_notes : null
+//     taskNotes.value = task.task_notes ? task.task_notes : null
+//     taskDescription.value = task.task_description
+//     taskRecipientType.value = 'team'
+//     taskEndDate.value = task.task_end_date
+//     taskStartDate.value = task.task_start_date
+//     taskInputEndDate.value = task.task_input_end_date
+//     taskableId.value = task.team_id
+//     taskableType.value = 'App\\Models\\Team'
+//     taskMembers.value = task.selected_team_members
 
-    showBackdrop.value = true
-    showEditAdminTaskModal.value = true
-}
+//     showBackdrop.value = true
+//     showEditAdminTaskModal.value = true
+// }
 
 const onActivateEditTaskModal = (task) => {
     edit.value = true
@@ -582,9 +645,11 @@ const onActivateEditTaskModal = (task) => {
             taskTeamData.value.push(myteam)
         }
     })
+    
     taskCompleted.value = task.task_completed
     taskId.value = task.task_id
-    taskProjectId.value = task.project_id
+    taskAssignee.value = task.assignee
+    projectId.value = task.project_id
     taskName.value = task.task_name
     projectNotes.value = task.project_notes ? task.project_notes : []
     taskNotes.value = task.notes ? task.notes : []
@@ -601,6 +666,7 @@ const onActivateEditTaskModal = (task) => {
                 username: member.task_member_username, 
                 created_at: member.task_member_created_at,
                 user_id: member.task_member_user_id,
+                team_name: member.task_team_name
             })
         }) 
     } else if (task.selected_task_members) {
@@ -609,6 +675,7 @@ const onActivateEditTaskModal = (task) => {
                 username: member.task_member_username, 
                 created_at: member.task_member_created_at,
                 user_id: member.task_member_user_id,
+                team_name: member.task_team_name
             })
         }) 
     }
@@ -653,6 +720,26 @@ const onActivatePendingVoteModal = (vote) => {
 
     showBackdrop.value = true
     showPendingVoteModal.value = true
+}
+
+const onActivateShowCompletedProjectModal = (project) => {
+    projectCompleted.value = project.project_completed
+    projectDescription.value = project.project_description
+    projectName.value = project.project_name
+    projectCompletedAt.value = project.project_updated_at
+    projectId.value = project.project_id
+    projectGroupId.value = project.project_group_id
+    projectTeamId.value = project.project_team_id
+    projectGroupName.value = project.project_group_name
+    projectTeamName.value = project.project_team_name
+    projectNotes.value = project.notes ? project.notes : []
+    projectTasks.value = project.tasks ? project.tasks : []
+    projectEndDate.value = project.project_end_date
+    projectInputEndDate.value = project.project_input_end_date
+    projectStartDate.value = project.project_start_date
+
+    showBackdrop.value = true
+    showCompletedProjectModal.value = true
 }
 
 const onActivateTaskModal = (project) => {
@@ -711,6 +798,7 @@ const onClickOutside = () => {
 
 const manageModals = () => {
     return {
+        activateShowClosedVoteModal,
         activateShowGroupModal,
         activateUserTaskModal,
         amOutside, 
@@ -738,6 +826,7 @@ const manageModals = () => {
         hydrateInviteModal,
         hydrateNetworkInviteModal,
         inviteData,
+        membershipId,
         mode,
         networkDescription,
         networkId,
@@ -746,7 +835,6 @@ const manageModals = () => {
         networkOwner,
         nowInside, 
         nowOutside,
-        onActivateEditAdminTaskModal,
         onActivateEditGroupModal,
         onActivateEditNetworkModal,
         onActivateEditProjectModal,
@@ -754,12 +842,14 @@ const manageModals = () => {
         onActivateEditTeamModal,
         onActivateEditVoteModal,
         onActivatePendingVoteModal,
+        onActivateShowCompletedProjectModal,
         onActivateTaskModal, 
         onActivateTeamModal,
         onActivateTransferGroupOwnership,
         onActivateTransferNetworkOwnership,
         onClickOutside,
         projectCompleted,
+        projectCompletedAt,
         projectDescription,
         projectEndDate,
         projectGroupData,
@@ -772,12 +862,14 @@ const manageModals = () => {
         projectStartDate,
         projectTasks,
         projectTeamData,
+        projectTeamId,
         projectTeamName,
         selectedAssoc,
         selectedGroupAssociates,
         selectedTeamAssociates,
         selectedTeamMembers,
         showBackdrop,
+        showCompletedProjectModal,
         showEditAdminTaskModal,
         showEditNetworkModal,
         showEditProjectModal,
@@ -799,6 +891,7 @@ const manageModals = () => {
         showVoteModal,
         tAdmin,
         taskableId,
+        taskAssignee,
         taskableType,
         taskCompleted,
         taskDescription,
@@ -832,10 +925,13 @@ const manageModals = () => {
         userId,
         userMaySubmitForm,
         voteClosingDate,
+        voteGroupName,
         voteInputClosingDate,
         voteElements,
         voteId,
         voteOwner,
+        voteResults,
+        voteTeamName,
         voteTitle,
     }
 }

@@ -11,15 +11,15 @@ class UpdateMembershipRequestResponse
         $success = '';
 
         if ($request->confirmed && $request->user_id) {
-            Membership::where('membershipable_id', $request->membershipable_id)
-                ->where('user_id', auth()->id())
+            Membership::where('id', $request->id)
+                ->where('user_id', $request->user_id)
                 ->update(array('confirmed' => $request->confirmed));
 
             $success = 'Invitation accepted';
         }
 
         if ($request->confirmed && $request->group_id) {
-            Membership::where('membershipable_id', $request->membershipable_id)
+            Membership::where('id', $request->id)
                 ->where('group_id', $request->group_id)
                 ->update(array('confirmed' => $request->confirmed));
 
@@ -27,7 +27,7 @@ class UpdateMembershipRequestResponse
         }
 
         if (!$request->confirmed && $request->user_id) {
-            Membership::where('membershipable_id', $request->membershipable_id)
+            Membership::where('id', $request->id)
                 ->where('user_id', auth()->id())
                 ->delete();
             
@@ -37,7 +37,7 @@ class UpdateMembershipRequestResponse
         }
 
         if (!$request->confirmed && $request->group_id) {
-            Membership::where('membershipable_id', $request->membershipable_id)
+            Membership::where('id', $request->id)
                 ->where('group_id', $request->group_id)
                 ->delete();
 

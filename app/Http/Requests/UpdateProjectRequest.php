@@ -28,11 +28,15 @@ class UpdateProjectRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'required|uuid',
             'owner' => 'required|uuid',
+            'name' => 'required|string:50',
+            'description' => 'required|string:255',
+            'completed' => 'required|boolean',
             'end_date' => 'nullable|date',
             'group_id' => 'nullable|uuid',
             'team_id' => 'nullable|uuid',
-            'id' => 'required|uuid'
+            'note' => 'nullable'
         ];
     }
 }

@@ -1,14 +1,11 @@
 <template>
     <div class="grid gap-1 grid-cols-12 grid-rows-voteBox text-we4vBg bg-we4vGrey-800 p-2 w-full rounded shadow-md mb-1 tracking-tight">
         <div class="col-start-1 col-end-11 text-sm font-semibold text-we4vBlue content-center items-center pt-1 max-h-16">
-            <p>{{ vote.vote_title }} <span class="text-we4vGrey-200 font-light text-xs italic">(assigned to {{ vote.type }} <span class="font-normal">{{ vote.group_team_name }}</span>)</span></p>
+            <p class="text-we4vBlue">{{ vote.vote_title }} <span class="text-we4vGrey-200 font-light text-xs italic">(assigned to {{ vote.type }} <span class="font-normal">{{ vote.group_team_name }}</span>)</span></p>
         </div>
-        <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-between p-0 content-center items-center max-h-16 text-we4vGrey-200">
-            <div @click="$emit('activateEditVoteModal', vote)">
+        <div class="col-start-11 col-end-13 flex flex-row flex-nowrap justify-around p-0 content-center items-center max-h-16 text-we4vGrey-200">
+            <div v-if="open" @click="$emit('activateEditVoteModal', vote)">
                 <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
-            </div>
-            <div @click="deleteVote(vote.id)">
-                <i class="fas fa-trash h-5 cursor-pointer text-lg text-center"></i>
             </div>
             <div class="h-5 rounded-full bg-we4vGrey-200">
                 <img v-if="!displayDetails" @click="displayDetails = !displayDetails" class="h-5 object-cover cursor-pointer" src="/images/openGlyph.svg" alt="">
@@ -25,7 +22,7 @@
                 </div>
             </div>
 
-            <p class="text-sm font-medium text-we4vGrey-300 mb-1 mt-2">Progress</p>
+            <p class="text-sm font-medium text-we4vGrey-300 mb-1 mt-2">Progress (approximate)</p>
             <div v-if="!vote.num_votes_cast">
                 <p class="text-xs text-we4vGrey-200">0%</p>
             </div>
@@ -69,7 +66,7 @@
             <p class="text-sm font-medium text-we4vGrey-300 mb-1 mt-2">Results</p>
             <div class="flex flex-wrap flex-row">
                 <div v-for="(voteEl, voteElKey) in vote.elements" :key="voteElKey" class="min-w-1/3 max-w-1/4">
-                    <p class="text-xs text-we4vGrey-200">{{ voteEl.element_title }}: {{ vote.num_votes_cast ? parseInt(voteEl.numElVotes / (vote.num_votes_cast) * 100) : 0 }}%</p>
+                    <p class="text-xs" :class="parseInt(voteEl.numElVotes / (vote.num_votes_cast) * 100) >= 60 ? 'text-we4vGreen-500 font-semibold' : 'text-we4vGrey-200'">{{ voteEl.element_title }}: {{ vote.num_votes_cast ? parseInt(voteEl.numElVotes / (vote.num_votes_cast) * 100) : 0 }}%</p>
                 </div>
             </div>
         </div>
@@ -82,7 +79,8 @@ export default {
     'name': 'Vote',
 
     props: [
-        'vote'
+        'vote',
+        'open'
     ],
 
     data: () => {

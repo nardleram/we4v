@@ -112,9 +112,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::patch('/mygroups/transfer', [GroupController::class, 'transferOwnership'])
         ->name('transferGroup');
-        
-    Route::delete('/mygroups/{group}/destroy', [GroupController::class, 'destroy'])
-        ->name('deleteGroup');
     
     Route::post('/groups/search', [GroupController:: class, 'search'])
         ->name('searchGroups');
@@ -138,7 +135,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         ->name('storeMembership');
 
     Route::delete('/memberships/{membership}/destroy', [MembershipController::class, 'destroy'])
-        ->name('storeMembership');
+        ->name('deleteMembership');
     
     Route::patch('/memberships/accept-reject', [MembershipRequestResponseController::class, 'update'])
         ->name('acceptRejectMembership');
@@ -152,11 +149,17 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::patch('/myprojects/update', [ProjectController::class, 'update'])
         ->name('updateProject');
 
+    Route::delete('/myprojects/{project}/destroy', [ProjectController::class, 'destroy'])
+        ->name('deleteProject');
+
     Route::post('/mytasks/store', [TaskController::class, 'store'])
         ->name('storeTask');
     
     Route::patch('/mytasks/update', [TaskController::class, 'update'])
         ->name('updateTask');
+
+    Route::delete('/mytasks/{task}/destroy', [TaskController::class, 'destroy'])
+        ->name('deleteTask');
 
     Route::get('/myvotes', [VoteController::class, 'index'])
         ->name('myvotes');

@@ -34,7 +34,7 @@
         @apply text-xs text-we4vGrey-600;
     }
     input {
-        @apply focus:outline-none focus:border-transparent placeholder-we4vGrey-300 text-we4vGrey-600;
+        @apply focus:outline-none placeholder-we4vGrey-300 text-we4vGrey-600;
     }
     [type='text'],
     [type='textarea'],
@@ -42,7 +42,7 @@
     [type='password'],
     [type='multiple'],
     [type='date'] {
-        @apply focus:outline-none focus:border-transparent border-none placeholder-we4vGrey-300 text-we4vGrey-600;
+        @apply focus:outline-none focus:border-transparent border-none outline-none placeholder-we4vGrey-300 text-we4vGrey-600;
     }
     [type='checkbox'],
     [type='radio'] {
@@ -50,5 +50,8 @@
     }
     [type='radio'] {
         @apply rounded-full
+    }
+    [type='textarea'] {
+        @apply border border-we4vGrey-200 outline-none;
     }
 }

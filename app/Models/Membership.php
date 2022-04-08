@@ -49,17 +49,17 @@ class Membership extends Model
 
     public static function getMemberships4Votes() : array
     {
-        // Votes assigned to groups must also send invites to the associates in that group's teams.
         $ids = [];
 
         if (auth()->id()) {
             $memberships = Membership::where('confirmed', true)
                 ->where('user_id', auth()->id())
                 ->get(['membershipable_id', 'membershipable_type']);
-            
+
             foreach($memberships as $membership) {
                 array_push($ids, $membership->membershipable_id);
 
+                // Votes assigned to groups must also generate invites for associates in that group's teams.
                 if ($membership->membershipable_type === 'App\Models\Team') {
                     $team = Team::findOrFail($membership->membershipable_id);
 
@@ -200,7 +200,7 @@ class Membership extends Model
             }
 
             foreach($taskUsernameDetails as $usernameDetails) {
-                if ($task->task_id === $usernameDetails->task_id && !in_array($usernameDetails->username, $addedMembers) && $usernameDetails->username) {
+                if (!$task->completed && ($task->task_id === $usernameDetails->task_id) && !in_array($usernameDetails->username, $addedMembers) && $usernameDetails->username) {
                     array_push($addedMembers, $usernameDetails->username);
                     $mytasks[$taskCount]['task_members'][$taskMemberCount]['username'] = $usernameDetails->username;
                     ++$taskMemberCount;

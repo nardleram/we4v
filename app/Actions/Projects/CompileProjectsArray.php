@@ -4,7 +4,6 @@ namespace App\Actions\Projects;
 
 use DateTime;
 use Carbon\Carbon;
-use stdClass;
 
 class CompileProjectsArray
 {
@@ -53,6 +52,7 @@ class CompileProjectsArray
                 $projects[$projectCount]['project_id'] = $rawProject->project_id;
                 $projects[$projectCount]['project_group_id'] = $rawProject->project_group_id;
                 $projects[$projectCount]['project_team_id'] = $rawProject->project_team_id;
+                $projects[$projectCount]['project_updated_at'] = Carbon::parse($rawProject->project_updated_at)->format('d M Y');
                 $projects[$projectCount]['project_start_date'] = Carbon::parse($rawProject->project_start_date)->format('d M Y');
                 $projects[$projectCount]['project_end_date'] = Carbon::parse($rawProject->project_end_date)->format('d M Y');
                 $projects[$projectCount]['project_input_end_date'] = $rawProject->project_end_date;
@@ -65,7 +65,9 @@ class CompileProjectsArray
             }
 
             // Project has notes
-            if ($rawProject->project_note_id !== $currentProjectNoteId && $rawProject->project_note_body && !in_array($rawProject->project_note_id, $projectNotes)) {
+            if (( $rawProject->project_note_id !== $currentProjectNoteId ) 
+                && $rawProject->project_note_body 
+                && !in_array($rawProject->project_note_id, $projectNotes)) {
                 array_push($projectNotes, $rawProject->project_note_id);
 
                 $projects[$projectCount]['notes'][$projectNoteCount]['project_note_body'] = $rawProject->project_note_body;
@@ -88,15 +90,18 @@ class CompileProjectsArray
                 if ($loop > 0) {
                     ++$taskCount;
                     $taskNoteCount = 0;
-                    $teamMembers = [];
-                    $taskNotes = [];
                     $taskTeamMemberCount = 0;
                     $selectedMemberCount = 0;
+                    $teamMembers = [];
+                    $taskNotes = [];
+                    $selectedMembers = [];
                 }
 
                 // Task assigned to group member(s)
                 if ( $rawProject->taskable_type === 'App\\Models\\Group' ) {
-
+                    $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
                     $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
@@ -106,10 +111,10 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['assignee'] = 'group members';
                     $projects[$projectCount]['tasks'][$taskCount]['task_completed'] = $rawProject->task_completed;
                     $projects[$projectCount]['tasks'][$taskCount]['task_deadline_passed'] = $taskDeadlinePassed;
-                    $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
-                    $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
-                    $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_team_id'] = $rawProject->task_team_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_team_name'] = $rawProject->task_team_name;
                     $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_updated_at'] = Carbon::parse($rawProject->task_updated_at)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
 
@@ -137,6 +142,7 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['team_id'] = $rawProject->taskable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'team';
                     $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->project_task_team;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_updated_at'] = Carbon::parse($rawProject->task_updated_at)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
 
@@ -158,9 +164,10 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
                     $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
-                    $projects[$projectCount]['tasks'][$taskCount]['team_id'] = $rawProject->project_task_team_id;
-                    $projects[$projectCount]['tasks'][$taskCount]['team_name'] = $rawProject->project_task_team;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_team_id'] = $rawProject->task_team_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['task_team_name'] = $rawProject->task_team_name;
                     $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
+                    $projects[$projectCount]['tasks'][$taskCount]['task_updated_at'] = Carbon::parse($rawProject->task_updated_at)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');
 
                     $taskDeadlinePassed
@@ -169,7 +176,7 @@ class CompileProjectsArray
                 }
             }
 
-            // Compile team members (whole team as assignee)
+            // Compile team members (whole team as assignee) // I think I don't need this block
             if ($rawProject->taskable_type === 'App\\Models\\Team' && !$rawProject->task_member_user_id) {
                 if (!in_array($rawProject->team_member_username, $teamMembers, true)) {
                     array_push($teamMembers, $rawProject->team_member_username);
@@ -185,6 +192,7 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['selected_task_members'][$selectedMemberCount]['task_member_username'] = $rawProject->task_member_username;
                     $projects[$projectCount]['tasks'][$taskCount]['selected_task_members'][$selectedMemberCount]['task_member_created_at'] = $rawProject->task_member_created_at;
                     $projects[$projectCount]['tasks'][$taskCount]['selected_task_members'][$selectedMemberCount]['task_member_user_id'] = $rawProject->task_member_user_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['selected_task_members'][$selectedMemberCount]['task_team_name'] = $rawProject->task_team_name;
                     ++$selectedMemberCount;
                 }
             }
@@ -206,7 +214,7 @@ class CompileProjectsArray
             $currentTaskId = $rawProject->task_id;
             ++$loop;
         }
-        
+        // dd($projects);
         return $projects;
     }
 }

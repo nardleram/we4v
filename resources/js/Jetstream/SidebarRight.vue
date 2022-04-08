@@ -1,134 +1,149 @@
 <template>
     <teleport to="#membRequestModals">
-        <Modal :show="showInviteModal" >
-            <div v-if="showInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
-                <div class="flex justify-end">
-                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                        <div @click="showInviteModal = false; clearModal()">
-                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                        </div>   
-                    </div>
+        <div v-if="showInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showInviteModal = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
                 </div>
-
-                <h4 v-if="!updated_by" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
-                <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ updated_by }} has changed your membership details for the {{ type }} </h4>
-                <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
-
-                <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
-                <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
-                <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
-                <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }}’s administrator.</h5>
-                
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-                @click="storeInviteResponse(inviteData, true)">
-                    Accept
-                </button>
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
-                @click="storeInviteResponse(inviteData, false)">
-                    Reject
-                </button>
             </div>
-        </Modal>
+
+            <h4 v-if="!updated_by" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
+            <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ updated_by }} has changed your membership details for the {{ type }} </h4>
+            <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
+
+            <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
+            <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
+            <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
+            <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }}’s administrator.</h5>
+            
+            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
+            @click="storeInviteResponse(inviteData, true)">
+                Accept
+            </button>
+            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
+            @click="storeInviteResponse(inviteData, false)">
+                Reject
+            </button>
+        </div>
     </teleport>
 
     <teleport to="#membRequestModals">
-        <Modal :show="showNetworkInviteModal" >
-            <div v-if="showNetworkInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
-                <div class="flex justify-end">
-                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                        <div @click="showNetworkInviteModal = false; clearModal()">
-                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                        </div>   
-                    </div>
+        <div v-if="showNetworkInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showNetworkInviteModal = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
                 </div>
-
-                <h4 class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ networkOwner }} cordially invites you to join your group <span class="text-we4vBlue">{{ groupName }}</span> to the network</h4>
-                
-                <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ networkName }}</h3>
-
-                <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ networkDescription }}</h5>
-                
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-                @click="storeInviteResponse(inviteData, true)">
-                    Accept
-                </button>
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
-                @click="storeInviteResponse(inviteData, false)">
-                    Reject
-                </button>
             </div>
-        </Modal>
+
+            <h4 class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ networkOwner }} cordially invites you to join your group <span class="text-we4vBlue">{{ groupName }}</span> to the network</h4>
+            
+            <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ networkName }}</h3>
+
+            <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ networkDescription }}</h5>
+            
+            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
+            @click="storeInviteResponse(inviteData, true)">
+                Accept
+            </button>
+            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-red-600 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none my-4 py-2"
+            @click="storeInviteResponse(inviteData, false)">
+                Reject
+            </button>
+        </div>
     </teleport>
 
     <teleport to="#pendingVoteModals">
-        <Modal :show="showPendingVoteModal" >
-            <div v-if="showPendingVoteModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
-                <div class="flex justify-end">
-                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                        <div @click="showPendingVoteModal = false; clearModal()">
-                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                        </div>   
-                    </div>
+        <div v-if="showPendingVoteModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showPendingVoteModal = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
                 </div>
-
-                <div>
-                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ voteOwner }} requests your vote to help decide on <span class="italic text-we4vGrey-600">{{ voteTitle }}</span></h4>
-                    <p class="text-we4vGrey-500 text-sm">Closing date: <span class="italic font-medium">{{ voteClosingDate }}</span></p>
-                    <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-4">Vote options</h5>
-                    <div v-for="(element, elementKey) in voteElements" :key="elementKey">
-                        <input :value="element.element_id" name="element" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
-                        <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ element.element_id }}">{{ element.element_title }}</label>
-                    </div>
-                </div>
-
-                <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-                @click="storeVoteResponse()">
-                    Submit vote
-                </button>
-                
             </div>
-        </Modal>
+
+            <div>
+                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ voteOwner }} requests your vote to help decide on <span class="italic text-we4vGrey-600">{{ voteTitle }}</span></h4>
+                <p class="text-we4vGrey-500 text-sm">Closing date: <span class="italic font-medium">{{ voteClosingDate }}</span></p>
+                <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-4">Vote options</h5>
+                <div v-for="(element, elementKey) in voteElements" :key="elementKey">
+                    <input :value="element.element_id" name="element" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                    <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ element.element_id }}">{{ element.element_title }}</label>
+                </div>
+            </div>
+
+            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
+            @click="storeVoteResponse()">
+                Submit vote
+            </button>
+            
+        </div>
     </teleport>
 
     <teleport to="#projectModals">
-        <Modal :show="showUserTaskModal" >
-            <div v-if="showUserTaskModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
-                <div class="flex justify-end">
-                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                        <div @click="showUserTaskModal = false; clearModal()">
-                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                        </div>   
-                    </div>
+        <div v-if="showUserTaskModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showUserTaskModal = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
                 </div>
-
-                <div>
-                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
-                    <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p></h4>
-                    <p class="text-we4vGrey-500 text-sm">Description: <span class="italic font-medium">{{ taskDescription }}</span></p>
-                    <p class="text-we4vGrey-500 text-sm">From project: <span class="italic font-medium">{{ taskProjectName }}</span></p>
-                    <div class="flex flex-wrap">
-                        <p class="text-we4vGrey-500 text-sm">Fellow task members: </p>
-                        <p v-for="(member, memberKey) in taskMembers" :key="memberKey" class="text-we4vGrey-500 text-sm italic font-medium mx-2">{{ member.username}}</p>
-                    </div>
-                </div>
-
-                <div v-if="taskNotes">
-                    <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
-                </div>
-
-                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a task note</h5>
-                <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
-
-                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a project note</h5>
-                <textarea v-model="projectNoteBody" name="projectNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none mb-3"></textarea>
-
-                <input v-model="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" >
-                <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskCompleted }}">Task completed</label>
-
-                <button-grey @click="updateTask()" id="submitForm">Update task</button-grey>
-                
             </div>
-        </Modal>
+
+            <div>
+                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
+                <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p></h4>
+                <p class="text-we4vGrey-500 text-sm">Description: <span class="italic font-medium">{{ taskDescription }}</span></p>
+                <p class="text-we4vGrey-500 text-sm">From project: <span class="italic font-medium">{{ taskProjectName }}</span></p>
+                <div class="flex flex-wrap">
+                    <p class="text-we4vGrey-500 text-sm">Fellow task members: <span v-if="!taskMembers">None</span></p>
+                    <p v-for="(member, memberKey) in taskMembers" :key="memberKey" class="text-we4vGrey-500 text-sm italic font-medium mx-2">{{ member.username}}</p>
+                </div>
+            </div>
+
+            <div v-if="taskNotes">
+                <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
+            </div>
+
+            <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a task note</h5>
+            <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+
+            <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a project note</h5>
+            <textarea v-model="projectNoteBody" name="projectNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none mb-3"></textarea>
+
+            <input v-model="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" >
+            <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskCompleted }}">Task completed</label>
+
+            <button-grey @click="updateTask()" :enabled="true" id="submitForm">Update task</button-grey>
+            
+        </div>
+    </teleport>
+
+    <teleport to="#projectModals">
+        <div v-if="showVoteResults" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showVoteResults = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
+                </div>
+            </div>
+
+            <div>
+                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ voteTitle }}
+                <p class="text-we4vGrey-500 text-sm">Vote closed on: <span class="italic font-medium">{{ voteClosingDate }}</span></p></h4>
+                <p class="text-we4vGrey-500 text-sm">Vote was put to members of: <span class="italic font-medium">{{ voteGroupName ? voteGroupName : voteTeamName }}</span></p>
+                <div class="flex flex-wrap">
+                    <p class="text-we4vGrey-500 text-sm">Results: <span v-if="!voteResults">None</span></p>
+                    <p v-for="(result, resultKey) in voteResults" :key="resultKey" class="text-we4vGrey-500 text-sm italic font-medium mx-2">{{ result.element_title}}: {{ result.numElVotes}}</p>
+                </div>
+            </div>
+            
+        </div>
     </teleport>
 
     <div class="fixed top-16 right-0 w-1/4 h-screen p-2 pl-4 pt-4 bg-we4vGrey-800 text-we4vBg font-light">
@@ -283,6 +298,39 @@
         <div v-if="showTasks && !Object.keys($page.props.myOpenTasks).length" class="text-right -mt-2 mb-1">
             <small class="text-we4vGrey-200 text-xs">There are no tasks currently assigned to you</small>
         </div>
+
+        <sidebar-right-element>
+            <template #title>
+                <span @click="showVoteResults = !showVoteResults" class="cursor-pointer">Closed votes</span>
+            </template>
+        </sidebar-right-element>
+        <div v-if="showVoteResults && $page.props.closedVotes.length">
+            <table class="text-xs font-light tracking-tighter bg-we4vGrey-900 w-full -mt-2 ml-3 -mr-2 mb-2 rounded-md">
+                <thead class="text-we4vBlue table-fixed border border-we4vGrey-800 text-left">
+                    <tr>
+                        <th class="w-3/12 border border-we4vGrey-800 py-2 px-1">Vote</th>
+                        <th class="w-6/12 border border-we4vGrey-800 py-2 px-1">Group/team</th>
+                        <th class="w-3/2 border border-we4vGrey-800 py-2 px-1">End date</th>
+                    </tr>
+                </thead>
+                <tbody class="border border-we4vGrey-800 text-we4vGrey-100">
+                    <tr v-for="(cVote, cVoteKey) in $page.props.closedVotes" :key="cVoteKey" @click="activateShowClosedVoteModal(cVote)" class="cursor-pointer hover:bg-we4vBlue">
+                        <td class="px-1 py-2 border border-we4vGrey-800">
+                            {{ cVote.vote_title }}
+                        </td>
+                        <td class="px-1 py-2 border border-we4vGrey-800">
+                            {{ cVote.group_name ? cVote.group_name : cVote.team_name  }}
+                        </td>
+                        <td class="px-1 py-2 border border-we4vGrey-800">
+                            {{ cVote.close_date }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-if="showVoteResults && Object.keys($page.props.closedVotes).length === 0" class="text-right -mt-2 mb-1">
+            <small class="text-we4vGrey-200 text-xs">No closed-vote results to display</small>
+        </div>
     </div>
 </template>
 
@@ -327,6 +375,7 @@ export default {
             showNetworks: false,
             showTasks: false,
             showPendingVotes: false,
+            showVoteResults: false
         }
     },
 
@@ -341,6 +390,7 @@ export default {
 
     setup(props) {
         const {
+            activateShowClosedVoteModal,
             activateUserTaskModal,
             amOutside, 
             amInside,
@@ -356,6 +406,7 @@ export default {
             hydrateInviteModal,
             hydrateNetworkInviteModal,
             inviteData,
+            membershipId,
             mode,
             networkDescription,
             networkId,
@@ -396,8 +447,11 @@ export default {
             updated_by,
             voteClosingDate,
             voteElements,
+            voteGroupName,
             voteId,
             voteOwner,
+            voteResults,
+            voteTeamName,
             voteTitle,
         } = manageModals()
 
@@ -413,6 +467,7 @@ export default {
 
             if (inviteData[0].type === 'group') {
                 payload = {
+                    'id': inviteData[0].membership_id,
                     'membershipable_id': inviteData[0].groupId,
                     'confirmed': response,
                     'user_id': usePage().props.value.authUser.id,
@@ -421,6 +476,7 @@ export default {
             }
             if (inviteData[0].type === 'team') {
                 payload = {
+                    'id': inviteData[0].membership_id,
                     'membershipable_id': inviteData[0].teamId,
                     'confirmed': response,
                     'user_id': usePage().props.value.authUser.id,
@@ -429,6 +485,7 @@ export default {
             }
             if (!inviteData[0].type) {
                 payload = {
+                    'id': inviteData[0].membership_id,
                     'membershipable_id': inviteData[0].networkId,
                     'confirmed': response,
                     'group_id': inviteData[0].groupId,
@@ -486,6 +543,8 @@ export default {
 
             let payload = {
                 'id': taskId.value,
+                'name': taskName.value,
+                'description': taskDescription.value,
                 'completed': taskCompleted.value,
                 'membershipable_type': 'App\\Models\\Task',
                 'membershipable_id': taskId.value,
@@ -516,6 +575,7 @@ export default {
         })
 
         return {
+            activateShowClosedVoteModal,
             activateUserTaskModal,
             amOutside, 
             amInside,
@@ -531,6 +591,7 @@ export default {
             hydrateInviteModal,
             hydrateNetworkInviteModal,
             inviteData,
+            membershipId,
             mode,
             networkDescription,
             networkId,
@@ -579,9 +640,12 @@ export default {
             updated_by,
             updateTask,
             voteClosingDate,
+            voteGroupName,
             voteElements,
             voteId,
             voteOwner,
+            voteResults,
+            voteTeamName,
             voteTitle,
         }
     },

@@ -29,6 +29,8 @@ class UpdateTaskRequest extends FormRequest
     {
         return [
             'id' => 'nullable|uuid',
+            'name' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
             'end_date' => 'required|date',
             'taskable_id' => 'required|uuid',
             'taskable_type' => 'required|string|max:20',

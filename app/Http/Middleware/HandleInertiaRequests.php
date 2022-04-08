@@ -14,7 +14,6 @@ use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
 use App\Models\Network;
-use Illuminate\Support\Facades\Session;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -207,6 +206,7 @@ class HandleInertiaRequests extends Middleware
                                 'Us1.id as g_owner_id',
                                 'Me.role as g_role',
                                 'Us2.username as g_updated_by',
+                                'Me.id as membership_id',
                                 'Me.is_admin as g_admin',
                                 'Me.created_at as g_created',
                                 'Me.updated_at as g_updated'
@@ -233,6 +233,7 @@ class HandleInertiaRequests extends Middleware
                                 'users.id as t_owner_id',
                                 'Me.role as t_role',
                                 'Us2.username as t_updated_by',
+                                'Me.id as membership_id',
                                 'Us2.id as t_updated_by_id',
                                 'Me.is_admin as t_admin',
                                 'Me.created_at as t_created',
@@ -256,6 +257,7 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
                             $membReqs[$membCount]['gAdmin'] = $rawGroup->g_admin;
+                            $membReqs[$membCount]['membership_id'] = $rawGroup->membership_id;
                             ++$membCount;
                         }
 
@@ -270,6 +272,7 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
                             $membReqs[$membCount]['tAdmin'] = $rawTeam->t_admin;
+                            $membReqs[$membCount]['membership_id'] = $rawTeam->membership_id;
                             ++$membCount;
                         }
                         
@@ -295,6 +298,11 @@ class HandleInertiaRequests extends Middleware
                 $membIds = Membership::getMemberships4Votes();
                 
                 return Vote::getPendingVotes($membIds);
+            },
+
+            'closedVotes' => function ()
+            {
+                return Vote::getClosedVotes();
             },
 
             'myOpenTasks' => function ()

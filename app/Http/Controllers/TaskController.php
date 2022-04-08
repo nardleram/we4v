@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use App\Actions\Notes\StoreNote;
 use App\Actions\Tasks\StoreTask;
 use App\Actions\Groups\GetGroups;
@@ -13,6 +14,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Actions\Memberships\StoreMemberships;
 use App\Actions\Memberships\UpdateTaskMemberships;
+use App\Models\Membership;
 
 class TaskController extends Controller
 {
@@ -63,7 +65,6 @@ class TaskController extends Controller
                 $this->getAdminGroups->handle(auth()->id())
             ),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Task created']]);
     }
 
@@ -75,12 +76,8 @@ class TaskController extends Controller
         ? $this->updateTaskMemberships->handle($request, $request->id)
         : null;
 
-        count($request->taskNote) > 0
+        $request->taskNote['body']
         ? $this->storeNote->handle($request->taskNote)
-        : null;
-
-        count($request->projectNote) > 0
-        ? $this->storeNote->handle($request->projectNote)
         : null;
 
         return redirect()->back()->with([
@@ -90,7 +87,18 @@ class TaskController extends Controller
                 $this->getAdminGroups->handle(auth()->id())
             ),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
-            'flash' => ['message' => 'Task updated']]);
+            'flash' => ['message' => 'Task updated']
+        ]);
+    }
+
+    public function destroy(Task $task) 
+    {
+        Membership::where('membershipable_id', $task->id)->forceDelete();
+
+        Task::find($task->id)->forceDelete();
+
+        return redirect()->back()->with([
+            'flash' => ['message' => 'Task deleted']
+        ]);
     }
 }

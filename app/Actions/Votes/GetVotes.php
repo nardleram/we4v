@@ -24,7 +24,6 @@ class GetVotes
         
         $rawVotes = Vote::where('votes.owner', $id)
         ->where('votes.closing_date', $operator, $todayDate)
-        // ->whereIn('votes.id', ['f7cd6f61-1934-41e0-85fc-040f5cc59964'])
         ->leftJoin('vote_elements', function ($join) {
             $join->on('vote_elements.vote_id', '=', 'votes.id');
         })

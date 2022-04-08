@@ -21,8 +21,8 @@
         </div>
     </div>
 
-    <div v-if="Object.keys(projectNotes).length > 0" class="mb-2">
-        <p class="font-bold text-sm text-we4vGrey-500 mb-1 mt-2">Project-note log</p>
+    <div v-if="Object.keys(projectNotes).length > 0" class="mb-2 mt-4">
+        <p class="font-bold text-sm text-we4vGrey-500 mb-1">Project-note log</p>
         <div class="max-h-48 overflow-y-scroll">
             <table class="w-full">
                 <thead class="text-we4vBlue table-fixed border-b border-t border-we4vGrey-200 text-left">

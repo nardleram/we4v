@@ -11,6 +11,9 @@ class UpdateTask
     {
         return Task::where('id', $request->id)
             ->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'end_date' => $request->end_date,
                 'end_date' => $request->end_date,
                 'taskable_type' => $request->taskable_type,
                 'completed' => $request->completed,

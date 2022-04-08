@@ -24,11 +24,8 @@
                 </Subtitle>
 
                 <div>
-                    <h4 @click="getGroup()" class="text-blue-600">1. Talkboard</h4>
-                    
+                    <h4 class="text-blue-600">1. Talkboard</h4>
                 </div>
-
-                <Input :name="firstName" :label="'First name'" :placeholder="'Enter your first name here'" />
             </div>
 
         </template>
@@ -41,6 +38,7 @@ import AppLayout from '@/Layouts/AppLayout'
 import Title from '@/Jetstream/SectionTitle'
 import Subtitle from '@/Jetstream/Subtitle'
 import Input from './Components/Input'
+import { Inertia } from '@inertiajs/inertia'
 import { ref } from 'vue'
 
 export default {
@@ -59,8 +57,6 @@ export default {
     },
 
     setup(props) {
-        const showBackdrop = ref(false)
-        const groupShow = ref(null)
 
         const getGroup = async function () {
             let id = '5cdba9ce-f0af-47e5-bcc3-f5e52ed1f2fc'
@@ -75,9 +71,6 @@ export default {
         }
 
         return {
-            showBackdrop,
-            getGroup,
-            groupShow
         }
     }
     

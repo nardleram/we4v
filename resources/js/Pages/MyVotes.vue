@@ -7,91 +7,87 @@
         <template #centre>
             <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <teleport to="#voteModals">
-                        <Modal :show="showVoteModal">
-                            <div @mouseleave="nowOutside(); mode = 'vote'" @mouseenter="nowInside(); mode = 'vote'" v-if="showVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
-                                <Form>
-                                    <template #form>
-                                        <div class="flex justify-end">
-                                            <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                                <div @click="showVoteModal = false; clearModal()">
-                                                    <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                                                </div>   
+                    <div @mouseleave="nowOutside(); mode = 'vote'" @mouseenter="nowInside(); mode = 'vote'" v-if="showVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <Form>
+                            <template #form>
+                                <div class="flex justify-end">
+                                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                        <div @click="showVoteModal = false; clearModal()">
+                                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                        </div>   
+                                    </div>
+                                </div>
+
+                                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Set up vote</h4>
+                                
+                                <div class="mb-2">
+                                    <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote title</label>
+                                    <input v-model="voteTitle" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="E.g.: Build cob or straw-bale house?">
+                                </div>
+
+                                <div class="w-justUnderHalf">
+                                    <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">closing date</label>
+                                    <input v-model="voteClosingDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select closing date">
+                                </div>
+
+                                <div id="voteElements" class="my-3">
+                                    <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote options (hit enter to add to your list of options)</label>
+                                    <input @keydown.enter.prevent="addVoteEl" v-model="voteEl" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
+                                </div>
+
+                                <h5 v-if="voteEls.length > 0" class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight ml-4">List of vote options (click option to remove it)</h5>
+                                <div id="voteEls" class="flex flex-row w-full mb-2 ml-4">
+                                    <div v-for="voteEl in voteEls" :key="voteEl" class="text-xs text-we4vBlue mr-3 hover:text-we4vDarkBlue cursor-pointer">
+                                        <p @click="deleteEl(voteEl)">{{ voteEl }}</p>
+                                    </div>
+                                </div>
+
+                                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-2 tracking-tight mt-3">Select vote group or team</h5>
+                                
+                                <div v-if="$page.props.mygroups">
+                                    <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Groups</h5>
+                                    <div class="flex flex-wrap max-w-full">
+                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
+                                            <input @click="voteable_type = 'App\\Models\\Group'" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                        </div>
+                                    </div>
+                                    <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Teams</h5>
+                                    <div class="flex flex-wrap max-w-full">
+                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
+                                            <div v-for="(team, teamKey) in group.teams" :key="teamKey">
+                                                <input @click="voteable_type = 'App\\Models\\Team'" :value="team.team_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Set up vote</h4>
-                                        
-                                        <div class="mb-2">
-                                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote title</label>
-                                            <input v-model="voteTitle" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="E.g.: Build cob or straw-bale house?">
-                                        </div>
-
-                                        <div class="w-justUnderHalf">
-                                            <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">closing date</label>
-                                            <input v-model="voteClosingDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select closing date">
-                                        </div>
-
-                                        <div id="voteElements" class="my-3">
-                                            <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote options (hit enter to add to your list of options)</label>
-                                            <input @keydown.enter.prevent="addVoteEl" v-model="voteEl" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
-                                        </div>
-
-                                        <h5 v-if="voteEls.length > 0" class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight ml-4">List of vote options (click option to remove it)</h5>
-                                        <div id="voteEls" class="flex flex-row w-full mb-2 ml-4">
-                                            <div v-for="voteEl in voteEls" :key="voteEl" class="text-xs text-we4vBlue mr-3 hover:text-we4vDarkBlue cursor-pointer">
-                                                <p @click="deleteEl(voteEl)">{{ voteEl }}</p>
-                                            </div>
-                                        </div>
-
-                                        <h5 class="text-sm font-semibold text-we4vGrey-500 mb-2 tracking-tight mt-3">Select vote group or team</h5>
-                                        
-                                        <div v-if="$page.props.mygroups">
-                                            <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Groups</h5>
-                                            <div class="flex flex-wrap max-w-full">
-                                                <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
-                                                    <input @click="voteable_type = 'App\\Models\\Group'" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
-                                                    <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
-                                                </div>
-                                            </div>
-                                            <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Teams</h5>
-                                            <div class="flex flex-wrap max-w-full">
-                                                <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
-                                                    <div v-for="(team, teamKey) in group.teams" :key="teamKey">
-                                                        <input @click="voteable_type = 'App\\Models\\Team'" :value="team.team_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
-                                                        <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button-grey @click="submitVoteData()">Save vote</button-grey>
-                                    </template>
-                                </Form>
-                            </div>
-                        </Modal>
+                                <button-grey @click="submitVoteData()">Save vote</button-grey>
+                            </template>
+                        </Form>
+                    </div>
                 </teleport>
 
                 <teleport to=#voteModals>
-                    <Modal :show="showEditVoteModal">
-                        <div @mouseleave="nowOutside()" @mouseenter="nowInside()" v-if="showEditVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
-                            <div class="flex justify-end">
-                                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                    <div @click="showEditVoteModal = false; clearModal()">
-                                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                                    </div>   
-                                </div>
+                    <div @mouseleave="nowOutside()" @mouseenter="nowInside()" v-if="showEditVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                        <div class="flex justify-end">
+                            <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                <div @click="showEditVoteModal = false; clearModal()">
+                                    <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                </div>   
                             </div>
-
-                            <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Extend closing date for <span class="italic text-we4vGrey-600">{{ voteTitle }}</span></h4>
-
-                            <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend date</h5>
-                            <div class="w-justUnderHalf mb-4">
-                                <input v-model="voteInputClosingDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
-                            </div>
-                            
-                            <button-grey @click="submitVoteData()">Update vote’s closing date</button-grey>
                         </div>
-                    </Modal>
+
+                        <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Extend closing date for <span class="italic text-we4vGrey-600">{{ voteTitle }}</span></h4>
+
+                        <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend date</h5>
+                        <div class="w-justUnderHalf mb-4">
+                            <input v-model="voteInputClosingDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                        </div>
+                        
+                        <button-grey @click="submitVoteData()">Update vote’s closing date</button-grey>
+                    </div>
                 </teleport>
 
                 <Title>
@@ -114,7 +110,7 @@
 
                 <button-blue v-if="$page.props.mygroups.length > 0" @click="showVoteModal = true; showBackdrop = true">Set up a vote</button-blue>
 
-                <button-grey v-else>
+                <button-grey :enabled="true" v-else>
                     <a :href="route('mygroups', $page.props.authUser.id)">
                         Create a group before setting up a vote
                     </a>
@@ -131,11 +127,20 @@
                 </Subtitle>
                 <div v-if="$page.props.myvotes.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
-                        <Vote v-for="(vote, voteKey) in myvotes" :key="voteKey" :vote="vote" @activate-edit-vote-modal="onActivateEditVoteModal"/>
+                        <Vote v-for="(vote, voteKey) in myvotes" :key="voteKey" :vote="vote" :open="true" @activate-edit-vote-modal="onActivateEditVoteModal"/>
                     </div>
                 </div>
 
-                <button-grey>View closed votes</button-grey>
+                <button-grey v-if="myclosedvotes" @click="showClosedVotes = !showClosedVotes" :enabled="true" >
+                    <span v-if="!showClosedVotes">Show my closed votes</span>
+                    <span v-if="showClosedVotes">Hide my closed votes</span>
+                </button-grey>
+
+                <div v-if="$page.props.myclosedvotes.length > 0 && showClosedVotes" class="w-full m-0 m-auto">
+                    <div class="w-full m-0 flex flex-row flex-wrap justify-start">
+                        <Vote v-for="(closedVote, closedVoteKey) in myclosedvotes" :key="closedVoteKey" :vote="closedVote" :open="false"/>
+                    </div>
+                </div>
             </div>
         </template>
     </app-layout>
@@ -205,6 +210,7 @@ export default {
         const voteable_type = ref(null)
         const error = ref(false)
         const flashMessage = ref(false)
+        const showClosedVotes = ref(false)
 
         const addVoteEl = () => {
             if (!voteEls.value.includes(voteEl.value)) {
@@ -327,6 +333,7 @@ export default {
             onActivateEditVoteModal,
             onClickOutside, 
             showBackdrop, 
+            showClosedVotes,
             showEditVoteModal,
             showVoteModal,
             submitVoteData,

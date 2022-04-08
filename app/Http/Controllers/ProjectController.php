@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Note;
 use Inertia\Inertia;
+use App\Models\Project;
 use App\Actions\Notes\StoreNote;
 use App\Actions\Groups\GetGroups;
 use App\Actions\Tasks\GetAdminTasks;
@@ -52,8 +54,7 @@ class ProjectController extends Controller
                 $this->getGroups->handle(auth()->id()), 
                 $this->getAdminGroups->handle(auth()->id())
             ),
-            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
+            'myAdminTeams' => $this->getAdminTeams->handle(auth()->id())
         ]);
     }
 
@@ -68,7 +69,6 @@ class ProjectController extends Controller
                 $this->getAdminGroups->handle(auth()->id())
             ),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Project created']]);
     }
 
@@ -87,7 +87,16 @@ class ProjectController extends Controller
                 $this->getAdminGroups->handle(auth()->id())
             ),
             'myAdminTeams' => $this->getAdminTeams->handle(auth()->id()),
-            // 'myAdminTasks' => $this->getAdminTasks->handle(auth()->id()),
             'flash' => ['message' => 'Project updated']]);
+    }
+
+    public function destroy (Project $project)
+    {
+        Note::where('noteable_id', $project->id)->forceDelete();
+
+        Project::find($project->id)->forceDelete();
+
+        return redirect()->back()->with([
+            'flash' => ['message' => 'Project deleted']]);
     }
 }

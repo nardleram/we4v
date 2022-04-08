@@ -275,18 +275,18 @@
                                 </div>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add/remove groups to/from {{ networkName }}<span class="text-red-600">*</span></h4>
-                                <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">My groups (not currently in this network)</h5>
-                                <div v-if="groupsNotInNetwork" class="flex flex-wrap max-w-full justify-between mb-2">
+                                <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">My groups (not currently members of this network)</h5>
+                                <div v-if="groupsNotInNetwork" class="flex flex-wrap max-w-full justify-start mb-2">
                                     <div v-for="(group, groupKey) in groupsNotInNetwork" :key="groupKey" class="min-w-1/3">
-                                        <input :value="group.group_id" name="group" class="selected-groups rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox">
-                                        <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
+                                        <input :value="group.group_id" name="group" class="selected-groups" type="checkbox">
+                                        <label class="text-we4vGrey-500 text-xs ml-2 text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
                                     </div>
                                 </div>
                                 <h5 v-if="networkGroups" class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Uncheck a group to remove it from this network</h5>
-                                <div v-if="networkGroups" class="flex flex-wrap max-w-full justify-between mb-2">
+                                <div v-if="networkGroups" class="flex flex-wrap max-w-full justify-start mb-2">
                                     <div v-for="(nGroup, nGroupKey) in networkGroups" :key="nGroupKey" class="min-w-1/3">
-                                        <input :value="nGroup.group_id" name="group" class="selected-groups rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="checkbox" :checked="networkGroups.some(group => group.group_id === nGroup.group_id)">
-                                        <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ nGroup.group_id }}">{{ nGroup.group_name }}</label>
+                                        <input :value="nGroup.group_id" name="group" class="selected-groups" type="checkbox" :checked="networkGroups.some(group => group.group_id === nGroup.group_id)">
+                                        <label class="text-we4vGrey-500 text-xs ml-2 text-center" for="{{ nGroup.group_id }}">{{ nGroup.group_name }}</label>
                                     </div>
                                 </div>
 
