@@ -106,6 +106,8 @@ const type = ref(null)
 const updated_by = ref(false)
 const userId = ref(null)
 const userMaySubmitForm = ref(false)
+const voteableId = ref(null)
+const voteableType = ref(null)
 const voteClosingDate = ref(null)
 const voteInputClosingDate = ref(null)
 const voteElements = ref([])
@@ -448,6 +450,7 @@ const clearModal = () => {
     teamOwner.value = null
     teamRequester.value = null
     teamRole.value = null
+    showBackdrop.value = false
     showCompletedProjectModal.value = false
     showEditAdminTaskModal.value = false
     showEditProjectModal.value = false
@@ -468,10 +471,11 @@ const clearModal = () => {
     showVoteModal.value = false
     showPendingVoteModal.value = false
     showInviteModal.value = false
-    showBackdrop.value = false
     teamMembersEdit.value = []
     userId.value = null
     updated_by.value = null
+    voteableId.value = null
+    voteableType.value = null
     voteClosingDate.value = null
     voteElements.value = []
     voteGroupName.value = null
@@ -705,6 +709,8 @@ const onActivateEditVoteModal = (vote) => {
 
     voteTitle.value = vote.vote_title
     voteId.value = vote.vote_id
+    voteableId.value = vote.voteable_id
+    voteableType.value = vote.voteable_type
     voteInputClosingDate.value = vote.input_closing_date
 
     showBackdrop.value = true
@@ -924,6 +930,8 @@ const manageModals = () => {
         updated_by,
         userId,
         userMaySubmitForm,
+        voteableId,
+        voteableType,
         voteClosingDate,
         voteGroupName,
         voteInputClosingDate,

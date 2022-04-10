@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use DateTime;
 
 class Vote extends Model
 {
@@ -35,16 +36,22 @@ class Vote extends Model
 
     public static function getPendingVotes($ids) : array
     {
+        $today = date("Y-m-d");
+        $todayDate = new DateTime($today);
+
         if (auth()->id()) {
-            $rawVotes = Vote::whereIn('votes.voteable_id', $ids)
-            ->orWhere('votes.owner', auth()->id())
-            ->leftJoin('vote_elements', function ($join) {
+            $rawVotes = Vote::where('votes.closing_date', '>=', $todayDate)
+            ->where(function($q) use ($ids) {
+                $q->whereIn('votes.voteable_id', $ids)
+                ->orWhere('votes.owner', auth()->id());
+            })
+            ->join('cast_votes', function ($join) {
+                $join->on('votes.id', '=', 'cast_votes.vote_id');
+            })
+            ->join('vote_elements', function ($join) {
                 $join->on('votes.id', '=', 'vote_elements.vote_id');
             })
-            ->leftJoin('cast_votes', function ($join) {
-                $join->on('cast_votes.vote_id', '=', 'votes.id');
-            })
-            ->leftJoin('users', function ($join) {
+            ->join('users', function ($join) {
                 $join->on('users.id', '=', 'votes.owner');
             })
             ->join('memberships', function ($join) {

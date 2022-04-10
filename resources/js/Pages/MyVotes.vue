@@ -21,24 +21,22 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Set up vote</h4>
                                 
                                 <div class="mb-2">
-                                    <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote title</label>
-                                    <input v-model="voteTitle" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text" placeholder="E.g.: Build cob or straw-bale house?">
+                                    <Input :name="voteTitle" :modelValue="voteTitle" :id="'voteTitle'" :label="'vote title'" :placeholder="'E.g.: Build cob or straw-bale house?'" :type="'text'" required @update-model-value="voteTitle = $event" @check-if-user-may-submit="checkIfUserMaySubmit()"/>
                                 </div>
 
                                 <div class="w-justUnderHalf">
-                                    <label class="absolute pl-4 pt-6 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="startDate">closing date</label>
-                                    <input v-model="voteClosingDate" class="w-full mt-4 pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date" placeholder="select closing date">
+                                    <Input :name="voteClosingDate" :modelValue="voteClosingDate" :id="'voteClosingDate'" :label="'vote closing date'" :placeholder="'select closing date'" :type="'date'" required @update-model-value="voteClosingDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit()"/>
                                 </div>
 
                                 <div id="voteElements" class="my-3">
                                     <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="projectName">vote options (hit enter to add to your list of options)</label>
-                                    <input @keydown.enter.prevent="addVoteEl" v-model="voteEl" class="w-full pl-4 pt-9 pb-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="text">
+                                    <input @blur="checkIfUserMaySubmit()" @keydown.enter.prevent="addVoteEl" id="voteDate" v-model="voteEl" class="w-full pl-4 pt-9 pb-4 shadow-sm bg-white h-8 rounded-full border-none focus:border-we4vBlue focus:ring-1 focus:ring-we4vBlue focus:shadow-md text-sm tracking-tight font-medium" type="text">
                                 </div>
 
                                 <h5 v-if="voteEls.length > 0" class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight ml-4">List of vote options (click option to remove it)</h5>
                                 <div id="voteEls" class="flex flex-row w-full mb-2 ml-4">
-                                    <div v-for="voteEl in voteEls" :key="voteEl" class="text-xs text-we4vBlue mr-3 hover:text-we4vDarkBlue cursor-pointer">
-                                        <p @click="deleteEl(voteEl)">{{ voteEl }}</p>
+                                    <div v-for="voteEl in voteEls" :key="voteEl" class=" mr-3 ">
+                                        <p class="text-xs text-we4vBlue hover:text-we4vDarkBlue cursor-pointer" @click="deleteEl(voteEl)">{{ voteEl }}</p>
                                     </div>
                                 </div>
 
@@ -48,22 +46,20 @@
                                     <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Groups</h5>
                                     <div class="flex flex-wrap max-w-full">
                                         <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
-                                            <input @click="voteable_type = 'App\\Models\\Group'" :value="group.group_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                                            <input @click="voteable_type = 'App\\Models\\Group'; groupTeamSelectionClicked()" :value="group.group_id" name="voteGroup" class="selectedGroupTeam" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}</label>
                                         </div>
                                     </div>
                                     <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-2">Teams</h5>
                                     <div class="flex flex-wrap max-w-full">
-                                        <div v-for="(group, groupKey) in $page.props.mygroups" :key="groupKey" class="min-w-1/3">
-                                            <div v-for="(team, teamKey) in group.teams" :key="teamKey">
-                                                <input @click="voteable_type = 'App\\Models\\Team'" :value="team.team_id" name="group" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
-                                                <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
-                                            </div>
+                                        <div class="min-w-1/3" v-for="(team, teamKey) in teams" :key="teamKey">
+                                            <input @click="voteable_type = 'App\\Models\\Team'; groupTeamSelectionClicked()" :value="team.team_id" name="voteGroup" class="selectedGroupTeam" type="radio">
+                                            <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <button-grey @click="submitVoteData()">Save vote</button-grey>
+                                <button-grey :enabled="voteEnabled" @click="voteEnabled ? submitVoteData() : null">Save vote</button-grey>
                             </template>
                         </Form>
                     </div>
@@ -83,10 +79,10 @@
 
                         <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend date</h5>
                         <div class="w-justUnderHalf mb-4">
-                            <input v-model="voteInputClosingDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                            <Input :name="voteClosingDate" :modelValue="voteInputClosingDate" :id="'voteClosingDate'" :label="'vote closing date'" :placeholder="'select closing date'" :type="'date'" required @update-model-value="voteInputClosingDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit()"/>
                         </div>
                         
-                        <button-grey @click="submitVoteData()">Update vote’s closing date</button-grey>
+                        <button-grey :enabled="voteEnabled" @click="voteEnabled ? submitVoteData() : null">Update vote’s closing date</button-grey>
                     </div>
                 </teleport>
 
@@ -95,7 +91,7 @@
                         My votes
                     </template>
                     <template #description>
-                        <p>Depending on your choice, votes are assigned to either:</p> 
+                        <p class="text-we4vGrey-600">Depending on your choice, votes are assigned to either:</p> 
                         <ol class="list-decimal ml-5 my-2 text-xs">
                             <li>
                                 The associates in one of your groups (including its teams), or
@@ -104,7 +100,7 @@
                                 The associates in one of your teams.
                             </li>
                         </ol>
-                        <p>Enter vote options into the relevant input field one by one. Hitting return after entering an option adds that option to the list you build. When the list is finished, you've selected a closing date, entered the title and chosen the group of associates who will vote, your data can be saved. Those invited to vote will then be notified.</p>
+                        <p class="text-we4vGrey-600">Enter vote options into the relevant input field one by one. Hitting return after entering an option adds that option to the list you build. When the list is finished, you've selected a closing date, entered the title and chosen the group of associates who will vote, your data can be saved. Those invited to vote will then be notified.</p>
                     </template>
                 </Title>
 
@@ -154,13 +150,13 @@ import ButtonBlue from '../Jetstream/ButtonBlue'
 import ButtonGrey from '@/Jetstream/ButtonGrey'
 import JetNavLink from '@/Jetstream/NavLink'
 import Form from '@/Jetstream/FormSection'
-import Modal from './Components/Modal'
+import Input from './Components/Input'
 import Vote from './Components/Vote'
+import FlashMessage from './Components/FlashMessage'
+import ErrorMessage from './Components/ErrorMessage'
 import ModalBackdrop from './Components/ModalBackdrop'
 import manageModals from './Composables/manageModals'
-import FlashMessage from '../Pages/Components/FlashMessage'
-import ErrorMessage from '../Pages/Components/ErrorMessage'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 import { Inertia } from '@inertiajs/inertia'
 
@@ -177,7 +173,7 @@ export default {
         AppLayout,
         Title,
         Subtitle,
-        Modal,
+        Input,
         ModalBackdrop,
         ButtonBlue,
         ButtonGrey,
@@ -201,6 +197,9 @@ export default {
             showEditVoteModal,
             showVoteModal,
             voteClosingDate,
+            voteableId,
+            voteableType,
+            voteId,
             voteInputClosingDate,
             voteTitle,
         } = manageModals()
@@ -211,6 +210,50 @@ export default {
         const error = ref(false)
         const flashMessage = ref(false)
         const showClosedVotes = ref(false)
+        const teams = ref([])
+        const voteEnabled = ref(false)
+        const groupTeamSelected = ref(false)
+
+        onMounted(() => {
+            usePage().props.value.mygroups.forEach(group => {
+                if (group.teams) {
+                    group.teams.forEach(team => {
+                        teams.value.push(team)
+                    })
+                }
+            })
+        })
+
+        const checkIfUserMaySubmit = () => {
+            if (showVoteModal.value) {
+                let title
+                let date
+
+                document.getElementById('voteTitle').value
+                    ? title = true
+                    : title = false
+
+                document.getElementById('voteClosingDate').value
+                    ? date = true
+                    : date = false
+
+                if (title && date && groupTeamSelected && voteEls.value.length > 0) {
+                    voteEnabled.value = true
+                }
+            }
+
+            if (showEditVoteModal.value) {
+                voteEnabled.value = true
+            }
+        }
+
+        const groupTeamSelectionClicked = () => {
+            if (document.querySelector('input[name="voteGroup"]:checked').value) {
+                groupTeamSelected.value = true
+            }
+
+            checkIfUserMaySubmit()
+        }
 
         const addVoteEl = () => {
             if (!voteEls.value.includes(voteEl.value)) {
@@ -226,19 +269,31 @@ export default {
         }
 
         const submitVoteData = async function () {
-            let selectedGroup = document.querySelector('input[name="group"]:checked').value
+            let selectedGroup
+
+            showVoteModal.value
+            ? selectedGroup = document.querySelector('input[name="voteGroup"]:checked').value
+            : null
 
             let payload = {
                 'owner': usePage().props.value.authUser.id,
                 'title': voteTitle.value,
                 'closing_date': voteClosingDate.value,
-                'voteable_id': selectedGroup,
-                'voteable_type': voteable_type.value,
+                'voteable_id': selectedGroup ? selectedGroup : voteableId.value,
+                'voteable_type': voteable_type.value ? voteable_type.value : voteableType.value,
                 'vote_elements': voteEls.value
             }
 
+            if (showEditVoteModal) {
+                payload.id = voteId.value
+                payload.closing_date = voteInputClosingDate.value
+            }
+
             try {
-                await Inertia.post('/myvotes/store', payload)
+                showVoteModal.value
+                ? await Inertia.post('/myvotes/store', payload) : null
+                showEditVoteModal
+                ? await Inertia.patch('/myvotes/update', payload) : null
                 flashMessage.value = true
                 props.errors = null
 
@@ -325,9 +380,11 @@ export default {
             addTeamMembersToGroupVoters,
             addVoteEl,
             amInside, 
-            amOutside, 
+            amOutside,
+            checkIfUserMaySubmit,
             clearModal,
             deleteEl,
+            groupTeamSelectionClicked,
             nowInside, 
             nowOutside,
             onActivateEditVoteModal,
@@ -337,12 +394,14 @@ export default {
             showEditVoteModal,
             showVoteModal,
             submitVoteData,
+            teams,
             voteable_type,
             voteClosingDate,
             voteInputClosingDate,
             voteTitle,
             voteEl,
             voteEls,
+            voteEnabled
         }
     }
     

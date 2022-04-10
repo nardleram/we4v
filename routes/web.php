@@ -167,6 +167,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/myvotes/store', [VoteController::class, 'store'])
         ->name('storeVote');
 
+    Route::patch('/myvotes/update', [VoteController::class, 'update'])
+        ->name('updateVote');
+
     Route::post('/cast-vote/store', [CastVoteController::class, 'store'])
         ->name('castVote');
 });

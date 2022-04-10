@@ -25,7 +25,7 @@ class Group extends Model
 
     public function memberships() : object
     {
-        return $this->hasMany(Membership::class);
+        return $this->morphMany(Membership::class, 'membershipable');
     }
 
     public static function getMyNetworkReqs() : object

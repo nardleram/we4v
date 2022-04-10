@@ -23,6 +23,11 @@ class Team extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function memberships() : object
+    {
+        return $this->morphMany(Membership::class, 'membershipable');
+    }
+
     public function group()
     {
         return $this->belongsTo(Group::class);

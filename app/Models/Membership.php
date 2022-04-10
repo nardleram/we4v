@@ -31,6 +31,12 @@ class Membership extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
 
+    public function membershipable()
+    {
+        return $this->morphTo();
+    }
+
+
     public static function getPendingMemberships() : object
     {
         return (new static())

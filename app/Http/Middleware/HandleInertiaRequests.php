@@ -294,10 +294,8 @@ class HandleInertiaRequests extends Middleware
             },
 
             'myPendingVotes' => function ()
-            {
-                $membIds = Membership::getMemberships4Votes();
-                
-                return Vote::getPendingVotes($membIds);
+            {   
+                return Vote::getPendingVotes(Membership::getMemberships4Votes());
             },
 
             'closedVotes' => function ()

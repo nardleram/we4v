@@ -180,7 +180,7 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
 
                                 <div>
-                                    <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: My Splendid Task'" :type="'text'" required @update-model-value="taskName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                    <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: Design anti-grav casing'" :type="'text'" required @update-model-value="taskName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
                                 </div>
 
                                 <div>
@@ -216,43 +216,41 @@
                 </teleport>
 
                 <teleport to="#projectModals">
-                    <Modal :show="showEditAdminTaskModal" :name="taskName" :id="taskId" :description="taskDescription">
-                        <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showEditAdminTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-28 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
-                            <Form>
-                                <template #form>
-                                    <div class="flex justify-end">
-                                        <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                                            <div @click="showEditAdminTaskModal = false; clearModal()">
-                                                <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
-                                            </div>   
-                                        </div>
+                    <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showEditAdminTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-28 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+                        <Form>
+                            <template #form>
+                                <div class="flex justify-end">
+                                    <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                                        <div @click="showEditAdminTaskModal = false; clearModal()">
+                                            <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                                        </div>   
                                     </div>
-                                    <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
-                                    <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
-                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
-                                        <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>(team)</p>
-                                    </div>
+                                </div>
+                                <h4 class="uppercase text-we4vBlue font-semibold mb-2 -mt-8">Edit task <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
+                                <div class="text-we4vGrey-600 text-sm mb-2 tracking-tight">
+                                    <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Description: </span>{{ taskDescription }}</p>
+                                    <p class="mb-2"><span class="font-semibold text-we4vGrey-500">Assignee: </span>(team)</p>
+                                </div>
 
-                                    <div v-if="taskNotes">
-                                        <Notes :notes="taskNotes" />
-                                    </div>
+                                <div v-if="taskNotes">
+                                    <Notes :notes="taskNotes" />
+                                </div>
 
-                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
-                                    <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
+                                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 tracking-tight">Log a note</h5>
+                                <textarea v-model="taskNoteBody" name="taskNoteBody" cols="30" rows="5" class="w-full text-we4vGrey-600 text-xs focus:outline-none"></textarea>
 
-                                    <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
-                                    <div class="w-justUnderHalf mb-4">
-                                        <input v-model="taskInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
-                                    </div>
+                                <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
+                                <div class="w-justUnderHalf mb-4">
+                                    <input v-model="taskInputEndDate" class="w-full p-3 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:outline-none focus:shadow-outline text-sm tracking-tight font-medium" type="date">
+                                </div>
 
-                                    <input @click="taskCompleted = !taskCompleted" :value="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="taskCompleted">
-                                    <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskId }}">Task completed</label>
+                                <input @click="taskCompleted = !taskCompleted" :value="taskCompleted" class="rounded-sm border-indigo-100 shadow-sm focus:outline-none" type="checkbox" :checked="taskCompleted">
+                                <label class="text-we4vGreen-500 font-semibold text-xs ml-2 w-full text-center" for="{{ taskId }}">Task completed</label>
 
-                                    <button-grey @click="greyButtonEnabled ? submitTaskData() : null" :enabled="greyButtonEnabled" id="submitForm">Update task</button-grey>
-                                </template>
-                            </Form>
-                        </div>
-                    </Modal>
+                                <button-grey @click="greyButtonEnabled ? submitTaskData() : null" :enabled="greyButtonEnabled" id="submitForm">Update task</button-grey>
+                            </template>
+                        </Form>
+                    </div>
                 </teleport>
 
                 <teleport to="#projectModals">

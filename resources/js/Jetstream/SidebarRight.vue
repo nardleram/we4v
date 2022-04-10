@@ -60,7 +60,7 @@
         <div v-if="showPendingVoteModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
             <div class="flex justify-end">
                 <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                    <div @click="showPendingVoteModal = false; clearModal()">
+                    <div @click="showPendingVoteModal = false; userCanVote = false; clearModal()">
                         <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
                     </div>   
                 </div>
@@ -71,15 +71,12 @@
                 <p class="text-we4vGrey-500 text-sm">Closing date: <span class="italic font-medium">{{ voteClosingDate }}</span></p>
                 <h5 class="text-sm font-medium text-we4vGrey-500 mb-1 tracking-tight mt-4">Vote options</h5>
                 <div v-for="(element, elementKey) in voteElements" :key="elementKey">
-                    <input :value="element.element_id" name="element" class="group rounded-sm border-indigo-100 shadow-sm text-indigo-600 focus:outline-none" type="radio">
+                    <input @click="userCanVote = true" :value="element.element_id" name="element" class="group" type="radio">
                     <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ element.element_id }}">{{ element.element_title }}</label>
                 </div>
             </div>
 
-            <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
-            @click="storeVoteResponse()">
-                Submit vote
-            </button>
+            <button-grey @click="storeVoteResponse()" :enabled="userCanVote" id="submitForm">Submit vote</button-grey>
             
         </div>
     </teleport>
@@ -374,7 +371,6 @@ export default {
             showMembs: false,
             showNetworks: false,
             showTasks: false,
-            showPendingVotes: false,
             showVoteResults: false
         }
     },
@@ -461,6 +457,8 @@ export default {
         const projectNoteBody = ref(null)
         const showAssocReqs = ref(false)
         const showNetworkReqs = ref(false)
+        const userCanVote = ref(false)
+        const showPendingVotes = ref(false)
 
         const storeInviteResponse = async (inviteData, response) => {
             let payload = {}
@@ -526,6 +524,7 @@ export default {
             : null
 
             clearModal()
+            showPendingVoteModal.value = false
         }
 
         const updateTask = async function () {
@@ -609,6 +608,7 @@ export default {
             showMembReqs,
             showNetworkReqs,
             showPendingVoteModal,
+            showPendingVotes,
             showUnansweredInvites,
             showUserTaskModal,
             storeInviteResponse,
@@ -639,6 +639,7 @@ export default {
             type,
             updated_by,
             updateTask,
+            userCanVote,
             voteClosingDate,
             voteGroupName,
             voteElements,

@@ -46,9 +46,12 @@ class CompileVotesArray
                     $votedUsers = [];
                 }
 
+                $votes[$voteCount]['vote_id'] = $rawVote->vote_id;
                 $votes[$voteCount]['vote_title'] = $rawVote->vote_title;
                 $votes[$voteCount]['closing_date'] = Carbon::parse($rawVote->closing_date)->format('d M y');
                 $votes[$voteCount]['input_closing_date'] = $rawVote->closing_date;
+                $votes[$voteCount]['voteable_id'] = $rawVote->voteable_id;
+                $votes[$voteCount]['voteable_type'] = $rawVote->voteable_type;
 
                 foreach ($castVoteEls as $castVoteEl) {
                     if ($rawVote->vote_id === $castVoteEl['vote_id']) {

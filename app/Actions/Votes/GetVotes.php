@@ -49,6 +49,8 @@ class GetVotes
             'votes.id as vote_id',
             'votes.title as vote_title',
             'votes.closing_date as closing_date',
+            'votes.voteable_id as voteable_id',
+            'votes.voteable_type as voteable_type',
             'vote_elements.title as element_title',
             'vote_elements.id as element_id',
             'cast_votes.vote_id as cast_vote_id',

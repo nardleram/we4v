@@ -89,19 +89,14 @@ class User extends Authenticatable
         return $this->hasMany(Article::class);
     }
 
-    public function comments() : object
+    public function memberships() : object
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->hasMany(Membership::class);
     }
 
     public function images() : object
     {
         return $this->morphMany(Image::class, 'imageable');
-    }
-
-    public function memberships() : object
-    {
-        return $this->hasMany(Membership::class);
     }
 
     public function associations() : object
