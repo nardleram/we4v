@@ -55,7 +55,7 @@
                     'slug': this.$page.props.authUser.slug,
                     'image': data.image,
                     'posted_by': this.$page.props.authUser.username,
-                    'posted_at': data.posted_at,
+                    'created_at': data.posted_at,
                     'num_approvals': 0,
                     'num_comments': 0,
                     'user_profile_pic': this.$page.props.userProfileImages.profile,

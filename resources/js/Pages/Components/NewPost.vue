@@ -96,7 +96,7 @@ export default {
                     this.updatePosts(res)
                 },
                 error: (error) => {
-                    this.$page.props.errors = { message: 'Files may be no larger than 2MB and must be of type jpeg, jpg or png'}
+                    this.$page.props.errors = { message: 'Images may be no larger than 2MB and must be one of jpg, jpeg, png, bmp, gif, svg, or webp'}
                 },
                 maxfilesexceeded: file => {
                     this.dropzone.removeAllFiles()
