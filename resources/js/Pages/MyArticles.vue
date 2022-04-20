@@ -46,7 +46,7 @@
 
                         <editor-content id="editorDiv" :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2"/>
 
-                        <button-grey @click="submitArticle">Save article</button-grey>
+                        <button-grey :enabled="true" @click="submitArticle">Save article</button-grey>
                     </template>
                 </Form>
 

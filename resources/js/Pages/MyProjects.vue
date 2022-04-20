@@ -22,19 +22,19 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create a new project</h4>
 
                                 <div>
-                                    <Input :name="projectName" :modelValue="projectName" :id="'projectName'" :label="'project name'" :placeholder="'E.g.: My Dastardly Plan'" :type="'text'" required @update-model-value="projectName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                    <Input :name="projectName" :modelValue="projectName" :id="'projectName'" :label="'project name'" :placeholder="'E.g.: My Dastardly Plan'" :type="'text'" required @update-model-value="projectName = $event" @input-blur-fired="checkIfUserMaySubmit('project')"/>
                                 </div>
 
                                 <div>
-                                    <Input :name="projectDescription" :modelValue="projectDescription" :id="'projectDescription'" :label="'describe project (required)'" :placeholder="'E.g.: Subdue humanity using only my dark genius'" :type="'text'" required @update-model-value="projectDescription = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                    <Input :name="projectDescription" :modelValue="projectDescription" :id="'projectDescription'" :label="'describe project (required)'" :placeholder="'E.g.: Subdue humanity using only my dark genius'" :type="'text'" required @update-model-value="projectDescription = $event" @input-blur-fired="checkIfUserMaySubmit('project')"/>
                                 </div>
 
                                 <div class="flex flex-row justify-between">
                                     <div class="w-justUnderHalf">
-                                        <Input :name="projectStartDate" :modelValue="projectStartDate" :id="'projectStartDate'" :label="'start date (required)'" :placeholder="'select start date'" :type="'date'" required @update-model-value="projectStartDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                        <Input :name="projectStartDate" :modelValue="projectStartDate" :id="'projectStartDate'" :label="'start date (required)'" :placeholder="'select start date'" :type="'date'" required @update-model-value="projectStartDate = $event" @input-blur-fired="checkIfUserMaySubmit('project')"/>
                                     </div>
                                     <div class="w-justUnderHalf">
-                                        <Input :name="projectEndDate" :modelValue="projectEndDate" :id="'projectEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="projectEndDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                        <Input :name="projectEndDate" :modelValue="projectEndDate" :id="'projectEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="projectEndDate = $event" @input-blur-fired="checkIfUserMaySubmit('project')"/>
                                     </div>
                                 </div>
 
@@ -76,16 +76,16 @@
                                     <p class="text-red-600 text-xs font-medium -mt-1 mb-4">(A project may only be reassigned to a different group or team if that project has no tasks. A task may only be deleted if that task has no notes, i.e., is not active.)</p>
 
                                     <div>
-                                        <Input :name="projectName" :modelValue="projectName" :id="'projectName'" :label="'project name'" :placeholder="'E.g.: My Dastardly Plan'" :type="'text'" required @update-model-value="projectName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                        <Input :name="projectName" :modelValue="projectName" :id="'projectName'" :label="'project name'" :placeholder="'E.g.: My Dastardly Plan'" :type="'text'" required @update-model-value="projectName = $event" @input-blut-fired="checkIfUserMaySubmit('project')"/>
                                     </div>
 
                                     <div>
-                                        <Input :name="projectDescription" :modelValue="projectDescription" :id="'projectDescription'" :label="'describe project (required)'" :placeholder="'E.g.: Subdue humanity using only my dark genius'" :type="'text'" required @update-model-value="projectDescription = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                        <Input :name="projectDescription" :modelValue="projectDescription" :id="'projectDescription'" :label="'describe project (required)'" :placeholder="'E.g.: Subdue humanity using only my dark genius'" :type="'text'" required @update-model-value="projectDescription = $event" @input-blut-fired="checkIfUserMaySubmit('project')"/>
                                     </div>
 
                                     <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
                                     <div class="w-justUnderHalf mb-4">
-                                        <Input :name="projectEndDate" :modelValue="projectInputEndDate" :id="'projectEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="projectInputEndDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('project')"/>
+                                        <Input :name="projectEndDate" :modelValue="projectInputEndDate" :id="'projectEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="projectInputEndDate = $event" @input-blut-fired="checkIfUserMaySubmit('project')"/>
                                     </div>
 
                                     <div v-if="projectTasks.length === 0">
@@ -138,19 +138,19 @@
                                     <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create task for <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
 
                                     <div>
-                                        <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: My Splendid Task'" :type="'text'" required @update-model-value="taskName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                        <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: My Splendid Task'" :type="'text'" required @update-model-value="taskName = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                     </div>
 
                                     <div>
-                                        <Input :name="taskDescription" :modelValue="taskDescription" :id="'taskDescription'" :label="'task description'" :placeholder="'E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)'" :type="'text'" required @update-model-value="taskDescription = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                        <Input :name="taskDescription" :modelValue="taskDescription" :id="'taskDescription'" :label="'task description'" :placeholder="'E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)'" :type="'text'" required @update-model-value="taskDescription = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                     </div>
 
                                     <div class="flex flex-row justify-between">
                                         <div class="w-justUnderHalf">
-                                            <Input :name="taskStartDate" :modelValue="taskStartDate" :id="'taskStartDate'" :label="'task start date'" :placeholder="'select start date'" :type="'date'" required @update-model-value="taskStartDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                            <Input :name="taskStartDate" :modelValue="taskStartDate" :id="'taskStartDate'" :label="'task start date'" :placeholder="'select start date'" :type="'date'" required @update-model-value="taskStartDate = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                         </div>
                                         <div class="w-justUnderHalf">
-                                            <Input :name="taskEndDate" :modelValue="taskEndDate" :id="'taskEndDate'" :label="'task end date'" :placeholder="'select end date'" :type="'date'" required @update-model-value="taskEndDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                            <Input :name="taskEndDate" :modelValue="taskEndDate" :id="'taskEndDate'" :label="'task end date'" :placeholder="'select end date'" :type="'date'" required @update-model-value="taskEndDate = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                         </div>
                                     </div>
 
@@ -180,16 +180,16 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
 
                                 <div>
-                                    <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: Design anti-grav casing'" :type="'text'" required @update-model-value="taskName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                    <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: Design anti-grav casing'" :type="'text'" required @update-model-value="taskName = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                 </div>
 
                                 <div>
-                                    <Input :name="taskDescription" :modelValue="taskDescription" :id="'taskDescription'" :label="'task description'" :placeholder="'E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)'" :type="'text'" required @update-model-value="taskDescription = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                    <Input :name="taskDescription" :modelValue="taskDescription" :id="'taskDescription'" :label="'task description'" :placeholder="'E.g.: Technical spec for anti-grav-drive casing (model no. ISV-2022)'" :type="'text'" required @update-model-value="taskDescription = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                 </div>
 
                                 <h5 class="text-sm font-semibold text-we4vGrey-500 mb-1 mt-2 tracking-tight">Extend deadline</h5>
                                 <div class="w-justUnderHalf mb-4">
-                                    <Input :name="taskEndDate" :modelValue="taskInputEndDate" :id="'taskEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="taskInputEndDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit('task')"/>
+                                    <Input :name="taskEndDate" :modelValue="taskInputEndDate" :id="'taskEndDate'" :label="'end date (required)'" :placeholder="'select end date'" :type="'date'" required @update-model-value="taskInputEndDate = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
                                 </div>
 
                                 <div>
@@ -215,7 +215,7 @@
                     </div>
                 </teleport>
 
-                <teleport to="#projectModals">
+                <!-- <teleport to="#projectModals">
                     <div @mouseleave="nowOutside(); mode = 'task'" @mouseenter="nowInside(); mode = 'task'" v-if="showEditAdminTaskModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-28 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
                         <Form>
                             <template #form>
@@ -251,7 +251,7 @@
                             </template>
                         </Form>
                     </div>
-                </teleport>
+                </teleport> -->
 
                 <teleport to="#projectModals">
                     <div @mouseleave="nowOutside(); mode = 'project'" @mouseenter="nowInside(); mode = 'project'" v-if="showCompletedProjectModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
@@ -326,14 +326,19 @@
                         Project and task management
                     </template>
                     <template #description>
-                        Projects are assigned to one of your groups. Tasks are created within your projects and assigned to whole teams or individual members of that group and its teams. A project may be deleted if it has not tasks. A task may be deleted if it has no notes. Notes may not be deleted, and as such effectively activate the project.
+                        Projects are assigned to one of your groups. Tasks are created within your projects and assigned to whole teams or individual members of that group and its teams. A project may be deleted if it has no tasks. A task may be deleted if it has no notes. Notes may not be deleted, and as such effectively activate the project.
                     </template>
                 </Title>
 
                 <button-blue v-if="$page.props.myGroups.length > 0" @click="showProjectModal = true; showBackdrop = true; checkIfUserMaySubmit('project')">Create a new project</button-blue>
+                <button-grey :enabled="true" v-else>
+                    <a :href="route('mygroups', $page.props.authUser.id)">
+                        Create a group before creating a project
+                    </a>
+                </button-grey>
 
                 <!-- Main page – Projects -->
-                <Subtitle>
+                <Subtitle v-if="myProjects.length > 0">
                     <template #title>
                         My projects
                     </template>
@@ -341,6 +346,7 @@
                         Click a project name to assign tasks.
                     </template>
                 </Subtitle>
+
                 <div v-if="myProjects.length > 0" class="w-full m-0 m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Project v-for="(project, projectKey) in myProjects" :key="projectKey" :project="project"  @activate-task-modal="onActivateTaskModal" @activate-edit-task-modal="onActivateEditTaskModal"

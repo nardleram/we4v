@@ -113,7 +113,7 @@
                 </button-grey>
 
                 <!-- Main page – Projects -->
-                <Subtitle>
+                <Subtitle v-if="$page.props.myvotes.length > 0">
                     <template #title>
                         My votes
                     </template>
@@ -127,7 +127,7 @@
                     </div>
                 </div>
 
-                <button-grey v-if="myclosedvotes" @click="showClosedVotes = !showClosedVotes" :enabled="true" >
+                <button-grey v-if="$page.props.myclosedvotes.length > 0" @click="showClosedVotes = !showClosedVotes" :enabled="true" >
                     <span v-if="!showClosedVotes">Show my closed votes</span>
                     <span v-if="showClosedVotes">Hide my closed votes</span>
                 </button-grey>

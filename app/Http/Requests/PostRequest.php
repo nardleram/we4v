@@ -33,4 +33,12 @@ class PostRequest extends FormRequest
             'image' => 'image|mimes:jpg,jpeg,png|max:2048|nullable'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'body.required' => 'You must enter some text for your post',
+            'image.nullable' => 'Images may be no larger than 2MB and may only be a jpg, jpeg or png file',
+        ];
+    }
 }

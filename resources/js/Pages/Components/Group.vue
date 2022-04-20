@@ -71,12 +71,9 @@
                         </div>
                     </div>
 
-                    <div id="teamActions" class="flex w-1/6 items-start justify-around mt-1">
+                    <div id="teamActions" class="flex w-1/6 items-start justify-end mt-1">
                         <div @click="$emit('activateEditTeamModal', team)">
                             <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
-                        </div>
-                        <div @click="deleteTeam(team.team_id)">
-                            <i class="fas fa-trash h-5 cursor-pointer text-lg"></i>
                         </div>
                     </div>
                 </div>

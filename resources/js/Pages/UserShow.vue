@@ -6,11 +6,11 @@
             <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <div class="relative mb-5">
                     <div class="w-full h-64 overflow-hidden">
-                        <img :src="'/'+user.bkgrnd_image" alt="User background image">
+                        <img :src="'/storage/'+user.bkgrnd_image" alt="User background image">
                     </div>
                     <div class="absolute flex items-center -mb-4 bottom-0 left-0 z-20">
                         <div class="w-24">
-                            <img :src="'/'+user.profile_image" alt="User profile image" class="rounded-full object-cover shadow-md h-24 w-24">
+                            <img :src="'/storage/'+user.profile_image" alt="User profile image" class="rounded-full object-cover shadow-md h-24 w-24">
                         </div>
                         <p class="font-bold tracking-tighter ml-4 text-we4vBg text-lg">{{ user.username }}</p>
                     </div>
@@ -57,7 +57,7 @@
                     </div>
                     <div v-else>
                         <h4>My posts</h4>
-                        <Post class="text-left" v-for="(post, postKey) in posts" :key="postKey" :post="post" />
+                        <post-user-self class="text-left" v-for="(post, postKey) in posts" :key="postKey" :post="post" />
                     </div>
                 </div>
             </div>
@@ -66,20 +66,20 @@
 </template>
 
 <script>
-import Post from './components/Post'
 import AppLayout from '@/Layouts/AppLayout'
 import Article from '../Pages/Components/Article'
 import ModalBackdrop from '../Pages/Components/ModalBackdrop'
 import manageModals from '../Pages/Composables/manageModals'
+import PostUserSelf from './Components/PostUserSelf.vue'
 
 export default {
     name: 'Show',
 
     components: {
         Article,
-        Post,
         AppLayout,
         ModalBackdrop,
+        PostUserSelf,
     },
     props: [
         'myArticles',

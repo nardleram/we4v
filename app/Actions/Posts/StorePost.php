@@ -16,6 +16,7 @@ class StorePost
         ]);
 
         $post['posted_at'] = $post->created_at->diffForHumans();
+        $post['image'] = false;
 
         if (isset($request['image'])) {
             $image = $request['image']->store('images/posts', 'public');

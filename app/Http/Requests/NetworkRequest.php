@@ -31,7 +31,7 @@ class NetworkRequest extends FormRequest
             'id' => 'nullable|uuid',
             'name' => 'required|string:max 50',
             'description' => 'required|string:max 255',
-            'groups' => 'required|array'
+            'groups' => 'nullable|array'
         ];
     }
 }

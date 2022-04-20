@@ -1,21 +1,23 @@
 <template>
+    <error-message></error-message>
+
     <div class="p-1 bg-white rounded shadow mb-2">
         <div class="flex justify-between items-center">
 
             <div class="w-10">
-                <img :src="'/'+$page.props.userProfileImages.profile" class="rounded-full object-cover h-10 w-10" />
+                <img :src="'/storage/'+$page.props.userProfileImages.profile" class="rounded-full object-cover h-10 w-10" />
             </div>
 
             <div class="flex-1 flex mx-2">
-                <input v-model="postMessage"
-                type="text" name="body" class="w-full pl-4 text-we4vGrey-700 bg-we4vGrey-100 h-8 rounded-full focus:border-we4vBlue focus:shadow-outline text-sm tracking-tighter" placeholder="Add a post to your Talkboard">
+                <textarea v-model="postMessage" name="body" class="w-full border border-we4vGrey-200 outline-none resize-none overflow-auto text-sm rounded-xl max-h-24 text-we4vGrey-600 tracking-tighter" rows="2" placeholder="Add a post to your Talkboard"></textarea>
+                <!-- <input v-model="postMessage"
+                type="text" name="body" class="w-full pl-4 text-we4vGrey-600 bg-we4vGrey-100 h-8 rounded-full focus:border-we4vBlue focus:shadow-outline text-sm tracking-tighter" placeholder="Add a post to your Talkboard"> -->
                 <transition name="fade">
                     <button v-if="postMessage"
                         @click="postHandler" 
                         class="text-we4vBlue ml-3">
                         <small class="dz-clickable"><i class="fas fa-save cursor-pointer text-xl text-we4vBlue"></i></small>
                     </button>
-            
                 </transition>
             </div>
 
@@ -47,14 +49,19 @@
 <script>
 import _ from 'lodash'
 import Dropzone from 'dropzone'
+import ErrorMessage from './ErrorMessage'
 
 export default {
     name: 'NewPost',
 
+    components: {
+        ErrorMessage
+    },
+
     data: () => {
         return {
             postMessage: null,
-            dropzone: null,
+            dropzone: null
         }
     },
 
@@ -89,7 +96,7 @@ export default {
                     this.updatePosts(res)
                 },
                 error: (error) => {
-                    console.log('Something went wrong: ' + error)
+                    this.$page.props.errors = { message: 'Files may be no larger than 2MB and must be of type jpeg, jpg or png'}
                 },
                 maxfilesexceeded: file => {
                     this.dropzone.removeAllFiles()
@@ -114,8 +121,7 @@ export default {
         },
 
         updatePosts(post) {
-            console.log('updatePosts triggered from NewPost.vue, here is post: '+post)
-            this.$emit('UpdatePosts', post)
+            this.$emit('updatePosts', post)
         },
     },
 }

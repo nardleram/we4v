@@ -47,9 +47,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::get('/about', [HomeController::class, 'index'])
         ->name('about');
 
-    Route::get('/about/showGroup/{id}', [HomeController::class, 'showgroup'])
-        ->name('showGroup');
-
     Route::get('/users/{user}/profile', [UserController:: class, 'showProfile'])
         ->name('myprofile');
 

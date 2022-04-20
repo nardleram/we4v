@@ -32,7 +32,7 @@
                                 <th class="w-3/12">Name</th>
                                 <th class="w-4/12">Timeframe / days left</th>
                                 <th class="w-3/12">Assignee(s)</th>
-                                <th class="w-2/12">Action</th>
+                                <th class="w-2/12 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -52,9 +52,9 @@
                                 <td v-if="task.assignee && !task.selected_task_members">
                                     <p class="font-regular text-we4vGrey-600 text-xs">{{ task.assignee }} (team)</p>
                                 </td>
-                                <td class="font-regular text-we4vBlue flex justify-around">
-                                    <i @click="$emit('activateEditTaskModal', task)" class="fas fa-edit cursor-pointer text-base mr-5 hover:text-we4vDarkBlue"></i>
-                                    <i v-if="!task.notes" @click="deleteTask(task.task_id)" class="fas fa-trash cursor-pointer text-base hover:text-we4vDarkBlue"></i>
+                                <td class="font-regular text-we4vBlue flex justify-end">
+                                    <i @click="$emit('activateEditTaskModal', task)" class="fas fa-edit cursor-pointer text-base hover:text-we4vDarkBlue"></i>
+                                    <i v-if="!task.notes" @click="deleteTask(task.task_id)" class="fas fa-trash ml-5 cursor-pointer text-base hover:text-we4vDarkBlue"></i>
                                 </td>
                             </tr>
                         </tbody>

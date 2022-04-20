@@ -37,16 +37,13 @@ class GetTalkboardPosts
         return Post::select('user_id')
             ->whereIn('posts.user_id', $ids)
             ->leftJoin('approvals', function ($join) {
-                $join->on('posts.id', '=', 'approvals.approvalable_id')
-                    ->where('approvalable_type', '=', 'App\Models\Post');
+                $join->on('posts.id', '=', 'approvals.approvalable_id');
             })
             ->leftJoin('comments', function ($join) {
-                $join->on('posts.id', '=', 'comments.commentable_id')
-                    ->where('comments.commentable_type', '=', 'App\Models\Post');
+                $join->on('posts.id', '=', 'comments.commentable_id');
             })
             ->leftJoin('images', function ($join) {
-                $join->on('posts.id', '=', 'images.imageable_id')
-                    ->where('images.imageable_type', '=', 'App\Models\Post');
+                $join->on('posts.id', '=', 'images.imageable_id');
             })
             ->select([
                 'posts.id as post_id',
@@ -128,7 +125,7 @@ class GetTalkboardPosts
                     }
                     $posts[$postCount]['body'] = $rawPost->body;
                     $posts[$postCount]['post_id'] = $rawPost->post_id;
-                    $rawPost->path ? $posts[$postCount]['image'] = $rawPost->path : null;
+                    $rawPost->path ? $posts[$postCount]['image'] = $rawPost->path : false;
                     $posts[$postCount]['created_at'] = $rawPost->created_at->diffForHumans();
                 }
 
@@ -148,7 +145,7 @@ class GetTalkboardPosts
                 $posts[$postCount]['post_id'] = $rawPost->post_id;
                 $posts[$postCount]['user_id'] = $user->user_id;
                 $posts[$postCount]['body'] = $rawPost->body;
-                $rawPost->path ? $posts[$postCount]['image'] = $rawPost->path : null;
+                $rawPost->path ? $posts[$postCount]['image'] = $rawPost->path : false;
                 $posts[$postCount]['created_at'] = $rawPost->created_at->diffForHumans();
             }
 
@@ -177,7 +174,6 @@ class GetTalkboardPosts
             $currentPostId = $rawPost->post_id;
             ++$loop;
         }
-
         return $posts;
     }
 }

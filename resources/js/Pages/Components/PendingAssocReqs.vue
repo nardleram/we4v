@@ -3,7 +3,7 @@
         <div class="flex items-center pt-1">
             <div>
                 <inertia-link :href="route('user-show', req.slug_requester)" as="button">
-                    <img :src="'/'+req.requester_profile_photo" :alt="req.requester" 
+                    <img :src="'/storage/'+req.requester_profile_photo" :alt="req.requester" 
                     class="rounded-full object-cover w-9 h-9">
                 </inertia-link>
             </div>
@@ -12,7 +12,7 @@
             </div>
             <div class="z-0 -ml-2">
                 <inertia-link :href="route('user-show', req.slug_requestee)" as="button">
-                    <img :src="'/'+req.requestee_profile_photo" :alt="req.requestee" 
+                    <img :src="'/storage/'+req.requestee_profile_photo" :alt="req.requestee" 
                     class="rounded-full object-cover w-9 h-9">
                 </inertia-link>
             </div>

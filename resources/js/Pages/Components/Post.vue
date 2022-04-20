@@ -3,7 +3,7 @@
         <div class="flex flex-1">
             <div class="mr-3 h-12 w-12">
                 <inertia-link :href="route('user-show', post.slug)" as="button">
-                    <img :src="'/'+post.user_profile_pic" :alt="post.name" class="rounded-full object-cover h-10 w-10">
+                    <img :src="'/storage/'+post.user_profile_pic" :alt="post.name" class="rounded-full object-cover h-10 w-10">
                 </inertia-link>
             </div>
             <div class="text-we4vBlue w-full font-semibold text-sm flex items-center justify-between">
@@ -18,7 +18,7 @@
         <div v-html="post.body" class="tracking-tight text-we4vPost text-we4vGrey-700"></div>
 
         <div class="w-full mt-2" v-if="post.image">
-            <img :src="'/'+post.image" alt="" class="object-cover mx-auto">
+            <img :src="'/storage/'+post.image" alt="" class="object-cover mx-auto">
         </div>
 
         <div class="flex justify-between m-4">
@@ -86,7 +86,7 @@
                 this.$inertia.post('/approvals/store', {
                     'id': id,
                     'model': 'App\\Models\\Post'
-                })
+                }, { preserveScroll: true })
                 if (this.post.user_likes_post) { // User is therefore disapproving
                     this.post.user_likes_post = false;
                     --this.post.num_approvals;
@@ -102,7 +102,7 @@
                     'commentable_id': post_id,
                     'commentable_type': 'App\\Models\\Post',
                     'parent_id': null,
-                });
+                }, { preserveScroll: true });
             },
         },
 

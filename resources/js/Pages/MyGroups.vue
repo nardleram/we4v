@@ -22,15 +22,15 @@
                                 <h4 v-if="edit" class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit group <span class="italic text-we4vGrey-600">{{ groupName }}</span></h4>
 
                                 <div>
-                                    <Input :name="groupName" :modelValue="groupName" :id="'groupName'" :label="'group name'" :placeholder="'Enter group name (required)'" :type="'text'" required @update-model-value="groupName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('group')"/>
+                                    <Input :name="groupName" :modelValue="groupName" :id="'groupName'" :label="'group name'" :placeholder="'Enter group name (required)'" :type="'text'" required @update-model-value="groupName = $event" @input-blur-fired="checkIfUserMaySubmit('group')" />
                                 </div>
 
                                 <div>
-                                    <Input :name="groupDescription" :modelValue="groupDescription" :id="'groupDescription'" :label="'describe group'" :placeholder="'Enter group description (required)'" :type="'text'" required @update-model-value="groupDescription = $event" @check-if-user-may-submit="checkIfUserMaySubmit('group')"/>
+                                    <Input :name="groupDescription" :modelValue="groupDescription" :id="'groupDescription'" :label="'describe group'" :placeholder="'Enter group description (required)'" :type="'text'" required @update-model-value="groupDescription = $event" @click="checkIfUserMaySubmit('group')" />
                                 </div>
 
                                 <div>
-                                    <Input :name="geogArea" :modelValue="geogArea" :label="'geographic area'" :placeholder="'Enter group’s geagraphic area (optional)'" :type="'text'" @update-model-value="geogArea = $event" @check-if-user-may-submit="checkIfUserMaySubmit('group')" />
+                                    <Input :name="geogArea" :modelValue="geogArea" :label="'geographic area'" :placeholder="'Enter group’s geagraphic area (optional)'" :type="'text'" @update-model-value="geogArea = $event" @click="checkIfUserMaySubmit('group')" />
                                 </div>
 
                                 <h4  v-if="!edit" class="text-we4vBlue font-semibold text-sm mt-4">Invite associates to join your group (optional)</h4>
@@ -41,7 +41,7 @@
                                         <div class="w-1/4">
                                             <input :id="'checkbox_'+associate.user_id" class="invitedAssocs" @click="addRemoveAssociate('group', associate.user_id), selectedAssoc = !selectedAssoc, roleUserId = associate.user_id" :value="associate.user_id" type="checkbox">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ associate.user_id }}">{{ associate.username }}</label>
-                                            <img :src="'/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            <img :src="'/storage/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                         </div>
 
                                         <div class="w-1/2">
@@ -60,7 +60,7 @@
                                         <div class="w-1/4">
                                             <input :id="'checkbox_'+groupMember.user_id" class="invitedAssocsEdit" @click="addRemoveAssociate('group', groupMember.user_id), selectedAssoc = !selectedAssoc, roleUserId = groupMember.user_id" :value="groupMember.user_id" :checked="groupMember.invited && !groupMember.declined" type="checkbox">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ groupMember.user_id }}">{{ groupMember.username }}</label>
-                                            <img :src="'/'+groupMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            <img :src="'/storage/'+groupMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                         </div>
 
                                         <div class="w-1/2">
@@ -76,7 +76,7 @@
 
                                 <!-- Add input field for tags -->
 
-                                <button-grey @click="submitGroupData()" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitGroupData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
                                     <span v-if="!edit">Save group, send invites</span>
                                     <span v-else>Update group (send invites)</span>
                                 </button-grey>
@@ -105,12 +105,12 @@
                                         <div class="w-full">
                                             <input :value="associate.user_id" name="transferToAssocs" type="radio" @click="greyButtonEnabled = true">
                                             <label class="text-we4vGrey-500 text-xs ml-2 text-center" for="{{ associate.user_id }}">{{ associate.username }}</label>
-                                            <img :src="'/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            <img :src="'/storage/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                         </div>
                                     </div>
                                 </div>
 
-                                <button-grey @click="submitTransferGroupData()" :type="'submit'" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitTransferGroupData() : null" :type="'submit'" :enabled="greyButtonEnabled">
                                     <span>Transfer group</span>
                                 </button-grey>
                             </template>
@@ -134,11 +134,11 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Add team to <span class="italic text-we4vGrey-600">{{ groupName }}</span></h4>
 
                                 <div>
-                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')"/>
+                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @input-blur-fired="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <div>
-                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')" />
+                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" @input-blur-fired="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Invite at least one associate to join your team (required)</h4>
@@ -147,7 +147,7 @@
                                         <div class="w-1/4">
                                             <input :id="'checkbox_'+associate.user_id" class="invitedAssocs" @click="addRemoveAssociate('team', associate.user_id), selectedAssoc = !selectedAssoc, roleUserId = associate.user_id" :value="associate.user_id" type="checkbox">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ associate.user_id }}">{{ associate.username }}</label>
-                                            <img :src="'/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            <img :src="'/storage/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                         </div>
                                         <div class="w-1/2">
                                             <InputNoLabel class="assocRoles" :id="associate.user_id" :placeholder="'define role'" :type="'text'" @collect-member-roles="onCollectMemberRoles" />
@@ -159,7 +159,7 @@
                                     </div>
                                 </div>
 
-                                <button-grey @click="submitTeamData()" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
                                     <span>Save team, send invites</span>
                                 </button-grey>
                             </template>
@@ -184,11 +184,11 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic text-we4vGrey-600">{{ teamName }}</span></h4>
 
                                 <div>
-                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')" />
+                                    <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @input-blur-fired="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <div>
-                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" @check-if-user-may-submit="checkIfUserMaySubmit('team')" />
+                                    <Input :id="'teamFunction'" :name="teamFunction" :modelValue="teamFunction" :label="'team function'" :placeholder="'Define team’s function (required)'" :type="'text'" required @update-model-value="teamFunction = $event" @input-blur-fired="checkIfUserMaySubmit('team')" />
                                 </div>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add/Remove associates to/from this team</h4>
@@ -197,7 +197,7 @@
                                         <div class="w-1/4">
                                             <input :id="'checkbox_'+teamMember.user_id" @click="addRemoveAssociate('team', teamMember.user_id), selectedAssoc = !selectedAssoc, roleUserId = teamMember.user_id" :value="teamMember.user_id" class="invitedAssocsEdit" type="checkbox" :checked="teamMember.invited && !teamMember.declined">
                                             <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ teamMember.user_id }}">{{ teamMember.username }}</label>
-                                            <img :src="'/'+teamMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
+                                            <img :src="'/storage/'+teamMember.path" alt="" class="rounded-full w-8 h-8 object-cover ml-6">
                                         </div>
                                         <div class="w-1/2">
                                             <InputNoLabel class="assocRolesEdit" :id="teamMember.user_id" :modelValue="teamMember.role" :placeholder="'define role'" :type="'text'" @collect-member-roles="onCollectMemberRoles" />
@@ -209,7 +209,7 @@
                                     </div>
                                 </div>
                                 
-                                <button-grey @click="submitTeamData()" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
                                     <span>Update team (send invites)</span>
                                 </button-grey>
                             </template>
@@ -234,17 +234,16 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create network</h4>
 
                                 <div>
-                                    <Input :name="networkName" :label="'network name'" :placeholder="'Enter network name (required)'" :type="'text'" required />
+                                    <Input :id="'networkName'" @input-blur-fired="checkIfNetworkFormComplete()" :name="networkName" :label="'network name'" :placeholder="'Enter network name (required)'" :type="'text'" required />
                                 </div>
 
                                 <div>
-                                <Input :name="networkDescription" :label="'network description'" :placeholder="'Enter network’s description (required)'" :type="'text'" required />
+                                    <Input :id="'networkDescription'" @input-blur-fired="checkIfNetworkFormComplete()" :name="networkDescription" :label="'network description'" :placeholder="'Enter network’s description (required)'" :type="'text'" required />
                                 </div>
-
-                                <button class="text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4"
-                                @click="submitNetworkData()">
+                                
+                                <button-grey @click="networkFormComplete ? submitNetworkData() : null" :type="'submit'" :enabled="networkFormComplete">
                                     <span>Save network</span>
-                                </button>
+                                </button-grey>
                             </template>
                         </Form>
                     </div>
@@ -267,11 +266,11 @@
                                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit {{ networkName }}</h4>
 
                                 <div>
-                                    <Input :id="networkName" :name="networkName" :modelValue="networkName" :label="'network name'" :placeholder="'Enter network name (required)'" :type="'text'" required @update-model-value="networkName = $event" />
+                                    <Input :id="'networkName'" :name="networkName" :modelValue="networkName" :label="'network name'" :placeholder="'Enter network name (required)'" :type="'text'" required @update-model-value="networkName = $event" @input-blur-fired="checkIfNetworkFormComplete()" />
                                 </div>
 
                                 <div>
-                                    <Input :id="networkDescription" :name="networkDescription" :modelValue="networkDescription" :label="'network description'" :placeholder="'Enter network description (required)'" :type="'text'" required @update-model-value="networkDescription = $event" />
+                                    <Input :id="'networkDescription'" :name="networkDescription" :modelValue="networkDescription" :label="'network description'" :placeholder="'Enter network description (required)'" :type="'text'" required @update-model-value="networkDescription = $event" @input-blur-fired="checkIfNetworkFormComplete()" />
                                 </div>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Add/remove groups to/from {{ networkName }}<span class="text-red-600">*</span></h4>
@@ -290,10 +289,9 @@
                                     </div>
                                 </div>
 
-                                <button class="text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300 font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4"
-                                @click="submitNetworkData()">
+                               <button-grey @click="networkFormComplete ? submitNetworkData() : null" :type="'submit'" :enabled="networkFormComplete">
                                     <span>Update network</span>
-                                </button>
+                                </button-grey>
                             </template>
                         </Form>
                     </div>
@@ -318,7 +316,7 @@
                                         <div class="w-full flex flex-nowrap items-center justify-evenly">
                                             <input @click="greyButtonEnabled = true" :value="associate.user_id" name="transferToAssocs" type="radio">
                                             <label class="text-we4vGrey-500 text-xs ml-2 text-center" for="{{ associate.user_id }}">{{ associate.username }}</label>
-                                            <img :src="'/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-2">
+                                            <img :src="'/storage/'+associate.path" alt="" class="rounded-full w-8 h-8 object-cover ml-2">
                                         </div>
                                     </div>
                                 </div>
@@ -356,7 +354,7 @@
                             <h5 class="font-semibold tracking-tight text-sm text-we4vBlue mt-3 mb-2 w-full">Group members</h5>
                             <div class="flex flex-row mb-1 items-center" v-for="(member, memberKey) in groupDetails.groupMembers" :key="memberKey">
                                 <inertia-link @click="clearModal(); showNetworkGroupMember = false" class="mr-1" :href="route('user-show', member.slug)" as="button">
-                                    <img :src="'/'+member.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover mr-1">
+                                    <img :src="'/storage/'+member.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover mr-1">
                                 </inertia-link>
                                 <small class="w-full tracking-tight text-we4vGrey-500 mr-3">{{ member.username }}<span v-if="member.admin" class="text-we4vOrange">*</span>, {{ member.role }}</small>
                             </div>
@@ -369,7 +367,7 @@
                                 <h5 class="w-full tracking-tight text-we4vBlue font-semibold text-sm mt-2">{{ team.team_name }}'s members</h5>
                                 <div class="flex flex-row mb-1 mt-2 items-center" v-for="(teamMember, teamMemberKey) in team.teamMembers" :key="teamMemberKey">
                                     <inertia-link @click="clearModal(); showNetworkGroupMember = false" class="mr-1" :href="route('user-show', teamMember.slug)" as="button">
-                                        <img :src="'/'+teamMember.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover ">
+                                        <img :src="'/storage/'+teamMember.path" alt="" class="cursor-pointer rounded-full w-8 h-8 object-cover ">
                                     </inertia-link>
                                     <small class="w-full tracking-tight text-we4vGrey-500 mr-3">{{ teamMember.username }}<span v-if="teamMember.admin" class="text-we4vOrange">*</span>, {{ teamMember.role }} <span v-if="!teamMember.confirmed" class="font-semibold text-we4vGrey-300">(TBC)</span></small>
                                 </div>
@@ -384,7 +382,7 @@
                         Group, team and network management
                     </template>
                     <template #description>
-                        <p>Group functionality lies at the heart of we4v.</p>
+                        <p>Group functionality is the heart of we4v.</p>
                         <p class="mt-2">Groups house the teams or members (associates) you add to them. Teams house only members; they cannot house groups. Teams only exist within groups. Invite associates to become members of your groups or teams as required by the complexity of your ambitions. After setting up your groups and teams, you can then create projects for them.</p>
                     </template>
                 </Title>
@@ -392,9 +390,9 @@
                     Create a new group
                 </button-blue>
 
-                <Subtitle>
+                <Subtitle v-if="myGroups.length > 0">
                     <template #title>
-                        Groups (and teams) I manage
+                        Groups and teams I manage
                     </template>
                     <template #description>
                         Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group; clicking the wastebin icon will delete the group and its teams. Teams can be edited and deleted by clicking on their relevant icons.
@@ -408,12 +406,9 @@
                     </div>
                 </div>
 
-                <Subtitle>
+                <Subtitle v-if="myGroups.length > 0">
                     <template #title>
                         Groups and teams I administrate
-                    </template>
-                    <template #description>
-                        Instructions as above, but with fewer rights than for groups you own.
                     </template>
                 </Subtitle>
 
@@ -440,11 +435,11 @@
                     </template>
                 </Subtitle>
 
-                <button-blue :type="'submit'" @click="showNetworkModal = true; showBackdrop = true; checkIfUserMaySubmit('network')">
+                <button-blue :type="'submit'" @click="showNetworkModal = true; showBackdrop = true" >
                     Create a new network
                 </button-blue>
 
-                <Subtitle>
+                <Subtitle v-if="myNetworks.length > 0">
                     <template #title>
                         Networks I manage
                     </template>
@@ -576,6 +571,7 @@ export default {
         const showNetworkGroupMember = ref(null)
         const networkGroupMember = ref(null)
         const roleUserId = ref(null)
+        const networkFormComplete = ref(false)
 
         const submitGroupData = async function () {
             let members = []
@@ -707,6 +703,27 @@ export default {
             }
 
             clearModal()
+        }
+
+        const checkIfNetworkFormComplete = function () {
+            let name = false
+            let description = false
+
+            document.getElementById('networkName').value
+            ? name = true
+            : name = false
+            
+            document.getElementById('networkDescription').value
+            ? description = true
+            : description = false
+
+            name && description
+            ? networkFormComplete.value = true
+            : networkFormComplete.value = false
+
+            if (edit.value) {
+                // Do stuff
+            }
         }
 
         const submitNetworkData = async function () {
@@ -1002,6 +1019,7 @@ export default {
             addRemoveAssociate,
             amOutside,
             amInside,
+            checkIfNetworkFormComplete,
             checkIfRoleInputFieldsFilled,
             checkIfUserMaySubmit,
             clearInviteModals,
@@ -1022,6 +1040,7 @@ export default {
             mode,
             networkName,
             networkDescription,
+            networkFormComplete,
             networkGroups,
             networkGroupMember,
             networkId,

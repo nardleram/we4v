@@ -12,7 +12,7 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Quicksand', ...defaultTheme.fontFamily.sans],
-                serif: ['Nattyla', ...defaultTheme.fontFamily.serif]
+                serif: ['Elsie', ...defaultTheme.fontFamily.serif]
             },
             colors: {
                 we4vBg: 'rgba(250, 251, 246)',

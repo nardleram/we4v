@@ -21,9 +21,6 @@ class UserController extends Controller
     private $getUserPosts;
     private $searchUsers;
     private $getArticles;
-    private $getUserGroups;
-    private $getUserProjects;
-    private $getUserVotes;
     
     public function __construct(
         GetUserPosts $getUserPosts,
@@ -35,10 +32,6 @@ class UserController extends Controller
         $this->getArticles = $getArticles;
         $this->searchUsers = $searchUsers;
         $this->getUserImages = $getUserImages;
-        // $getUserArticles
-        // $getUserGroups
-        // $getUserProjects
-        // $getUserVotes
     }
     
     public function showProfile(User $user) : object

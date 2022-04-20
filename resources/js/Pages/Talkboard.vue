@@ -3,8 +3,9 @@
     <app-layout>
         <template #centre>
             <div class="w-1/2 p-3 ml-1/4 tracking-tight">
-                <NewPost v-on:UpdatePosts="addPost($event)" />
-                <p v-if="posts_status != 'success'">Retrieving posts...</p>
+                <NewPost @update-posts="addPost($event)" />
+
+                <p v-if="posts_status !== 'success'">Retrieving posts...</p>
                 <Post v-else v-for="(post, postKey) in posts" :key="postKey" :post="post" />
             </div>
         </template>
@@ -51,6 +52,7 @@
             addPost: function(data) {
                 let addedPost = {
                     'body': data.body,
+                    'slug': this.$page.props.authUser.slug,
                     'image': data.image,
                     'posted_by': this.$page.props.authUser.username,
                     'posted_at': data.posted_at,
@@ -60,7 +62,6 @@
                     'post_id': data.id,
                     'user_id': this.$page.props.authUser.id,
                 }
-                console.log('Content of data object after adding post in Talkboard.vue: '+addedPost.body)
                 this.posts.unshift(addedPost);
             }
         }

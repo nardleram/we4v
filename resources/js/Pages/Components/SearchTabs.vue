@@ -71,8 +71,8 @@
                     <div v-if="result.username" class="w-5/12 italic">{{ result.username }}</div>
                     <div v-if="result.username" class="w-1/6">
                         <inertia-link :href="route('user-show', result.slug)" as="button">
-                            <img v-if="result.path" :src="'/'+result.path" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
-                            <img v-if="!result.path" :src="'/images/nobody.png'" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
+                            <img v-if="result.path" :src="'/storage/'+result.path" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
+                            <img v-if="!result.path" :src="'/stoage/images/nobody.png'" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
                         </inertia-link>
                     </div>
                     <div v-if="result.geog_area" class="w-3/5 pl-1 italic">{{ result.geog_area }}</div>
@@ -95,7 +95,7 @@
 
         <div v-if="emptySetReturned" class="mt-3 bg-we4vBg p-1 rounded-md">
             <h5 class="text-red-700 font-semibold text-sm tracking-tight mb-3">Nothing found!</h5>
-            <p class="text-xs text-we4vGrey-700">
+            <p class="text-xs text-we4vGrey-600">
                 No results returned from that search string.
             </p>
         </div>

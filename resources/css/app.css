@@ -52,6 +52,6 @@
         @apply rounded-full
     }
     [type='textarea'] {
-        @apply border border-we4vGrey-200 outline-none;
+        @apply outline-none resize-none overflow-auto placeholder-we4vGrey-300;
     }
 }
