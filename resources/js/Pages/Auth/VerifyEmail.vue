@@ -1,39 +1,40 @@
 <template>
-    <jet-authentication-card>
-        <template #logo>
-            <jet-authentication-card-logo />
-        </template>
+        <div class="m-auto w-96 mt-24 mb-4">
+            <jet-application-mark class="block w-96" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
-
-        <div class="mb-4 font-medium text-sm text-green-600" v-if="verificationLinkSent" >
-            A new verification link has been sent to the email address you provided during registration.
-        </div>
-
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <jet-button-blue :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </jet-button-blue>
-
-                <inertia-link :href="route('logout')" method="post" as="button" class="underline text-sm text-gray-600 hover:text-gray-900">Log Out</inertia-link>
+            <div class="my-4 text-sm text-we4vGrey-600 text-center">
+                Thanks for joining us! Before you get going, could you verify your email address by clicking the link we just emailed you? If you didn’t receive the email, click the resend button below and we’ll dispatch another.
             </div>
-        </form>
-    </jet-authentication-card>
+
+            <div class="mb-4 font-medium text-sm text-we4vGreen-600" v-if="verificationLinkSent" >
+                A new verification link has been sent to the email address you provided during registration.
+            </div>
+
+            <form @submit.prevent="submit">
+                <div class="mt-4 flex flex-wrap items-center justify-between">
+                    <!-- <jet-button-blue :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Resend verification email
+                    </jet-button-blue> -->
+                    <button-blue :type="'submit'" class="w-full text-white">
+                        Resend verification email
+                    </button-blue>
+
+                    <inertia-link :href="route('logout')" method="post" as="button" class="w-full text-center tracking-tighter text-sm font-bold text-we4vBlue hover:text-we4vDarkBlue">Log out</inertia-link>
+                </div>
+            </form>
+        </div>
 </template>
 
 <script>
-    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
-    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
+    import JetApplicationMark from '@/Jetstream/ApplicationMark'
     import JetButtonBlue from '@/Jetstream/ButtonBlue'
+    import ButtonBlue from '@/Jetstream/ButtonBlue'
 
     export default {
         components: {
-            JetAuthenticationCard,
-            JetAuthenticationCardLogo,
+            JetApplicationMark,
             JetButtonBlue,
+            ButtonBlue
         },
 
         props: {

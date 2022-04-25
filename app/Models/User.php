@@ -3,22 +3,18 @@
 namespace App\Models;
 
 use App\Traits\Uuids;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens;
-    use HasFactory;
-    use Notifiable;
-    use TwoFactorAuthenticatable;
-    use SoftDeletes;
-    use Uuids;
+    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes, Uuids;
 
     public $incrementing = false;
     protected $primaryKey = 'id';
@@ -36,6 +32,7 @@ class User extends Authenticatable
         'slug',
         'email',
         'password',
+        'email_verified_at'
     ];
 
     /**
@@ -84,6 +81,11 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function comments() : object
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function articles() : object
     {
         return $this->hasMany(Article::class);
@@ -107,5 +109,12 @@ class User extends Authenticatable
     public function notes() : object
     {
         return $this->hasMany(Note::class);
+    }
+
+    public function scopeWhoCommentedOnPost(Builder $query, Post $post)
+    {
+        return $query->whereHas('comments', function ($query) use ($post) {
+            return $query->where('commentable_id', $post->id);
+        });
     }
 }

@@ -19,6 +19,7 @@
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.5",
         "mews/purifier": "^3.3",
+        "predis/predis": "^1.1",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
         "tightenco/ziggy": "^1.0"
     },

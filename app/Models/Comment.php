@@ -30,4 +30,9 @@ class Comment extends Model
     {
         return $this->morphMany(Approval::class, 'approvalable');
     }
+
+    public function commentable()
+    {
+        return $this->morphTo();
+    }
 }
