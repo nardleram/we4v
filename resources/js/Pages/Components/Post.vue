@@ -49,7 +49,7 @@
                     <div class="flex flex-1">
                         <div class="mr-3 w-1/12">
                             <inertia-link :href="route('user-show', comment.slug)" as="button">
-                                <img :src="'/'+comment.user_profile_pic" :alt="comment.commented_by" class="rounded-full w-8 h-8 object-cover">
+                                <img :src="'/storage/'+comment.user_profile_pic" :alt="comment.commented_by" class="rounded-full w-8 h-8 object-cover">
                             </inertia-link>
                         </div>
                         <div class="mb-3 w-11/12">
