@@ -16,11 +16,6 @@ class CommentPostedOnCommentedPost extends Mailable implements ShouldQueue
     public $comment;
     public $user;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
     public function __construct(Comment $comment, User $user)
     {
         $this->comment = $comment;

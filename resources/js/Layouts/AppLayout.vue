@@ -54,12 +54,12 @@
                     <div class="ml-3 mt-4 text-we4vGrey-800 relative w-1/4 flex justify-end">
                         <jet-dropdown align="right" width="48">
                             <template #mail>
-                                <img class="h-8 rounded-none pt-1 mr-2 cursor-pointer" :src="'/images/pigeon.svg'" alt="pmail" />
+                                <img class="h-8 rounded-none pt-1 mr-2 cursor-pointer" :src="'/storage/images/pigeon.svg'" alt="pmail" />
                             </template>
 
                             <template #trigger>
                                 <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-we4vGrey-300 transition duration-150 ease-in-out">
-                                    <img class="h-8 w-8 rounded-full object-cover" :src="'/'+$page.props.userProfileImages.profile" :alt="$page.props.user.name" />
+                                    <img class="h-8 w-8 rounded-full object-cover" :src="'/storage/'+$page.props.userProfileImages.profile" :alt="$page.props.user.name" />
                                 </button>
                             </template>
 

@@ -20,7 +20,7 @@
 
 <p>{{ $comment->user->username}} said:</p>
 
-<em style="color: #848181;">{!! $comment->body !!}</em>
+<span style="color: #939090;">{!! $comment->body !!}</span>
 
 <p>Visit your <a href="{{ route('talkboard') }}">Talkboard</a> if you would like to respond.</p>
 

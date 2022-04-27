@@ -12,12 +12,13 @@ use App\Http\Controllers\VoteController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\CastVoteController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\ArticleCommentController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
 use App\Http\Controllers\MembershipRequestResponseController;
@@ -86,8 +87,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/posts/store', [PostController::class, 'store'])
         ->name('storePost');
     
-    Route::post('/comments/store', [CommentController::class, 'store'])
-    ->name('storeComment');
+    Route::post('/post-comments/store', [PostCommentController::class, 'store'])
+    ->name('storePostComment');
+
+    Route::post('/article-comments/store', [ArticleCommentController::class, 'store'])
+        ->name('storeArticleComment');
 
     Route::post('/associate-request', [AssociateRequestController::class, 'store'])
         ->name('assocReq');

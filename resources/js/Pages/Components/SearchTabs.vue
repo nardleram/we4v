@@ -72,7 +72,7 @@
                     <div v-if="result.username" class="w-1/6">
                         <inertia-link :href="route('user-show', result.slug)" as="button">
                             <img v-if="result.path" :src="'/storage/'+result.path" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
-                            <img v-if="!result.path" :src="'/stoage/images/nobody.png'" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
+                            <img v-if="!result.path" :src="'/storage/images/nobody.png'" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
                         </inertia-link>
                     </div>
                     <div v-if="result.geog_area" class="w-3/5 pl-1 italic">{{ result.geog_area }}</div>

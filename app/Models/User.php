@@ -117,4 +117,11 @@ class User extends Authenticatable implements MustVerifyEmail
             return $query->where('commentable_id', $post->id);
         });
     }
+
+    public function scopeWhoCommentedOnArticle(Builder $query, Article $article)
+    {
+        return $query->whereHas('comments', function ($query) use ($article) {
+            return $query->where('commentable_id', $article->id);
+        });
+    }
 }

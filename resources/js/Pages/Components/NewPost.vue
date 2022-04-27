@@ -115,7 +115,7 @@ export default {
             if (this.dropzone.getAcceptedFiles().length) {
                 this.dropzone.processQueue()
             } else {
-                this.$inertia.post('/posts/store', payload)
+                this.$inertia.post('/posts/store', payload, { preserveScroll: true })
             }
             this.postMessage = null
         },

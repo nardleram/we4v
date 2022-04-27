@@ -15,6 +15,7 @@ class SendPostCommentersNotificationEmail implements ShouldQueue
 {
     protected $comment;
     public $tries = 10;
+    public $backoff = 3;
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

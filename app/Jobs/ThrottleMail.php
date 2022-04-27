@@ -19,6 +19,7 @@ class ThrottleMail implements ShouldQueue
     public $mail;
     public $user;
     public $tries = 10;
+    public $backoff = 4;
 
     /**
      * Create a new job instance.
@@ -38,7 +39,7 @@ class ThrottleMail implements ShouldQueue
      */
     public function handle()
     {
-        Redis::throttle('talkboard')->allow(1)->every(6)->then(function () {
+        Redis::throttle('we4v_notifications')->allow(1)->every(6)->then(function () {
             Mail::to($this->user)->send($this->mail);
         }, function () {
             return $this->release(6);

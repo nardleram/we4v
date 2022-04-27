@@ -97,7 +97,7 @@
             },
 
             postComment: function (comment, post_id) {
-                this.$inertia.post('/comments/store', {
+                this.$inertia.post('/post-comments/store', {
                     'body': comment,
                     'commentable_id': post_id,
                     'commentable_type': 'App\\Models\\Post',

@@ -9,11 +9,12 @@ class NestComments
     public function handle($comments) : array
     {
         $nestedComments = [];
+        $nestedCommentsCollection = collect();
         $comment = false;
-        $loop = 0;
 
         if (count($comments) > 0) {
             $thisComment = $comments->first();
+            // Looking like a test article to me Brainy Yak. Looking to me like you need bigger fish to fry.
 
             $thisComment['created'] = Carbon::parse($thisComment['created_at'])->format('j M Y, H:i');
 
@@ -21,30 +22,48 @@ class NestComments
 
             $remainingComments = $comments->where('id', '!=', $thisComment->id);
 
+            // Determine which should be $nextComment to display...
             while (count($nestedComments) < $comments->count()) {
-                //$thisComment has a child in $remainingComments?
+                // Does $thisComment have a child (reply) in $remainingComments?
                 $nextComment = $remainingComments->first(function ($item) use ($thisComment) {
                     return ($item->parent_id === $thisComment->id);
                 });
                 
-                //$thisComment has sibling with same parent comment?
+                // Does $thisComment have sibling (same parent_id)?
                 if (!$nextComment) {
                     $nextComment = $remainingComments->first(function ($item) use ($thisComment) {
                         return (($item->parent_id === $thisComment->parent_id)
                         && ($item->parent_type === 'App\Models\Comment'));
                     });
                 }
-                
-                //Must be a reponse to parent article
+
+                // Comment has parent in $nestedComments, and thus not in $remainingComments
+                // In other words: Am I a child of previously accounted-for comment?
+                if (!$nextComment) {
+                    $remainingCommentsSorted = $remainingComments->sortByDesc('indent_level');
+                    foreach($remainingCommentsSorted as $remainingComment) {
+                        if (in_array($remainingComment->parent_id, array_column($nestedComments, 'id'))) {
+                            $nextComment = $remainingComment;
+                            break;
+                        }
+                    }
+                }
+
+                // All above failed, $nextComment must be a reply to the article...
                 if (!$nextComment) {
                     $nextComment = $remainingComments->first(function ($item) {
                         return $item->parent_type === 'App\Models\Article';
                     });
                 }
 
+                // Catch last comment in array if not caught by above (not response to article: must have sibling or parent in $nestedComments)
+                if (!$nextComment && count($remainingComments) === 1) {
+                    $nextComment = $remainingComments->first();
+                }
+
                 if ($nextComment && !$comment) { 
                     $comment = $comments->first(function ($item) use ($nextComment) {
-                        return $item->id === $nextComment->parent_id;
+                        return ($item->id === $nextComment->parent_id);
                     });
                 }
                 
@@ -58,7 +77,10 @@ class NestComments
 
                     $nextComment->approval_user_id === auth()->id() ? $nextComment['user_approves'] = true : $nextComment['user_approves'] = false;
                     
-                    array_push($nestedComments, $nextComment);
+                    if (!in_array($nextComment->id, array_column($nestedComments, 'id'))) {
+                        array_push($nestedComments, $nextComment);
+                        $nestedCommentsCollection->push($nextComment);
+                    }
 
                     $remainingComments = $remainingComments->filter(function ($item) use ($nextComment) {
                         return $item->id !== $nextComment->id;
@@ -67,8 +89,7 @@ class NestComments
                 
                 $thisComment = $nextComment;
                 $nextComment = null;
-                $comment = null;
-                ++$loop;
+                $comment = false;
             }
         }
         

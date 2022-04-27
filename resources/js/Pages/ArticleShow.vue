@@ -11,7 +11,7 @@
                 <div class="flex flex-row items-start justify-between">
                     <div class="w-16">
                         <inertia-link :href="route('user-show', article[0].userslug)" as="button">
-                            <img class="h-12 w-12 rounded-full object-cover mb-3 cursor-pointer hover:shadow-md" :src="'/'+article[0].path" :alt="article[0].name + ' ' + article[0].surname" />
+                            <img class="h-12 w-12 rounded-full object-cover mb-3 cursor-pointer hover:shadow-md" :src="'/storage/'+article[0].path" :alt="article[0].name + ' ' + article[0].surname" />
                         </inertia-link>
                     </div>
 
@@ -46,7 +46,7 @@
                 <div v-if="!reply" class="w-full">
                     <Menubar v-if="editor" :editor="editor"/>
                     <editor-content :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2"/>
-                    <button-grey @click="submitComment">Save comment</button-grey>
+                    <button-grey @click="submitComment" :enabled="greyButtonEnabled">Save comment</button-grey>
                 </div>
 
                 <!-- COMMENTS -->
@@ -59,12 +59,12 @@
                             <div class="flex w-full flex-row flex-wrap" :class="'p-indent-'+comment.indent_level">
                                 <div class="w-1/12">
                                     <inertia-link :href="route('user-show', comment.author_slug)" as="button">
-                                        <img :src="'/'+comment.comment_path" :alt="comment.comment_author" class="rounded-full w-8 h-8 object-cover">
+                                        <img :src="'/storage/'+comment.comment_path" :alt="comment.comment_author" class="rounded-full w-8 h-8 object-cover">
                                     </inertia-link>
                                 </div>
                                 <div class="mb-3 w-11/12 tracking-tight flex flex-col justify-between">
-                                    <div class="w-full">
-                                        <div class="text-gray-400 tracking-tight text-xs w-10/12">{{ comment.comment_author }}, {{ comment.commented_at }}<span v-if="comment.indent_level > 0">, in reply to {{ comment.reply_to }}, {{ comment.parent_created_at }}</span></div>
+                                    <div class="w-full pl-1">
+                                        <div class="text-gray-400 tracking-tight text-xs w-10/12">{{ comment.comment_author }} ({{ comment.commented_at }})<span v-if="comment.indent_level > 0">: reply to {{ comment.reply_to }} ({{ comment.parent_created_at }})</span></div>
                                     </div>
                                     <div v-html="comment.body" class="text-we4vComment text-we4vGrey-700 pr-3"></div>
                                     <div class="flex flex-row items-start mb-2">
@@ -88,7 +88,7 @@
                                 <div v-if="reply && commentId === comment.id" class="w-full">
                                     <Menubar v-if="editor" :editor="editor"/>
                                     <editor-content :editor="editor" class="max-h-80 overflow-y-scroll mb-2 border border-we4vGrey-200 p-2"/>
-                                    <button-grey @click="submitComment">Save comment</button-grey>
+                                    <button-grey @click="submitComment" :enabled="greyButtonEnabled">Save comment</button-grey>
                                 </div>
                             </div>
                         </div>
@@ -159,6 +159,7 @@ export default {
         const reply = ref(false)
         const commentId = ref(null)
         const indentLevel = ref(null)
+        const greyButtonEnabled = ref(true)
 
         onMounted(() => {
             newEditor('<p>Enter comment here</p>')
@@ -203,7 +204,7 @@ export default {
             }
 
             try {
-                await Inertia.post('/comments/store', payload)
+                await Inertia.post('/article-comments/store', payload, { preserveScroll: true })
                 props.errors = null
                 reply.value = false
                 commentId.value = null
@@ -218,7 +219,7 @@ export default {
             await Inertia.post('/approvals/store', {
                 'id': id,
                 'model': model === 'article' ? 'App\\Models\\Article' : 'App\\Models\\Comment'
-            })
+            }, { preserveScroll: true })
             if (props.article.user_approves) { // User is therefore disapproving
                 props.article.user_approves = false;
                 --props.article.num_approvals;
@@ -251,6 +252,7 @@ export default {
             indentLevel,
             amOutside, 
             amInside,
+            greyButtonEnabled,
             clearModal,
             edit,
             mode,

@@ -29,6 +29,11 @@ class Article extends Model
     {
         return $date->format('D j M Y, h:m');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     
     public function comments() 
     {
