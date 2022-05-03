@@ -14,7 +14,6 @@ class NestComments
 
         if (count($comments) > 0) {
             $thisComment = $comments->first();
-            // Looking like a test article to me Brainy Yak. Looking to me like you need bigger fish to fry.
 
             $thisComment['created'] = Carbon::parse($thisComment['created_at'])->format('j M Y, H:i');
 
@@ -37,8 +36,7 @@ class NestComments
                     });
                 }
 
-                // Comment has parent in $nestedComments, and thus not in $remainingComments
-                // In other words: Am I a child of previously accounted-for comment?
+                // Is $thisComment a child of a now-nested comment?
                 if (!$nextComment) {
                     $remainingCommentsSorted = $remainingComments->sortByDesc('indent_level');
                     foreach($remainingCommentsSorted as $remainingComment) {
@@ -56,7 +54,8 @@ class NestComments
                     });
                 }
 
-                // Catch last comment in array if not caught by above (not response to article: must have sibling or parent in $nestedComments)
+                // Catch last comment in array if not caught by above (not response to article: must have parent in $nestedComments)
+                // Do I need this???
                 if (!$nextComment && count($remainingComments) === 1) {
                     $nextComment = $remainingComments->first();
                 }
