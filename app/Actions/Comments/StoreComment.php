@@ -11,7 +11,7 @@ use App\Jobs\SendArticleCommentersNotificationEmail;
 
 class StoreComment
 {
-    public function handle(Request $request) : void
+    public function handle(Request $request) : object
     {
         $comment = Comment::create([
             'body' => $request->body,
@@ -44,5 +44,7 @@ class StoreComment
             ? ThrottleMail::dispatch(new ArticleCommentRepliedTo($comment, $replyTo->user), $replyTo->user)
             : SendArticleCommentersNotificationEmail::dispatch($comment);
         }
+
+        return $comment;
     }
 }

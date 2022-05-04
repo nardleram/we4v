@@ -18,9 +18,9 @@ class Team extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
 
-    public function owner()
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'owner');
     }
 
     public function memberships() : object

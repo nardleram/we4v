@@ -12,13 +12,13 @@ class AssociationRequested extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $requester;
     public $requestee;
+    public $requester;
 
    public function __construct(User $requestee, User $requester)
     {
-        $this->requester = $requester;
         $this->requestee = $requestee;
+        $this->requester = $requester;
     }
 
     public function build() : object

@@ -18,7 +18,7 @@
 
 <p>{{ $requester->username}} has requested to associate with you.</p>
 
-<p>Simply visit {{ $requester->username}}’s <a href="{{ route('user-show', $requester->slug) }}">Self page</a> or click the orange bell to the right of the “Association requests” panel at the upper right of the we4v site to respond.</p>
+<p>Simply visit {{ $requester->username }}’s <a href="{{ route('user-show', $requester->slug) }}">Self page</a> or click the orange bell to the right of the “Association requests” panel at the upper right of the we4v site to respond.</p>
 
 <p>(If you are already logged on, you may need to refresh the page to turn the grey bell orange!)</p>
 

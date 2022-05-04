@@ -28,6 +28,11 @@ class Group extends Model
         return $this->morphMany(Membership::class, 'membershipable');
     }
 
+    public function user() : object
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
+
     public static function getMyNetworkReqs() : object
     {
         return Group::where('groups.owner', auth()->id())

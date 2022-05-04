@@ -400,7 +400,7 @@
                 </Subtitle>
 
                 <!-- Groups and teams -->
-                <div v-if="myGroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myGroups.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Group v-for="(group, groupKey) in myGroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal" @activate-transfer-group-ownership="onActivateTransferGroupOwnership"/>
                     </div>
@@ -412,14 +412,14 @@
                     </template>
                 </Subtitle>
 
-                <div v-if="myAdminGroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myAdminGroups.length > 0" class="w-full m-auto">
                     <h5 class="font-medium mb-1 text-we4vGrey-600 -mt-2">Groups</h5>
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Group v-for="(adminGroup, adminGroupKey) in myAdminGroups" :key="adminGroupKey" :group="adminGroup" :teams="adminGroup.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
                     </div>
                 </div>
 
-                <div v-if="myAdminTeams.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myAdminTeams.length > 0" class="w-full m-auto">
                     <h5 class="font-medium mb-1 mt-3 text-we4vGrey-600">Teams</h5>
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Team v-for="(adminTeam, adminTeamKey) in myAdminTeams" :key="adminTeamKey" :team="adminTeam" :members="adminTeam.team_members" @activate-edit-team-modal="onActivateEditTeamModal"/>
@@ -449,7 +449,7 @@
                 </Subtitle>
 
                 <!-- Networks -->
-                <div v-if="myNetworks.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myNetworks.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Network v-for="(network, networkKey) in myNetworks" :key="networkKey" :network="network"  @activate-edit-network-modal="onActivateEditNetworkModal" @activate-show-group-modal="onActivateShowGroupModal" @activate-transfer-network-ownership="onActivateTransferNetworkOwnership"/>
                     </div>
@@ -573,6 +573,69 @@ export default {
         const roleUserId = ref(null)
         const networkFormComplete = ref(false)
 
+        const addRemoveAssociate = (mode) => {
+            checkIfRoleInputFieldsFilled()
+
+            selectedGroupAssociates.value = []
+            selectedTeamAssociates.value = []
+            let myVals
+            edit.value
+            ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
+            : myVals = document.querySelectorAll('input.invitedAssocs')
+
+            if (mode === 'group' && !edit.value) {
+                selectedGroupAssociates.value = []
+                for (const myVal of myVals) {
+                    if (myVal.checked) {
+                        selectedGroupAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
+                    }
+                }
+            }
+            if (mode === 'group' && edit.value) {
+                let loop = 0
+
+                for (const groupMember of groupMembersEdit.value) {
+                    for (const myVal of myVals) {
+                        if (!groupMember.invited) {
+                            if (myVal.checked && myVal.value === groupMember.user_id) {
+                                selectedGroupAssociates.value.push({
+                                    id: myVal.value, 
+                                    invited: false, 
+                                    confirmed: false
+                                })
+                            }
+                        } else if (groupMember.invited && !myVal.checked && myVal.value === groupMember.user_id) {
+                            groupMembersEdit.value[loop].invited = false
+                        }
+                    }
+                    ++loop
+                }
+            }
+
+            if (mode === 'team' && !edit.value) {
+                for (const myVal of myVals) {
+                    if (myVal.checked) {
+                        selectedTeamAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
+                    }
+                }
+            }
+            if (mode === 'team' && edit.value) {
+                for (const teamMember of teamMembersEdit.value) {
+                    if (!teamMember.invited) {
+                        for (const myVal of myVals) {
+                            if (myVal.checked && myVal.value === teamMember.user_id) {
+                                selectedTeamAssociates.value.push({
+                                    id: myVal.value, 
+                                    invited: false, 
+                                    confirmed: false
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         const submitGroupData = async function () {
             let members = []
             let role
@@ -593,7 +656,7 @@ export default {
                         groupMemberRoles.value.push({id: groupMember.user_id, role: groupMember.role})
                     }
 
-                    if (groupMember.admin && groupAdmins.value.includes(groupMember.user_id)) {
+                    if (groupMember.admin && !groupAdmins.value.includes(groupMember.user_id)) {
                         groupAdmins.value.push(groupMember.user_id)
                     }
                 })
@@ -847,60 +910,6 @@ export default {
 
         const onUpdateModelValue = (data) => {
             teamName.vaue = data
-        }
-
-        const addRemoveAssociate = (mode) => {
-            checkIfRoleInputFieldsFilled()
-
-            selectedGroupAssociates.value = []
-            selectedTeamAssociates.value = []
-            let myVals
-            edit.value
-            ? myVals = document.querySelectorAll('input.invitedAssocsEdit')
-            : myVals = document.querySelectorAll('input.invitedAssocs')
-
-            if (mode === 'group' && !edit.value) {
-                selectedGroupAssociates.value = []
-                for (const myVal of myVals) {
-                    if (myVal.checked) {
-                        selectedGroupAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
-                    }
-                }
-            }
-            if (mode === 'group' && edit.value) {
-                for (const groupMember of groupMembersEdit.value) {
-                    if (!groupMember.invited) {
-                        for (const myVal of myVals) {
-                            if (myVal.checked && myVal.value === groupMember.user_id) {
-                                selectedGroupAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (mode === 'team' && !edit.value) {
-                for (const myVal of myVals) {
-                    if (myVal.checked) {
-                        selectedTeamAssociates.value.push({id: myVal.value, invited: false, confirmed: false})
-                    }
-                }
-            }
-            if (mode === 'team' && edit.value) {
-                for (const teamMember of teamMembersEdit.value) {
-                    if (!teamMember.invited) {
-                        for (const myVal of myVals) {
-                            if (myVal.checked && myVal.value === teamMember.user_id) {
-                                selectedTeamAssociates.value.push({
-                                    id: myVal.value, 
-                                    invited: false, 
-                                    confirmed: false
-                                })
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         const makeAdmin = (mode) => {

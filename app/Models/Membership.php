@@ -5,7 +5,6 @@ namespace App\Models;
 use stdClass;
 use Carbon\Carbon;
 use App\Traits\Uuids;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,11 +30,15 @@ class Membership extends Model
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
 
-    public function membershipable()
+    public function membershipable() : object
     {
         return $this->morphTo();
     }
 
+    public function user() : object
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public static function getPendingMemberships() : object
     {
