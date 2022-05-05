@@ -400,7 +400,7 @@
                 </Subtitle>
 
                 <!-- Groups and teams -->
-                <div v-if="myGroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myGroups.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Group v-for="(group, groupKey) in myGroups" :key="groupKey" :group="group" :teams="group.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal" @activate-transfer-group-ownership="onActivateTransferGroupOwnership"/>
                     </div>
@@ -412,14 +412,14 @@
                     </template>
                 </Subtitle>
 
-                <div v-if="myAdminGroups.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myAdminGroups.length > 0" class="w-full m-auto">
                     <h5 class="font-medium mb-1 text-we4vGrey-600 -mt-2">Groups</h5>
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Group v-for="(adminGroup, adminGroupKey) in myAdminGroups" :key="adminGroupKey" :group="adminGroup" :teams="adminGroup.teams" @activate-team-modal="onActivateTeamModal" @activate-edit-group-modal="onActivateEditGroupModal" @activate-edit-team-modal="onActivateEditTeamModal"/>
                     </div>
                 </div>
 
-                <div v-if="myAdminTeams.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myAdminTeams.length > 0" class="w-full m-auto">
                     <h5 class="font-medium mb-1 mt-3 text-we4vGrey-600">Teams</h5>
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Team v-for="(adminTeam, adminTeamKey) in myAdminTeams" :key="adminTeamKey" :team="adminTeam" :members="adminTeam.team_members" @activate-edit-team-modal="onActivateEditTeamModal"/>
@@ -449,7 +449,7 @@
                 </Subtitle>
 
                 <!-- Networks -->
-                <div v-if="myNetworks.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myNetworks.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Network v-for="(network, networkKey) in myNetworks" :key="networkKey" :network="network"  @activate-edit-network-modal="onActivateEditNetworkModal" @activate-show-group-modal="onActivateShowGroupModal" @activate-transfer-network-ownership="onActivateTransferNetworkOwnership"/>
                     </div>

@@ -21,7 +21,7 @@ class AssociateRequestController extends Controller
             $requestee = User::where('id', $request->requested_of)->first();
             $requester = User::where('id', $request->requested_by)->first();
             
-            ThrottleMail::dispatch(new AssociationRequested($requestee, $requester), $requester);
+            ThrottleMail::dispatch(new AssociationRequested($requestee, $requester), $requestee);
         } catch (ModelNotFoundException $e) {
             throw new UserNotFoundException();
         }
