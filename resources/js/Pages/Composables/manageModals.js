@@ -381,7 +381,7 @@ const checkIfUserMaySubmit = (mode) => {
         } else {
             greyButtonEnabled.value = false
         }
-    }, 50)
+    }, 150)
 }
 
 const clearModal = () => {

@@ -4,11 +4,10 @@ namespace App\Mail;
 
 use App\Models\Membership;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class MembershipDeleted extends Mailable implements ShouldQueue
+class MembershipDeleted extends Mailable
 {
     use Queueable, SerializesModels;
 

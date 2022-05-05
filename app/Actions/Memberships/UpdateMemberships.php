@@ -8,6 +8,7 @@ use App\Mail\MembershipDeleted;
 use App\Mail\MembershipUpdated;
 use App\Mail\TeamMembershipRequested;
 use App\Mail\GroupMembershipRequested;
+use Illuminate\Support\Facades\Mail;
 
 class UpdateMemberships
 {
@@ -43,10 +44,11 @@ class UpdateMemberships
                     ->where('membershipable_id', $request->membershipable_id)
                     ->first();
 
-                // Dispatch notification email
-                ThrottleMail::dispatch(new MembershipDeleted($membership), $membership->user);
-
-                sleep(4);
+                // Dispatch notification email immediately, before membership deletion
+                // ThrottleMail::dispatch(new MembershipDeleted($membership), $membership->user);
+                Mail::to($membership->user)->send(
+                    new MembershipDeleted($membership
+                ));
 
                 Membership::where('membershipable_id', $request->membershipable_id)
                     ->where('user_id', $delete_this_member)

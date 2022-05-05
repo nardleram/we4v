@@ -16,9 +16,9 @@
 
 <p>Hi {{ $membership->user->name }}!</p>
 
-<p>{{ $membership->membershipable->user->username}} has has invited you to join the team, “{{ $membership->membershipable->name }}”.</p>
+<p>{{ $membership->membershipable->user->username }} has invited you to join the team, “{{ $membership->membershipable->name }}”.</p>
 
-<p>Go to <a href="{{ route('talkboard') }}">we4v</a> and click the orange bell to the right of the “Group/team invitations” panel on the right of each we4v page to respond.</p>
+<p>To respond, go to <a href="{{ route('talkboard') }}">we4v</a> and click the orange bell to the right of the “Group/team invitations” panel on the right of each we4v page.</p>
 
 <p>(If you are already logged on, you may need to refresh the page to turn the grey bell orange!)</p>
 

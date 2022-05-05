@@ -18,7 +18,11 @@
 
 <p>{{ $membership->membershipable->user->username}} removed you from “{{ $membership->membershipable->name }}”.</p>
 
-<p>If this was unexpected, you should take up this matter with {{ $membership->membershipable->user->username}}.</p>
+<p>If this was unexpected, you might want to discuss this matter with {{ $membership->membershipable->user->username}}.</p>
+
+@if (!$membership->confirmed)
+    <p>(However, seeing as you have not yet responded to the invitation, perhaps it was sent in error.)</p>
+@endif
 
 <br>
 

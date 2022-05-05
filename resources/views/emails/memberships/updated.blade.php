@@ -16,7 +16,7 @@
 
 <p>Hi {{ $membership->user->name }}!</p>
 
-<p>{{ $membership->membershipable->user->username}} chenged the details of your membership in “{{ $membership->membershipable->name }}”:</p>
+<p>{{ $membership->membershipable->user->username}} changed the details of your membership of “{{ $membership->membershipable->name }}”:</p>
 
 @if ($roleChanged)
     <p>Your role has changed to {{ $membership->role }}</p>
@@ -30,7 +30,7 @@
     @endif
 @endif
 
-<p>If these changes were not discussed with you, perhaps you should discuss them with {{ $membership->membershipable->user->username }}</p>
+<p>If these changes come as a surprise to you, you might want to discuss them with {{ $membership->membershipable->user->username }}</p>
 
 <br>
 

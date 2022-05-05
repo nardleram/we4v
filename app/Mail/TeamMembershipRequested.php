@@ -22,7 +22,7 @@ class TeamMembershipRequested extends Mailable implements ShouldQueue
 
     public function build()
     {
-        $subject = "{$this->team->user->username} sent you a team invitation";
+        $subject = "{$this->membership->membershipable->user->username} sent you a team invitation";
 
         return $this->subject($subject)
             ->view('emails.teams.requested');

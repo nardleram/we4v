@@ -76,9 +76,12 @@
 
                                 <!-- Add input field for tags -->
 
-                                <button-grey @click="greyButtonEnabled ? submitGroupData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitGroupData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
                                     <span v-if="!edit">Save group, send invites</span>
                                     <span v-else>Update group (send invites)</span>
+                                    <span v-if="isLoading">
+                                        <i class="fas fa-hourglass-half text-we4vOrange animate-pulse ml-2"></i>
+                                    </span>
                                 </button-grey>
                             </template>
                         </Form>
@@ -209,8 +212,11 @@
                                     </div>
                                 </div>
                                 
-                                <button-grey @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled">
+                                <button-grey @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
                                     <span>Update team (send invites)</span>
+                                    <span v-if="isLoading">
+                                        <i class="fas fa-hourglass-half text-we4vOrange animate-pulse ml-2"></i>
+                                    </span>
                                 </button-grey>
                             </template>
                         </Form>
@@ -572,6 +578,7 @@ export default {
         const networkGroupMember = ref(null)
         const roleUserId = ref(null)
         const networkFormComplete = ref(false)
+        const isLoading = ref(false)
 
         const addRemoveAssociate = (mode) => {
             checkIfRoleInputFieldsFilled()
@@ -593,7 +600,6 @@ export default {
             }
             if (mode === 'group' && edit.value) {
                 let loop = 0
-
                 for (const groupMember of groupMembersEdit.value) {
                     for (const myVal of myVals) {
                         if (!groupMember.invited) {
@@ -620,9 +626,10 @@ export default {
                 }
             }
             if (mode === 'team' && edit.value) {
+                let loop = 0
                 for (const teamMember of teamMembersEdit.value) {
-                    if (!teamMember.invited) {
-                        for (const myVal of myVals) {
+                    for (const myVal of myVals) {
+                        if (!teamMember.invited) {
                             if (myVal.checked && myVal.value === teamMember.user_id) {
                                 selectedTeamAssociates.value.push({
                                     id: myVal.value, 
@@ -630,13 +637,17 @@ export default {
                                     confirmed: false
                                 })
                             }
+                        } else if (teamMember.invited && !myVal.checked && myVal.value === teamMember.user_id) {
+                            teamMembersEdit.value[loop].invited = false
                         }
                     }
+                    ++loop
                 }
             }
         }
 
         const submitGroupData = async function () {
+            isLoading.value = true
             let members = []
             let role
             let admin
@@ -656,9 +667,9 @@ export default {
                         groupMemberRoles.value.push({id: groupMember.user_id, role: groupMember.role})
                     }
 
-                    if (groupMember.admin && !groupAdmins.value.includes(groupMember.user_id)) {
-                        groupAdmins.value.push(groupMember.user_id)
-                    }
+                    // if (groupMember.admin && !groupAdmins.value.includes(groupMember.user_id)) {
+                    //     groupAdmins.value.push(groupMember.user_id)
+                    // }
                 })
             }
             
@@ -692,6 +703,8 @@ export default {
                 edit.value
                 ? await Inertia.patch('/mygroups/update', payload)
                 : await Inertia.post('/mygroups/store', payload)
+
+                isLoading.value = false
                 flashMessage.value = true
                 props.errors = null
             } catch (err) {
@@ -706,6 +719,7 @@ export default {
             let members = []
             let role
             let admin
+            isLoading.value = true
 
             if (edit.value) {
                 teamMembersEdit.value.forEach(teamMember => {
@@ -722,11 +736,16 @@ export default {
                         teamMemberRoles.value.push({id: teamMember.user_id, role: teamMember.role})
                     }
                     
-                    if (teamMember.admin && teamAdmins.value.includes(teamMember.user_id)) {
-                        teamAdmins.value.push(teamMember.user_id)
-                    }
+                    // if (teamMember.admin && teamAdmins.value.includes(teamMember.user_id)) {
+                    //     teamAdmins.value.push(teamMember.user_id)
+                    // }
                 })
             }
+
+            // console.log('Below selectedGroupAssociates:')
+            // console.log(selectedTeamAssociates.value)
+            // console.log('Below teamAdmins.value')
+            // console.log(teamAdmins.value)
 
             selectedTeamAssociates.value.forEach(assoc => {
                 role = teamMemberRoles.value.filter(teamMember => teamMember.id === assoc.id)
@@ -754,10 +773,15 @@ export default {
 
             edit.value ? payload.membershipable_id = teamId.value : null
 
+            // console.log(payload)
+            // isLoading.value = false
+
             try {
                 edit.value
                 ? await Inertia.patch('/myteams/update', payload)
                 : await Inertia.post('/myteams/store', payload)
+
+                isLoading.value = false
                 flashMessage.value = true
                 props.errors  = null
             } catch (err) {
@@ -923,10 +947,14 @@ export default {
 
             myVals.forEach(myVal => {
                 if (mode === 'group') {
-                    myVal.checked ? groupAdmins.value.push(myVal.value) : null
+                    if (myVal.checked) {
+                        !groupAdmins.value.includes(myVal.value) ? groupAdmins.value.push(myVal.value) : null
+                    }
                 }
                 if (mode === 'team') {
-                    myVal.checked ? teamAdmins.value.push(myVal.value) : null
+                    if (myVal.checked) {
+                        !teamAdmins.value.includes(myVal.value) ? teamAdmins.value.push(myVal.value) : null
+                    }
                 }
             })
         }
@@ -1021,6 +1049,7 @@ export default {
         watch(flashMessage, () => {
             setTimeout(() => {
                 usePage().props.value.jetstream.flash.message = ''
+                flashMessage.value = false
             }, 2500 )
         })
 
@@ -1045,6 +1074,7 @@ export default {
             groupName,
             groupMemberRoles,
             groupsNotInNetwork,
+            isLoading,
             makeAdmin,
             mode,
             networkName,

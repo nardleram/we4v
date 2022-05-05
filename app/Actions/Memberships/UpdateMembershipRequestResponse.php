@@ -12,7 +12,7 @@ class UpdateMembershipRequestResponse
 
         if ($request->confirmed && $request->user_id) {
             Membership::where('id', $request->id)
-                ->where('user_id', $request->user_id)
+                // ->where('user_id', $request->user_id)
                 ->update(array('confirmed' => $request->confirmed));
 
             $success = 'Invitation accepted';

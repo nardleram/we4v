@@ -67,8 +67,14 @@
                 <div class="flex flex-row flex-nowrap w-full tracking-tight hover:bg-we4vGrey-200 py-2 px-1 items-center max-h-96 overflow-y-scroll rounded-sm">
                     <!-- Groups and users -->
                     <div @click="showGroup = true; activateShowGroupModal(result)" v-if="result.description" class="w-1/3 font-medium cursor-pointer hover:text-we4vBlue">{{ result.name }}</div>
-                    <div v-if="result.surname" class="text-xs w-5/12 font-medium pl-1">{{ result.name }} {{ result.surname }}</div>
-                    <div v-if="result.username" class="w-5/12 italic">{{ result.username }}</div>
+                    <div v-if="result.surname" class="text-xs w-5/12 font-medium pl-1">
+                        {{ result.name }} {{ result.surname }}
+                    </div>
+                    <div v-if="result.username" class="w-5/12 text-we4vBlue hover:text-we4vDarkBlue">
+                        <inertia-link :href="route('user-show', result.slug)" as="button">
+                            <span class="italic">{{ result.username }}</span>
+                        </inertia-link>
+                    </div>
                     <div v-if="result.username" class="w-1/6">
                         <inertia-link :href="route('user-show', result.slug)" as="button">
                             <img v-if="result.path" :src="'/storage/'+result.path" alt="" class="rounded-full w-7 h-7 object-cover ml-4">
