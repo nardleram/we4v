@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Actions\Memberships\StoreMembership;
 use App\Actions\Memberships\DeleteMembership;
 use App\Http\Requests\StoreMembershipRequest;
