@@ -46,7 +46,7 @@
     }
     [type='checkbox'],
     [type='radio'] {
-        @apply text-we4vBlue border-we4vGrey-200 rounded focus:ring-we4vDarkBlue;
+        @apply text-we4vBlue border-we4vGrey-300 rounded focus:ring-we4vDarkBlue;
     }
     [type='radio'] {
         @apply rounded-full
