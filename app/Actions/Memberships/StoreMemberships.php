@@ -14,7 +14,7 @@ class StoreMemberships
     public function handle($request, $parentId)
     {
         foreach ($request->members as $member) {
-            $membershipId = Membership::create([
+            $membership = Membership::create([
                 'membershipable_id' => $parentId,
                 'membershipable_type' => $request->membershipable_type,
                 'user_id' => $member['user_id'],
@@ -22,8 +22,6 @@ class StoreMemberships
                 'is_admin' => $member['is_admin'],
                 'updated_by' => auth()->id()
             ]);
-
-            $membership = Membership::where('id', $membershipId)->first();
         
             if ($request->membershipable_type === 'App\\Models\\Group') {
                 ThrottleMail::dispatch(new GroupMembershipRequested($membership), $membership->user);
