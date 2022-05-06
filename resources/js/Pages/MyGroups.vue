@@ -76,10 +76,13 @@
 
                                 <!-- Add input field for tags -->
 
-                                <button-grey @click="greyButtonEnabled ? submitGroupData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
+                                <button-grey v-if="!isLoading" @click="greyButtonEnabled ? submitGroupData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
                                     <span v-if="!edit">Save group, send invites</span>
                                     <span v-else>Update group (send invites)</span>
-                                    <span v-if="isLoading">
+                                </button-grey>
+                                <button-grey v-if="isLoading" :type="'submit'" id="submitForm" :enabled="false" :loading="isLoading">
+                                    <span>Processing request...</span>
+                                    <span>
                                         <i class="fas fa-hourglass-half text-we4vOrange animate-pulse ml-2"></i>
                                     </span>
                                 </button-grey>
@@ -212,9 +215,12 @@
                                     </div>
                                 </div>
                                 
-                                <button-grey @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
+                                <button-grey v-if="!isLoading" @click="greyButtonEnabled ? submitTeamData() : null" :type="'submit'" id="submitForm" :enabled="greyButtonEnabled" :loading="isLoading">
                                     <span>Update team (send invites)</span>
-                                    <span v-if="isLoading">
+                                </button-grey>
+                                <button-grey v-if="isLoading" :type="'submit'" id="submitForm" :enabled="false" :loading="isLoading">
+                                    <span>Processing request...</span>
+                                    <span>
                                         <i class="fas fa-hourglass-half text-we4vOrange animate-pulse ml-2"></i>
                                     </span>
                                 </button-grey>
@@ -412,7 +418,7 @@
                     </div>
                 </div>
 
-                <Subtitle v-if="myGroups.length > 0">
+                <Subtitle v-if="myAdminGroups.length > 0">
                     <template #title>
                         Groups and teams I administrate
                     </template>

@@ -16,7 +16,10 @@
             <h5 class="text-we4vGrey-700 text-sm mt-4">Description: {{ groupDescription ? groupDescription : teamFunction  }}</h5>
             <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
             <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
-            <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }}’s administrator.</h5>
+            <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">
+                <span v-if="!updated_by">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }} administrator.</span>
+                <span v-else>{{ updated_by }} requests that you become the {{ type }} administrator.</span>
+            </h5>
             
             <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"
             @click="storeInviteResponse(inviteData, true)">
@@ -174,7 +177,6 @@
                     @click="showMembReqs = !showMembReqs">
                     <i class="far fa-bell"></i>
                 </span>
-
                 <span v-else class="font-extrabold text-we4vGrey-600 text-sm">
                     <i class="far fa-bell"></i>
                 </span>

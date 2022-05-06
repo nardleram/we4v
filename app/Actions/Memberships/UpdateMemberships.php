@@ -2,13 +2,14 @@
 
 namespace App\Actions\Memberships;
 
+use App\Models\User;
 use App\Jobs\ThrottleMail;
 use App\Models\Membership;
 use App\Mail\MembershipDeleted;
 use App\Mail\MembershipUpdated;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\TeamMembershipRequested;
 use App\Mail\GroupMembershipRequested;
-use Illuminate\Support\Facades\Mail;
 
 class UpdateMemberships
 {
@@ -20,6 +21,7 @@ class UpdateMemberships
         $delete_these_members = [];
         $roleChanged = false;
         $adminChanged = false;
+        $user = User::where('id', auth()->id())->first();
 
         $members = Membership::where('membershipable_id', $request->membershipable_id)->withTrashed()
             ->get(['user_id']);
@@ -47,8 +49,8 @@ class UpdateMemberships
                 // Dispatch notification email immediately, before membership deletion
                 // ThrottleMail::dispatch(new MembershipDeleted($membership), $membership->user);
                 Mail::to($membership->user)->send(
-                    new MembershipDeleted($membership
-                ));
+                    new MembershipDeleted($membership, $user)
+                );
 
                 Membership::where('membershipable_id', $request->membershipable_id)
                     ->where('user_id', $delete_this_member)
@@ -84,7 +86,7 @@ class UpdateMemberships
                         $adminChanged = true;
                     }
 
-                    ThrottleMail::dispatch(new MembershipUpdated($currentMember, $roleChanged, $adminChanged), $currentMember->user);
+                    ThrottleMail::dispatch(new MembershipUpdated($currentMember, $user, $roleChanged, $adminChanged), $currentMember->user);
                 }
             }
             
@@ -100,11 +102,11 @@ class UpdateMemberships
                 ]);
 
                 if ($request->membershipable_type === 'App\\Models\\Group') {
-                    ThrottleMail::dispatch(new GroupMembershipRequested($membership), $membership->user);
+                    ThrottleMail::dispatch(new GroupMembershipRequested($membership, $user), $membership->user);
                 }
     
                 if ($request->membershipable_type === 'App\\Models\\Team') {
-                    ThrottleMail::dispatch(new TeamMembershipRequested($membership), $membership->user);
+                    ThrottleMail::dispatch(new TeamMembershipRequested($membership, $user), $membership->user);
                 }
             }
         }

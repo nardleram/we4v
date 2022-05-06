@@ -401,7 +401,9 @@ const clearModal = () => {
     groupName.value = null
     groupRequester.value = null
     groupRole.value = null
+    inviteData.value = []
     membershipId.value = null
+    mode.value = null
     networkId.value = null
     networkDescription.value = null
     networkGroups.value = []

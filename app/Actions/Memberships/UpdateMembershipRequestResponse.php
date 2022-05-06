@@ -11,19 +11,21 @@ class UpdateMembershipRequestResponse
         $success = '';
 
         if ($request->confirmed && $request->user_id) {
-            Membership::where('id', $request->id)
-                // ->where('user_id', $request->user_id)
-                ->update(array('confirmed' => $request->confirmed));
+            $membership = Membership::where('id', $request->id)
+                ->update(['confirmed' => true]);
 
-            $success = 'Invitation accepted';
+            $membership 
+            ? $success = 'Invitation accepted'
+            : $success = 'Oops, something went wrong! Please refresh the page and try again.';
         }
 
         if ($request->confirmed && $request->group_id) {
-            Membership::where('id', $request->id)
-                ->where('group_id', $request->group_id)
-                ->update(array('confirmed' => $request->confirmed));
+            $membership = Membership::where('id', $request->id)
+                ->update(['confirmed' => true]);
 
-            $success = 'Invitation accepted';
+            $membership 
+            ? $success = 'Invitation accepted'
+            : $success = 'Oops, something went wrong! Please refresh the page and try again.';
         }
 
         if (!$request->confirmed && $request->user_id) {
