@@ -2,8 +2,7 @@
 
 namespace App\Actions\Memberships;
 
-use App\Models\Team;
-use App\Models\Group;
+use App\Models\User;
 use App\Jobs\ThrottleMail;
 use App\Models\Membership;
 use App\Mail\TeamMembershipRequested;
@@ -22,13 +21,15 @@ class StoreMemberships
                 'is_admin' => $member['is_admin'],
                 'updated_by' => auth()->id()
             ]);
+
+            $user = User::where('id', auth()->id())->first();
         
             if ($request->membershipable_type === 'App\\Models\\Group') {
-                ThrottleMail::dispatch(new GroupMembershipRequested($membership), $membership->user);
+                ThrottleMail::dispatch(new GroupMembershipRequested($membership, $user), $membership->user);
             }
 
             if ($request->membershipable_type === 'App\\Models\\Team') {
-                ThrottleMail::dispatch(new TeamMembershipRequested($membership), $membership->user);
+                ThrottleMail::dispatch(new TeamMembershipRequested($membership, $user), $membership->user);
             }
         }
     }

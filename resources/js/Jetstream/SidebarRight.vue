@@ -124,10 +124,10 @@
     </teleport>
 
     <teleport to="#projectModals">
-        <div v-if="showVoteResults" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
+        <div v-if="showVoteResultsModal" @mouseleave="nowOutside()" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-600 overflow-y-scroll">
             <div class="flex justify-end">
                 <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
-                    <div @click="showVoteResults = false; clearModal()">
+                    <div @click="showVoteResultsModal = false; clearModal()">
                         <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
                     </div>   
                 </div>
@@ -419,6 +419,7 @@ export default {
             showNetworkInviteModal,
             showPendingVoteModal,
             showUserTaskModal,
+            showVoteResultsModal,
             tAdmin,
             taskableId,
             taskableType,
@@ -613,6 +614,7 @@ export default {
             showPendingVotes,
             showUnansweredInvites,
             showUserTaskModal,
+            showVoteResultsModal,
             storeInviteResponse,
             storeVoteResponse,
             taskableId,

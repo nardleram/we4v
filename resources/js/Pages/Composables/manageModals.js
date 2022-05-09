@@ -70,6 +70,7 @@ const showTransferGroupModal = ref(false)
 const showTransferNetworkModal = ref(false)
 const showUserTaskModal = ref(false)
 const showVoteModal = ref(false)
+const showVoteResultsModal = ref(false)
 const tAdmin = ref(false)
 const taskableId = ref(null)
 const taskableType = ref(null)
@@ -128,6 +129,7 @@ const activateShowClosedVoteModal = (vote) => {
     voteResults.value = vote.results
 
     showBackdrop.value = true
+    showVoteResultsModal.value = true
 }
 
 const activateShowGroupModal = (group) => {
@@ -471,6 +473,7 @@ const clearModal = () => {
     showTeamModal.value = false
     showUserTaskModal.value = false
     showVoteModal.value = false
+    showVoteResultsModal.value = false
     showPendingVoteModal.value = false
     showInviteModal.value = false
     teamMembersEdit.value = []
@@ -897,6 +900,7 @@ const manageModals = () => {
         showTransferNetworkModal,
         showUserTaskModal,
         showVoteModal,
+        showVoteResultsModal,
         tAdmin,
         taskableId,
         taskAssignee,

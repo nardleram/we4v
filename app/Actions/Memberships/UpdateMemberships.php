@@ -46,8 +46,7 @@ class UpdateMemberships
                     ->where('membershipable_id', $request->membershipable_id)
                     ->first();
 
-                // Dispatch notification email immediately, before membership deletion
-                // ThrottleMail::dispatch(new MembershipDeleted($membership), $membership->user);
+                // Dispatch notification email first, before deletion
                 Mail::to($membership->user)->send(
                     new MembershipDeleted($membership, $user)
                 );
@@ -61,7 +60,7 @@ class UpdateMemberships
 
         // Update/create existing/new members
         foreach ($request->members as $member) {
-            if ($member['invited']) { // Existing member: update if changes to record
+            if ($member['invited']) { // Existing member: only update if changes to records
                 $currentMember = Membership::where('membershipable_id', $request->membershipable_id)
                     ->where('user_id', $member['user_id'])
                     ->first();
