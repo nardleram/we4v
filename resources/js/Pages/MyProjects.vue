@@ -347,7 +347,7 @@
                     </template>
                 </Subtitle>
 
-                <div v-if="myProjects.length > 0" class="w-full m-0 m-auto">
+                <div v-if="myProjects.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Project v-for="(project, projectKey) in myProjects" :key="projectKey" :project="project"  @activate-task-modal="onActivateTaskModal" @activate-edit-task-modal="onActivateEditTaskModal"
                         @activate-edit-project-modal="onActivateEditProjectModal"/>
@@ -359,7 +359,7 @@
                     <span v-if="showCompletedProjects" >Hide completed projects</span>
                 </button-grey>
 
-                <div v-if="showCompletedProjects" class="w-full m-0 m-auto">
+                <div v-if="showCompletedProjects" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <CompletedProject v-for="(project, projectKey) in myProjects" :key="projectKey" :project="project" @activate-show-completed-project-modal="onActivateShowCompletedProjectModal"/>
                     </div>

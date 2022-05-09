@@ -14,7 +14,7 @@ class ImagesController extends Controller
     {
         $request->validate([
             'profile' => 'image|mimes:jpg,jpeg,png|max:1024|nullable',
-            'bkgrnd' => 'image|mimes:jpg,jpeg,png|max:1024|nullable',
+            'bkgrnd' => 'image|mimes:jpg,jpeg,png|max:2048|nullable',
         ]);
 
         foreach ($request->files as $image) {

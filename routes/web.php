@@ -18,7 +18,9 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\CastVoteController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\ProfileImageController;
 use App\Http\Controllers\ArticleCommentController;
+use App\Http\Controllers\BackgroundImageController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
 use App\Http\Controllers\MembershipRequestResponseController;
@@ -63,8 +65,11 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/users/search', [UserController:: class, 'search'])
         ->name('searchUsers');
 
-    Route::post('/images/store', [ImagesController::class, 'store'])
-        ->name('storeImage');
+    Route::post('/images/profile/store', [ProfileImageController::class, 'store'])
+        ->name('storeProfileImage');
+
+    Route::post('/images/background/store', [BackgroundImageController::class, 'store'])
+        ->name('storeBackgroundImage');
 
     Route::get('myarticles', [ArticleController::class, 'index'])
         ->name('myarticles');

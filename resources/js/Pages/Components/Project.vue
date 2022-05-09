@@ -16,9 +16,9 @@
             <div v-if="!project.tasks" @click="deleteProject(project.project_id)">
                 <i class="fas fa-trash h-5 cursor-pointer text-lg"></i>
             </div>
-            <div class="h-5 rounded-full bg-we4vGrey-200">
-                <img v-if="!displayDetails" @click="displayDetails = !displayDetails" class="h-5 object-cover cursor-pointer" src="/images/openGlyph.svg" alt="">
-                <img v-if="displayDetails" @click="displayDetails = !displayDetails" class="h-5 object-cover cursor-pointer" src="/images/closeGlyph.svg" alt="">
+            <div>
+                <i v-if="!displayDetails" @click="displayDetails = !displayDetails" class="fas fa-lock h-5 cursor-pointer text-lg"></i>
+                <i v-if="displayDetails" @click="displayDetails = !displayDetails" class="fas fa-unlock h-5 cursor-pointer text-lg"></i>
             </div>
         </div>
 

@@ -77,7 +77,7 @@
                     <template #form>
                         <div class="flex w-full relative pb-4 items-center">
                             <div class="w-1/6 border-2 border-transparent rounded-full focus:outline-none focus:border-we4vGrey-300 transition duration-150 ease-in-out mr-2">
-                                <img :src="'/'+$page.props.userProfileImages.profile" alt="Profile image">
+                                <img :src="'/storage/'+$page.props.userProfileImages.profile" alt="Profile image">
                             </div>
                             <div class="w-5/6">
                                 <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="profile">select new profile image</label>
@@ -94,7 +94,7 @@
                     <template #form>
                         <div class="flex w-full relative pb-4 items-center">
                             <div class="w-1/6 border-2 border-transparent rounded-full focus:outline-none focus:border-we4vGrey-300 transition duration-150 ease-in-out mr-2">
-                                <img :src="'/'+$page.props.userProfileImages.bkgrnd" alt="Background image">
+                                <img :src="'/storage/'+$page.props.userProfileImages.bkgrnd" alt="Background image">
                             </div>
                             <div class="w-5/6">
                                 <label class="absolute pl-4 pt-2 text-we4vBlue text-xs lowercase font-medium tracking-tight" for="bkgrnd">select new background image</label>
@@ -198,14 +198,12 @@
                     return
                 }
 
-                let imageFormat = 'profile'
-                let model = 'User'
                 let selectedImage = {}
 
                 profile.files[0] ? selectedImage.profile = profile.files[0] : null
 
-                let res = await this.$inertia.post('/images/store', {
-                    selectedImage, imageFormat, model
+                let res = await this.$inertia.post('/images/profile/store', {
+                    'image': selectedImage.profile
                 })
                 .then(() => this.$inertia.props.userProfileImages.profile = res.userProfileImages.profile)
             },
@@ -216,14 +214,12 @@
                     return
                 }
 
-                let imageFormat = 'bkgrnd'
-                let model = 'User'
                 let selectedImage = {}
 
                 bkgrnd.files[0] ? selectedImage.bkgrnd = bkgrnd.files[0] : null
 
-                let res = await this.$inertia.post('/images/store', {
-                    selectedImage, imageFormat, model
+                let res = await this.$inertia.post('/images/background/store', {
+                    'image': selectedImage.bkgrnd
                 })
                 .then(() => this.$inertia.props.userProfileImages.bkgrnd = res.userProfileImages.bkgrnd)
             }
