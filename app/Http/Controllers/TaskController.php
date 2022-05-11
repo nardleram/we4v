@@ -80,9 +80,11 @@ class TaskController extends Controller
         ? $this->storeNote->handle($request->taskNote)
         : null;
 
-        $request->projectNote['body']
-        ? $this->storeNote->handle($request->projectNote)
-        : null;
+        if ($request->projectNote) {
+            $request->projectNote['body']
+            ? $this->storeNote->handle($request->projectNote)
+            : null;
+        }
 
         return redirect()->back()->with([
             'myprojects' => $this->getProjects->handle(auth()->id()),
