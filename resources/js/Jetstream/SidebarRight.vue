@@ -98,7 +98,8 @@
                 <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
                 <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p></h4>
                 <p class="text-we4vGrey-500 text-sm">Description: <span class="italic font-medium">{{ taskDescription }}</span></p>
-                <p class="text-we4vGrey-500 text-sm">From project: <span class="italic font-medium">{{ taskProjectName }}</span></p>
+                <p class="text-we4vGrey-500 text-sm">In project: <span class="italic font-medium">{{ taskProjectName }}</span></p>
+                <p class="text-we4vGrey-500 text-sm">Task assigned to: <span class="italic font-medium">{{ taskGroupName ? taskGroupName : taskTeamName }}</span></p>
                 <div class="flex flex-wrap">
                     <p class="text-we4vGrey-500 text-sm">Fellow task members: <span v-if="!taskMembers">None</span></p>
                     <p v-for="(member, memberKey) in taskMembers" :key="memberKey" class="text-we4vGrey-500 text-sm italic font-medium mx-2">{{ member.username}}</p>
@@ -557,17 +558,19 @@ export default {
                 'projectNote': projectNote,
                 'members': []
             }
+
+            console.log(payload)
             
             try {
                 await Inertia.patch('/mytasks/update', payload)
                 props.errors = null
+                taskNoteBody.value = null
+                projectNoteBody.value = null
             } catch (err) {
                 props.errors = err
             }
             
             clearModal()
-            taskNoteBody.value = null
-            projectNoteBody.value = null
         }
 
         watch(amOutside, () => {

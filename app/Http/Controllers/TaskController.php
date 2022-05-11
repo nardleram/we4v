@@ -80,6 +80,10 @@ class TaskController extends Controller
         ? $this->storeNote->handle($request->taskNote)
         : null;
 
+        $request->projectNote['body']
+        ? $this->storeNote->handle($request->projectNote)
+        : null;
+
         return redirect()->back()->with([
             'myprojects' => $this->getProjects->handle(auth()->id()),
             'myGroups' => array_merge(

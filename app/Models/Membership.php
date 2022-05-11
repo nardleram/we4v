@@ -150,6 +150,8 @@ class Membership extends Model
     {
         $mytasks = [];
         $addedMembers = [];
+        $taskNoteIds = [];
+        $projectNoteIds = [];
         $loop = 0;
         $taskCount = 0;
         $taskNoteCount = 0;
@@ -167,6 +169,8 @@ class Membership extends Model
                     $projectNoteCount = 0;
                     $taskMemberCount = 0;
                     $addedMembers = [];
+                    $taskNoteIds = [];
+                    $projectNoteIds = [];
                 }
 
                 if ($currentTaskNoteId !== $task->task_note_id) {
@@ -195,17 +199,25 @@ class Membership extends Model
             }
 
             if ($task->task_id === $task->task_noteable_id && !$task->completed) {
-                $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_id'] = $task->task_note_id;
-                $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_body'] = $task->task_note_body;
-                $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_author'] = $task->task_note_author;
-                $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_created_at'] = Carbon::parse($task->task_note_created_at)->format('d M y, H:i');
+                if (!in_array($task->task_note_id, $taskNoteIds)) {
+                    $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_id'] = $task->task_note_id;
+                    $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_body'] = $task->task_note_body;
+                    $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_author'] = $task->task_note_author;
+                    $mytasks[$taskCount]['task_notes'][$taskNoteCount]['task_note_created_at'] = Carbon::parse($task->task_note_created_at)->format('d M y, H:i');
+
+                    array_push($taskNoteIds, $task->task_note_id);
+                }
             }
 
             if ($task->project_id === $task->project_noteable_id && !$task->completed) {
-                $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_id'] = $task->project_note_id;
-                $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_body'] = $task->project_note_body;
-                $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_author'] = $task->project_note_author;
-                $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_created_at'] = Carbon::parse($task->project_note_created_at)->format('d M y, H:i');
+                if (!in_array($task->project_note_id, $projectNoteIds)) {
+                    $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_id'] = $task->project_note_id;
+                    $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_body'] = $task->project_note_body;
+                    $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_author'] = $task->project_note_author;
+                    $mytasks[$taskCount]['project_notes'][$projectNoteCount]['project_note_created_at'] = Carbon::parse($task->project_note_created_at)->format('d M y, H:i');
+
+                    array_push($projectNoteIds, $task->project_note_id);
+                }
             }
 
             foreach($taskUsernameDetails as $usernameDetails) {
