@@ -40,6 +40,7 @@ class CompileTeamsArray
             
             $currentTeamId = $rawTeam->team_id;
             $currentMemberUserId = $rawTeam->member_user_id;
+            ++$loop;
         }
         
         return $teams;

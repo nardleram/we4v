@@ -19,7 +19,7 @@
                 <td class="text-xs leading-tight p-1 border border-we4vGrey-800">
                     {{ memb.membership_role }}<span v-if="memb.admin" class="font-bold text-sm text-we4vOrange">*</span>
                 </td>
-                <td class="text-xs leading-tight p-1 border border-we4vGrey-800">
+                <td class="text-left leading-tight p-1 border border-we4vGrey-800">
                     <inertia-link :href="route('user-show', memb.slug)" as="button">
                         <p class="text-xs text-we4vGrey-200 hover:text-we4vBlue">{{ memb.owner }}</p>
                     </inertia-link>

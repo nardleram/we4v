@@ -142,7 +142,7 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['task_project_id'] = $rawProject->task_project_id;
                     $projects[$projectCount]['tasks'][$taskCount]['team_id'] = $rawProject->taskable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'team';
-                    $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->project_task_team;
+                    $projects[$projectCount]['tasks'][$taskCount]['assignee'] = $rawProject->task_team_name;
                     $projects[$projectCount]['tasks'][$taskCount]['task_updated_at'] = Carbon::parse($rawProject->task_updated_at)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_start_date'] = Carbon::parse($rawProject->task_start_date)->format('d M y');
                     $projects[$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawProject->task_end_date)->format('d M y');

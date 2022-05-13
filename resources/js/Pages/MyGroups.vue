@@ -418,7 +418,7 @@
                     </div>
                 </div>
 
-                <Subtitle v-if="myAdminGroups.length > 0">
+                <Subtitle v-if="myAdminGroups.length > 0 || myAdminTeams.length > 0">
                     <template #title>
                         Groups and teams I administrate
                     </template>

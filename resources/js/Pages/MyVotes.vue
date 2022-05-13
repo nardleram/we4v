@@ -121,7 +121,7 @@
                         Click open the vote panel to view results and progress.
                     </template>
                 </Subtitle>
-                <div v-if="$page.props.myvotes.length > 0" class="w-full m-0 m-auto">
+                <div v-if="$page.props.myvotes.length > 0" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Vote v-for="(vote, voteKey) in myvotes" :key="voteKey" :vote="vote" :open="true" @activate-edit-vote-modal="onActivateEditVoteModal"/>
                     </div>
@@ -132,7 +132,7 @@
                     <span v-if="showClosedVotes">Hide my closed votes</span>
                 </button-grey>
 
-                <div v-if="$page.props.myclosedvotes.length > 0 && showClosedVotes" class="w-full m-0 m-auto">
+                <div v-if="$page.props.myclosedvotes.length > 0 && showClosedVotes" class="w-full m-auto">
                     <div class="w-full m-0 flex flex-row flex-wrap justify-start">
                         <Vote v-for="(closedVote, closedVoteKey) in myclosedvotes" :key="closedVoteKey" :vote="closedVote" :open="false"/>
                     </div>

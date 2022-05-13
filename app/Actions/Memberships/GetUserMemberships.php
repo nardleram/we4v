@@ -8,7 +8,7 @@ class GetUserMemberships
 {
     public function getUserMemberships($userId)
     {
-        $memberships = DB::select("SELECT Me.membershipable_type as membership_type,
+        DB::select("SELECT Me.membershipable_type as membership_type,
             Gr.id as group_id,
             Gr.name as group_name,
             Te.name as team_name,
@@ -26,7 +26,5 @@ class GetUserMemberships
         ON Te.owner = Us2.id
         WHERE Me.user_id = '$userId'
         ");
-
-        dd($memberships);
     }
 }

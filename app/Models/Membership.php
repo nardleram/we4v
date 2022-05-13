@@ -86,11 +86,35 @@ class Membership extends Model
 
     public static function getTaskMemberships($userId) : object
     {
+        $teamIds = [];
+        $taskIds = [];
+
         if (auth()->id()) {
+            $myTeams = Membership::where('membershipable_type', 'App\\Models\\Team')
+                ->where('user_id', $userId)
+                ->get('membershipable_id');
+
+            foreach($myTeams as $team) {
+                array_push($teamIds, $team->membershipable_id);
+            }
+
+            $tasks = Task::whereIn('taskable_id', $teamIds)
+            ->where('completed', false)
+            ->get('id');
+
+            foreach($tasks as $task) {
+                array_push($taskIds, $task->id);
+            }
+
             return Membership::where('memberships.user_id', $userId)
                 ->where('membershipable_type', 'App\Models\Task')
-                ->leftJoin('tasks AS Ta', function($join) {
-                    $join->on('Ta.id', '=', 'membershipable_id');
+                ->orWhere(function ($query) use ($taskIds) {
+                    $query->whereIn('membershipable_id', $taskIds)
+                    ->where('memberships.user_id', null);
+                })
+                ->join('tasks AS Ta', function($join) {
+                    $join->on('Ta.id', '=', 'membershipable_id')
+                    ->where('Ta.completed', '=', 'f');
                 })
                 ->leftJoin('teams AS Te', function($join) {
                     $join->on('Te.id', '=', 'Ta.taskable_id');
