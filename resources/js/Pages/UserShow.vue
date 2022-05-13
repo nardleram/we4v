@@ -5,8 +5,8 @@
         <template #centre>
             <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <div class="relative mb-5">
-                    <div class="w-full h-64 overflow-hidden">
-                        <img :src="'/storage/'+user.bkgrnd_image" alt="User background image">
+                    <div class="w-full h-64">
+                        <img :src="'/storage/'+user.bkgrnd_image" alt="User background image" class="h-64 object-fit">
                     </div>
                     <div class="absolute flex items-center -mb-4 bottom-0 left-0 z-20">
                         <div class="w-24">

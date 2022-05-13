@@ -79,6 +79,7 @@ class CompileProjectsArray
 
             // TASKS
             $taskDeadlinePassed = false;
+            $taskTeamMemberCount = 0;
             $taskToDate = new DateTime($rawProject->task_end_date);
             $taskInterval = $todayDate->diff($taskToDate);
             $taskDays = $taskInterval->format('%a');
