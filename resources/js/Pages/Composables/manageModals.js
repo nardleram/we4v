@@ -938,6 +938,7 @@ const manageModals = () => {
         teamRole,
         type,
         updated_by,
+        updated,
         userId,
         userMaySubmitForm,
         voteableId,

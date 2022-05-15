@@ -407,7 +407,7 @@
                         Groups and teams I manage
                     </template>
                     <template #description>
-                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group. Teams can be edited their edit icon or their name.
+                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group. Teams can be edited by clicking their edit icon, or, if it is a team you administrate, also by clicking the team’s name.
                     </template>
                 </Subtitle>
 
@@ -735,19 +735,13 @@ export default {
                     teamMember.invited
                     ? selectedTeamAssociates.value.push({
                         id: teamMember.user_id, 
-                        invited: true, 
-                        confirmed: teamMember.confirmed,
-                        created_at: teamMember.created_at
+                        invited: true
                     })
                     : null
 
                     if (!teamMemberRoles.value.find(role => role.id === teamMember.user_id)) {
                         teamMemberRoles.value.push({id: teamMember.user_id, role: teamMember.role})
                     }
-                    
-                    // if (teamMember.admin && teamAdmins.value.includes(teamMember.user_id)) {
-                    //     teamAdmins.value.push(teamMember.user_id)
-                    // }
                 })
             }
 
@@ -764,9 +758,7 @@ export default {
                     user_id: assoc.id,
                     role: role[0].role,
                     is_admin: admin,
-                    invited: assoc.invited,
-                    confirmed: assoc.confirmed,
-                    created_at: assoc.created_at
+                    invited: assoc.invited
                 })
             })
 
@@ -782,7 +774,7 @@ export default {
 
             edit.value ? payload.membershipable_id = teamId.value : null
 
-            // console.log(payload)
+            console.log(payload)
             // isLoading.value = false
 
             try {

@@ -15,7 +15,7 @@ class UpdateMemberships
 {
     public function handle($request) : void
     {
-        // Force-delete de-checked members
+        // Force-delete de-selected members
         $db_ids = [];
         $memb_ids = [];
         $delete_these_members = [];
@@ -46,7 +46,7 @@ class UpdateMemberships
                     ->where('membershipable_id', $request->membershipable_id)
                     ->first();
 
-                // Dispatch notification email first, before deletion
+                // Must dispatch notification email BEFORE deletion
                 Mail::to($membership->user)->send(
                     new MembershipDeleted($membership, $user)
                 );

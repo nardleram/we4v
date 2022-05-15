@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class UpdateTeam
 {
-    public function handle(Request $request) : int
+    public function handle(Request $request) : void
     {
-        return Team::where('id', $request->membershipable_id)
+        Team::where('id', $request->membershipable_id)
             ->update([
                 'function' => $request->function,
                 'name' => $request->name
