@@ -105,10 +105,9 @@
                 </Title>
 
                 <button-blue v-if="$page.props.mygroups.length > 0" @click="showVoteModal = true; showBackdrop = true">Set up a vote</button-blue>
-
                 <button-grey :enabled="true" v-else>
                     <a :href="route('mygroups', $page.props.authUser.id)">
-                        Create a group before setting up a vote
+                        Create your own group before setting up a vote (group-admin rights insufficient)
                     </a>
                 </button-grey>
 

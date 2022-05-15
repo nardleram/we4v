@@ -9,7 +9,7 @@
                 </div>
             </div>
 
-            <h4 v-if="!updated_by" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ groupOwner ? groupOwner : teamOwner }} cordially invites you to join the {{ type }} </h4>
+            <h4 v-if="!updated" class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ updated_by }} cordially invites you to join the {{ type }} </h4>
             <h4 v-else class="text-we4vGrey-600 text-sm mb-6 -mt-8 pr-10">{{ updated_by }} has changed your membership details for the {{ type }} </h4>
             <h3 class="font-serif font-semibold text-we4vBlue text-center text-2xl">{{ groupName ? groupName : teamName }}</h3>
 
@@ -17,8 +17,7 @@
             <h5 v-if="geogArea" class="text-we4vGrey-700 text-sm mt-1">Geographical area: {{ geogArea }}</h5>
             <h5 v-if="groupRole || teamRole" class="text-we4vGrey-700 text-sm mt-1">Proposed role: {{ groupRole ? groupRole : teamRole }}</h5>
             <h5 v-if="gAdmin || tAdmin" class="text-we4vOrange text-sm font-medium mt-1">
-                <span v-if="!updated_by">{{ groupOwner ? groupOwner : teamOwner }} requests that you become the {{ type }} administrator.</span>
-                <span v-else>{{ updated_by }} requests that you become the {{ type }} administrator.</span>
+                {{ updated_by }} requests that you become {{ type }} administrator.
             </h5>
             
             <button class="hover:bg-we4vGrey-100 border-we4vGrey-300 text-we4vBlue font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 my-4 py-2"

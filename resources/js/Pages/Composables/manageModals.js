@@ -105,6 +105,7 @@ const teamRequester = ref(null)
 const teamRole = ref(null)
 const type = ref(null)
 const updated_by = ref(false)
+const updated = ref(false)
 const userId = ref(null)
 const userMaySubmitForm = ref(false)
 const voteableId = ref(null)
@@ -479,6 +480,7 @@ const clearModal = () => {
     teamMembersEdit.value = []
     userId.value = null
     updated_by.value = null
+    updated.value = false
     voteableId.value = null
     voteableType.value = null
     voteClosingDate.value = null
@@ -506,9 +508,10 @@ const hydrateInviteModal = (req) => {
         groupDescription.value = req.groupDesc
         geogArea.value = req.geogArea
         groupRole.value = req.gRole
-        groupRequester.value = req.groupRequester
+        // groupRequester.value = req.groupRequester
         groupMembers.value = req.groupMembers
-        updated_by.value = req.groupRequester
+        updated_by.value = req.g_updated_by
+        updated.value = req.g_updated
         membershipId.value = req.membership_id
     }
 
@@ -519,8 +522,9 @@ const hydrateInviteModal = (req) => {
         teamId.value = req.teamId
         teamFunction.value = req.teamFunc
         teamRole.value = req.tRole
-        teamRequester.value = req.teamRequester
-        updated_by.value = req.teamRequester
+        // teamRequester.value = req.teamRequester
+        updated_by.value = req.t_updated_by
+        updated.value = req.t_updated
         membershipId.value = req.membership_id
     }
 

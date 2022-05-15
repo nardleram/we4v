@@ -33,6 +33,11 @@ class Group extends Model
         return $this->belongsTo(User::class, 'owner');
     }
 
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public static function getMyNetworkReqs() : object
     {
         return Group::where('groups.owner', auth()->id())

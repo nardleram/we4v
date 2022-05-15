@@ -94,7 +94,7 @@ class UpdateMemberships
                     'membershipable_id' => $request->membershipable_id,
                     'membershipable_type' => $request->membershipable_type,
                     'user_id' => $member['user_id'],
-                    'updated_by' => null,
+                    'updated_by' => auth()->id(), // Admin can invite new members
                     'role' => $member['role'],
                     'is_admin' => $member['is_admin'],
                     'confirmed' => false

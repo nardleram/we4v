@@ -16,7 +16,7 @@
 
 <p>Hi {{ $membership->user->name }}!</p>
 
-<p>{{ $user->username}} changed the details of your membership of “{{ $membership->membershipable->name }}”:</p>
+<p>{{ $user->username }} changed the details of your membership of “{{ $membership->membershipable->name }}”:</p>
 
 @if ($roleChanged)
     <p>Your role has changed to {{ $membership->role }}</p>
@@ -24,9 +24,9 @@
 
 @if ($adminChanged)
     @if ($membership->is_admin)
-        <p>You are now an administrator of {{ $membership->membershipable->name }}</p>
+        <p>{{ $user->username }} requests that you become administrator of {{ $membership->membershipable->name }}</p>
     @else
-        <p>You are no longer an administrator of {{ $membership->membershipable->name }}</p>
+        <p>{{ $user->username }} requests that you relinquish the administrator role for {{ $membership->membershipable->name }}</p>
     @endif
 @endif
 

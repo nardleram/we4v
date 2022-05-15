@@ -407,7 +407,7 @@
                         Groups and teams I manage
                     </template>
                     <template #description>
-                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group; clicking the wastebin icon will delete the group and its teams. Teams can be edited and deleted by clicking on their relevant icons.
+                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group. Teams can be edited their edit icon or their name.
                     </template>
                 </Subtitle>
 
@@ -421,6 +421,9 @@
                 <Subtitle v-if="myAdminGroups.length > 0 || myAdminTeams.length > 0">
                     <template #title>
                         Groups and teams I administrate
+                    </template>
+                    <template v-if="myGroups.length === 0" #description>
+                        Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group. Teams can be edited their edit icon or their name.
                     </template>
                 </Subtitle>
 
@@ -768,7 +771,7 @@ export default {
             })
 
             let payload = {
-                'owner': usePage().props.value.authUser.id,
+                'owner': usePage().props.value.authUser.id, // Could be admin, not owner
                 'group_id': groupId.value,
                 'name': teamName.value,
                 'function': teamFunction.value,

@@ -32,6 +32,11 @@ class Team extends Model
     {
         return $this->belongsTo(Group::class);
     }
+    
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 
     public static function getTeams()
     {

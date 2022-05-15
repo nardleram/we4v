@@ -232,8 +232,8 @@ class HandleInertiaRequests extends Middleware
                                 'users.username as t_owner_username',
                                 'users.id as t_owner_id',
                                 'Me.role as t_role',
-                                'Us2.username as t_updated_by',
                                 'Me.id as membership_id',
+                                'Us2.username as t_updated_by',
                                 'Us2.id as t_updated_by_id',
                                 'Me.is_admin as t_admin',
                                 'Me.created_at as t_created',
@@ -250,14 +250,19 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['groupId'] = $rawGroup->group_id;
                             $membReqs[$membCount]['groupDesc'] = $rawGroup->group_description;
                             $membReqs[$membCount]['geogArea'] = $rawGroup->geog_area;
-                            $membReqs[$membCount]['groupRequester'] = $rawGroup->g_updated_by;
-                            $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_updated_by_id;
+                            $membReqs[$membCount]['g_updated_by'] = $rawGroup->g_updated_by;
+                            // $membReqs[$membCount]['groupRequesterId'] = $rawGroup->g_updated_by_id;
                             $membReqs[$membCount]['groupOwner'] = $rawGroup->g_owner_username;
                             $membReqs[$membCount]['groupOwnerId'] = $rawGroup->g_owner_id;
                             $membReqs[$membCount]['gRole'] = $rawGroup->g_role;
                             $membReqs[$membCount]['type'] = 'group';
                             $membReqs[$membCount]['gAdmin'] = $rawGroup->g_admin;
                             $membReqs[$membCount]['membership_id'] = $rawGroup->membership_id;
+
+                            $rawGroup->g_updated > $rawGroup->g_created
+                            ? $membReqs[$membCount]['g_updated'] = true
+                            : $membReqs[$membCount]['g_updated'] = false; 
+
                             ++$membCount;
                         }
 
@@ -265,14 +270,19 @@ class HandleInertiaRequests extends Middleware
                             $membReqs[$membCount]['teamName'] = $rawTeam->team_name;
                             $membReqs[$membCount]['teamId'] = $rawTeam->team_id;
                             $membReqs[$membCount]['teamFunc'] = $rawTeam->team_function;
-                            $membReqs[$membCount]['teamRequester'] = $rawTeam->t_updated_by;
-                            $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_updated_by_id;
+                            $membReqs[$membCount]['t_updated_by'] = $rawTeam->t_updated_by;
+                            // $membReqs[$membCount]['teamRequesterId'] = $rawTeam->t_updated_by_id;
                             $membReqs[$membCount]['teamOwner'] = $rawTeam->t_owner_username;
                             $membReqs[$membCount]['teamOwnerId'] = $rawTeam->t_owner_id;
                             $membReqs[$membCount]['tRole'] = $rawTeam->t_role;
                             $membReqs[$membCount]['type'] = 'team';
                             $membReqs[$membCount]['tAdmin'] = $rawTeam->t_admin;
                             $membReqs[$membCount]['membership_id'] = $rawTeam->membership_id;
+
+                            $rawTeam->t_updated > $rawTeam->t_created
+                            ? $membReqs[$membCount]['t_updated'] = true
+                            : $membReqs[$membCount]['t_updated'] = false;
+                            
                             ++$membCount;
                         }
                         

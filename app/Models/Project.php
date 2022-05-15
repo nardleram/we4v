@@ -43,7 +43,7 @@ class Project extends Model
 
     public function user() : object
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'owner');
     }
 
     public function tasks() :  object

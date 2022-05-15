@@ -19,6 +19,7 @@ class Membership extends Model
         'membershipable_id', 
         'membershipable_type', 
         'created_at',
+        'updated_by',
         'user_id', 
         'group_id', 
         'role', 
