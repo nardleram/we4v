@@ -47,7 +47,7 @@ class UpdateMemberships
                     ->first();
 
                 // Must dispatch notification email BEFORE deletion
-                Mail::to($membership->user)->send(
+                Mail::to($membership->member)->send(
                     new MembershipDeleted($membership, $user)
                 );
 
@@ -85,7 +85,7 @@ class UpdateMemberships
                         $adminChanged = true;
                     }
 
-                    ThrottleMail::dispatch(new MembershipUpdated($currentMember, $user, $roleChanged, $adminChanged), $currentMember->user);
+                    ThrottleMail::dispatch(new MembershipUpdated($currentMember, $user, $roleChanged, $adminChanged), $currentMember->member);
                 }
             }
             
@@ -101,11 +101,11 @@ class UpdateMemberships
                 ]);
 
                 if ($request->membershipable_type === 'App\\Models\\Group') {
-                    ThrottleMail::dispatch(new GroupMembershipRequested($membership, $user), $membership->user);
+                    ThrottleMail::dispatch(new GroupMembershipRequested($membership, $user), $membership->member);
                 }
     
                 if ($request->membershipable_type === 'App\\Models\\Team') {
-                    ThrottleMail::dispatch(new TeamMembershipRequested($membership, $user), $membership->user);
+                    ThrottleMail::dispatch(new TeamMembershipRequested($membership, $user), $membership->member);
                 }
             }
         }

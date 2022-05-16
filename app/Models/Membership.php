@@ -36,9 +36,19 @@ class Membership extends Model
         return $this->morphTo();
     }
 
-    public function user() : object
+    public function member() : object
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function updatedBy() : object
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function networkMember() : object
+    {
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
     public static function getPendingMemberships() : object

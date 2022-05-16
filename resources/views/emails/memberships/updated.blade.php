@@ -14,7 +14,7 @@
     }
 </style>
 
-<p>Hi {{ $membership->user->name }}!</p>
+<p>Hi {{ $membership->member->name }}!</p>
 
 <p>{{ $user->username }} changed the details of your membership of “{{ $membership->membershipable->name }}”:</p>
 

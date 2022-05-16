@@ -14,14 +14,14 @@
     }
 </style>
 
-<p>Hi {{ $membership->member->name }}!</p>
+<p>Hi {{ $membership->updatedBy->name }}!</p>
 
-<p>{{ $user->username}} removed you from “{{ $membership->membershipable->name }}”.</p>
+<p>{{ $membership->member->username }} accepts your invitation to join the {{ $type }}, “{{ $membership->membershipable->name }}”.</p>
 
-<p>If this was unexpected, you might want to discuss this matter with {{ $user->username}}.</p>
+<p>Role: {{ $membership->role }}</p>
 
-@if (!$membership->confirmed)
-    <p>(However, seeing as you have not yet responded to the invitation, perhaps it was sent in error.)</p>
+@if ($membership->is_admin)
+    <p>{{ $membership->user->username }} is now an administrator of this {{ $type }}</p>
 @endif
 
 <br>

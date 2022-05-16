@@ -14,7 +14,7 @@
     }
 </style>
 
-<p>Hi {{ $membership->user->name }}!</p>
+<p>Hi {{ $membership->member->name }}!</p>
 
 <p>{{ $user->username }} has invited you to join the team, “{{ $membership->membershipable->name }}”.</p>
 
