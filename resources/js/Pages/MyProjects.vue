@@ -73,7 +73,7 @@
                                     </div>
 
                                     <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
-                                    <p class="text-red-600 text-xs font-medium -mt-1 mb-4">(A project may only be reassigned to a different group or team if that project has no tasks. A task may only be deleted if that task has no notes, i.e., is not active.)</p>
+                                    <p class="text-red-600 text-xs font-medium -mt-1 mb-4">(A project may only be deleted if it has no notes and no tasks. A project may only be reassigned to a different group or team if that project has no tasks. A task may only be deleted if that task has no notes, i.e., is not active.)</p>
 
                                     <div>
                                         <Input :name="projectName" :modelValue="projectName" :id="'projectName'" :label="'project name'" :placeholder="'E.g.: My Dastardly Plan'" :type="'text'" required @update-model-value="projectName = $event" @input-blut-fired="checkIfUserMaySubmit('project')"/>

@@ -45,13 +45,15 @@ class StoreNote
                 $memberships = $initialMemberships;
             }
 
-            foreach ($memberships as $membership) {
+            $filteredMemberships = $memberships->filter(function ($item) {
+                return $item->user_id !== auth()->id();
+            });
+
+            foreach ($filteredMemberships as $membership) {
                 if (!in_array($membership->member->email, $uniqueSet)) {
                     array_push($uniqueSet, $membership->member->email);
 
-                    if ($membership->member->user_id !== auth()->id()) {
-                        ThrottleMail::dispatch(new ProjectNoteLogged($membership, $note->user, $note, $type), $membership->member);
-                    }
+                    ThrottleMail::dispatch(new ProjectNoteLogged($membership, $note->user, $note, $type), $membership->member);
                 }
             }
         } 

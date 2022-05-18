@@ -29,7 +29,7 @@ class ProjectNoteLogged extends Mailable implements ShouldQueue
 
     public function build() :object
     {
-        $subject = "{$this->user->username} logged a note in {$this->note->noteable->name}, a project assigned to {$this->membership->membershipable->name}";
+        $subject = "{$this->user->username} logged a note in {$this->note->noteable->name}, a project assigned to {$this->note->noteable->projectable->name}";
 
         return $this->subject($subject)
             ->view('emails.projects.note-logged');

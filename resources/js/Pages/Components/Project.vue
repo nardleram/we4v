@@ -13,7 +13,7 @@
             <div @click="$emit('activateEditProjectModal', project)">
                 <i class="fas fa-edit h-5 cursor-pointer text-lg"></i>
             </div>
-            <div v-if="!project.tasks" @click="deleteProject(project.project_id)">
+            <div v-if="!project.tasks && !project.notes" @click="deleteProject(project.project_id)">
                 <i class="fas fa-trash h-5 cursor-pointer text-lg"></i>
             </div>
             <div>
