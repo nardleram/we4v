@@ -19,6 +19,7 @@
 <p>{{ $user->username }} logged a note in “<em>{{ $note->noteable->name }}</em>”, a project assigned to “<em>{{ $note->noteable->projectable->name }}</em>”, a {{ $type }} you are in.</p>
 
 <p>Project description: <span style="color: #939090;">{{ $note->noteable->description }}</span></p>
+<p>Project deadline: <span style="color: #939090;">{{ Carbon\Carbon::parse($note->noteable->end_date)->format('d M y') }}</span></p>
 
 <p>{{ $user->username }} recorded the following log entry:</p>
 
