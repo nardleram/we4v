@@ -31,15 +31,15 @@ const projectCompleted = ref(false)
 const projectCompletedAt = ref(null)
 const projectDescription = ref(null)
 const projectGroupData = ref([])
-const projectGroupId = ref(null)
 const projectGroupName = ref(null)
 const projectGroupSelected = ref(false)
 const projectId = ref(null)
 const projectName = ref(null)
 const projectNotes = ref([])
+const projectProjectableId = ref(null)
+const projectProjectableType = ref(null)
 const projectTasks = ref([])
 const projectTeamData = ref([])
-const projectTeamId = ref(null)
 const projectTeamName = ref(null)
 const projectStartDate = ref(null)
 const projectEndDate = ref(null)
@@ -384,7 +384,7 @@ const checkIfUserMaySubmit = (mode) => {
         } else {
             greyButtonEnabled.value = false
         }
-    }, 150)
+    }, 250)
 }
 
 const clearModal = () => {
@@ -417,11 +417,11 @@ const clearModal = () => {
     projectDescription.value = null
     projectEndDate.value = null
     projectGroupData.value = []
-    projectGroupId.value = null
+    projectProjectableId.value = null
+    projectProjectableType.value = null
     projectId.value = null
     projectInputEndDate.value = null
     projectName.value = null
-    projectTeamId.value = null
     projectStartDate.value = null
     projectTeamData.value = []
     roleFieldsAccountedFor.value = false
@@ -600,8 +600,8 @@ const onActivateEditProjectModal = (project) => {
     projectCompleted.value = project.project_completed
     projectDescription.value = project.project_description
     projectId.value = project.project_id
-    projectGroupId.value = project.project_group_id
-    projectTeamId.value = project.project_team_id
+    projectProjectableId.value = project.projectable_id
+    projectProjectableType.value = project.projectable_type
     projectGroupName.value = project.project_group_name
     projectTeamName.value = project.project_team_name
     projectName.value = project.project_name
@@ -649,12 +649,12 @@ const onActivateEditTaskModal = (task) => {
     checkIfUserMaySubmit('task')
 
     usePage().props.value.myGroups.forEach(mygroup => {
-        if (mygroup.group_id === task.project_group_id) {
+        if (mygroup.group_id === task.projectable_id) {
             taskGroupData.value.push(mygroup)
         }
     })
     usePage().props.value.myAdminTeams.forEach(myteam => {
-        if (myteam.team_id === task.taskable_id) {
+        if (myteam.team_id === task.projectable_id) {
             taskTeamData.value.push(myteam)
         }
     })
@@ -743,8 +743,7 @@ const onActivateShowCompletedProjectModal = (project) => {
     projectName.value = project.project_name
     projectCompletedAt.value = project.project_updated_at
     projectId.value = project.project_id
-    projectGroupId.value = project.project_group_id
-    projectTeamId.value = project.project_team_id
+    projectProjectableId.value = project.project_projectable_id
     projectGroupName.value = project.project_group_name
     projectTeamName.value = project.project_team_name
     projectNotes.value = project.notes ? project.notes : []
@@ -761,12 +760,12 @@ const onActivateTaskModal = (project) => {
     checkIfUserMaySubmit('task')
 
     usePage().props.value.myGroups.forEach(mygroup => {
-        if (mygroup.group_id === project.project_group_id) {
+        if (mygroup.group_id === project.projectable_id) {
             projectGroupData.value.push(mygroup)
         }
     })
     usePage().props.value.myAdminTeams.forEach(myteam => {
-        if (myteam.team_id === project.project_team_id) {
+        if (myteam.team_id === project.projectable_id) {
             projectTeamData.value.push(myteam)
         }
     })
@@ -868,16 +867,16 @@ const manageModals = () => {
         projectDescription,
         projectEndDate,
         projectGroupData,
-        projectGroupId,
         projectGroupName,
         projectId,
         projectInputEndDate,
         projectName,
         projectNotes,
+        projectProjectableId,
+        projectProjectableType,
         projectStartDate,
         projectTasks,
         projectTeamData,
-        projectTeamId,
         projectTeamName,
         selectedAssoc,
         selectedGroupAssociates,

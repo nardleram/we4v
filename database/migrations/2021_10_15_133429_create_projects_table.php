@@ -19,13 +19,13 @@ class CreateProjectsTable extends Migration
             $table->string('description')->nullable();
             $table->date('start_date');
             $table->date('end_date');
+            $table->uuid('projectable_id');
+            $table->string('projectable_type');
             $table->boolean('completed')->default(false);
             $table->softDeletes();
             $table->timestamps();
 
             $table->foreignUuid('owner')->references('id')->on('users');
-            $table->foreignUuid('group_id')->references('id')->on('groups')->nullable();
-            $table->foreignUuid('team_id')->references('id')->on('teams')->nullable();
         });
     }
 

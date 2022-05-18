@@ -93,7 +93,7 @@
                                         <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Groups</h5>
                                         <div v-if="myGroups" class="flex flex-wrap max-w-full justify-between mb-2">
                                             <div v-for="(group, groupKey) in $page.props.myGroups" :key="groupKey" class="min-w-1/3">
-                                                <input @click="checkIfProjectGroupSelected()" :value="group.group_id" name="groupOrTeam" id="group" type="radio" :checked="projectGroupId === group.group_id">
+                                                <input @click="checkIfProjectGroupSelected()" :value="group.group_id" name="groupOrTeam" id="group" type="radio" :checked="projectProjectableId === group.group_id">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ group.group_id }}">{{ group.group_name }}<span v-if="group.am_admin" class="text-we4vOrange font-semibold">*</span></label>
                                             </div>
                                         </div>
@@ -101,7 +101,7 @@
                                         <h5 class="text-sm font-semibold text-we4vGrey-500 my-1 tracking-tight">Teams</h5>
                                         <div v-if="myAdminTeams" class="flex flex-wrap max-w-full justify-between">
                                             <div v-for="(team, teamKey) in $page.props.myAdminTeams" :key="teamKey" class="min-w-1/3">
-                                                <input @click="checkIfProjectGroupSelected()" :value="team.team_id" name="groupOrTeam" id="team" type="radio" :checked="projectTeamId === team.team_id">
+                                                <input @click="checkIfProjectGroupSelected()" :value="team.team_id" name="groupOrTeam" id="team" type="radio" :checked="projectProjectableId === team.team_id">
                                                 <label class="text-we4vGrey-500 text-xs ml-2 w-full text-center" for="{{ team.team_id }}">{{ team.team_name }}</label>
                                             </div>
                                         </div>
@@ -447,16 +447,16 @@ export default {
             projectDescription,
             projectEndDate,
             projectGroupData,
-            projectGroupId,
             projectGroupName,
             projectId,
             projectInputEndDate,
             projectName,
             projectNotes,
+            projectProjectableId,
+            projectProjectableType,
             projectStartDate,
             projectTasks,
             projectTeamData,
-            projectTeamId,
             projectTeamName,
             showBackdrop,
             showCompletedProjectModal,
@@ -550,8 +550,8 @@ export default {
                 'start_date': projectStartDate.value,
                 'end_date': projectEndDate.value,
                 'completed': projectCompleted.value,
-                'group_id': selectedGroup ? selectedGroup: null,
-                'team_id': selectedTeam ? selectedTeam: null,
+                'projectable_id': selectedGroup ? selectedGroup : selectedTeam,
+                'projectable_type': selectedGroup ? 'App\\Models\\Group' : 'App\\Models\\Team',
                 'note': note,
                 '_token': usePage().props.value.csrf_token
             }
@@ -613,6 +613,8 @@ export default {
             if (edit.value) {
                 payload.end_date = taskInputEndDate.value
             }
+
+            console.log(payload)
             
             try {
                 edit.value
@@ -702,7 +704,6 @@ export default {
             projectCompleted,
             projectCompletedAt,
             projectDescription,
-            projectGroupId,
             projectEndDate,
             projectGroupData,
             projectGroupName,
@@ -711,10 +712,11 @@ export default {
             projectName,
             projectNoteBody,
             projectNotes,
+            projectProjectableId,
+            projectProjectableType,
             projectStartDate,
             projectTasks,
             projectTeamData,
-            projectTeamId,
             projectTeamName,
             reopenProject,
             showBackdrop,

@@ -130,6 +130,8 @@ export default {
                 'taskMemberships': taskMemberships
             }
 
+            console.log(taskData)
+
             emit('sendTaskData', taskData)
         }
 

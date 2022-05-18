@@ -19,7 +19,6 @@ use App\Http\Requests\UpdateProjectRequest;
 class ProjectController extends Controller
 {
     private $getProjects;
-    private $getAdminTasks;
     private $getGroups;
     private $storeProject;
     private $updateProject;

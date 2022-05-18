@@ -50,8 +50,8 @@ class CompileProjectsArray
                 $projects[$projectCount]['project_completed'] = $rawProject->project_completed;
                 $projects[$projectCount]['project_description'] = $rawProject->project_description;
                 $projects[$projectCount]['project_id'] = $rawProject->project_id;
-                $projects[$projectCount]['project_group_id'] = $rawProject->project_group_id;
-                $projects[$projectCount]['project_team_id'] = $rawProject->project_team_id;
+                $projects[$projectCount]['projectable_id'] = $rawProject->projectable_id;
+                $projects[$projectCount]['projectable_type'] = $rawProject->projectable_type;
                 $projects[$projectCount]['project_updated_at'] = Carbon::parse($rawProject->project_updated_at)->format('d M Y');
                 $projects[$projectCount]['project_start_date'] = Carbon::parse($rawProject->project_start_date)->format('d M Y');
                 $projects[$projectCount]['project_end_date'] = Carbon::parse($rawProject->project_end_date)->format('d M Y');
@@ -103,13 +103,12 @@ class CompileProjectsArray
                     $projects[$projectCount]['tasks'][$taskCount]['task_id'] = $rawProject->task_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_name'] = $rawProject->task_name;
                     $projects[$projectCount]['tasks'][$taskCount]['task_description'] = $rawProject->task_description;
-                    $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['projectable_id'] = $rawProject->projectable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;
                     $projects[$projectCount]['tasks'][$taskCount]['group_name'] = $rawProject->project_task_group;
                     $projects[$projectCount]['tasks'][$taskCount]['recipient_type'] = 'group member';
-                    $projects[$projectCount]['tasks'][$taskCount]['assignee'] = 'group members';
                     $projects[$projectCount]['tasks'][$taskCount]['task_completed'] = $rawProject->task_completed;
                     $projects[$projectCount]['tasks'][$taskCount]['task_deadline_passed'] = $taskDeadlinePassed;
                     $projects[$projectCount]['tasks'][$taskCount]['task_team_id'] = $rawProject->task_team_id;
@@ -130,7 +129,7 @@ class CompileProjectsArray
                 // Task assigned to whole team
                 if ( $rawProject->taskable_type === 'App\\Models\\Team' && !$rawProject->task_member_user_id ){
 
-                    $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['projectable_id'] = $rawProject->projectable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;
@@ -155,7 +154,7 @@ class CompileProjectsArray
 
                 // Task assigned to selected team member(s)
                 if ( $rawProject->taskable_type === 'App\\Models\\Team' && $rawProject->task_member_username ) {
-                    $projects[$projectCount]['tasks'][$taskCount]['project_group_id'] = $rawProject->project_group_id;
+                    $projects[$projectCount]['tasks'][$taskCount]['projectable_id'] = $rawProject->projectable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['task_input_end_date'] = $rawProject->task_end_date;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_id'] = $rawProject->taskable_id;
                     $projects[$projectCount]['tasks'][$taskCount]['taskable_type'] = $rawProject->taskable_type;

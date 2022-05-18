@@ -18,8 +18,8 @@ class Project extends Model
         'owner', 
         'description', 
         'completed',
-        'group_id', 
-        'team_id', 
+        'projectable_id',
+        'projectable_type',
         'start_date', 
         'end_date'
     ];
@@ -41,13 +41,28 @@ class Project extends Model
         return Carbon::parse($date)->format('d M Y');
     }
 
+    public function projectable() : object
+    {
+        return $this->morphTo();
+    }
+
     public function user() : object
     {
         return $this->belongsTo(User::class, 'owner');
     }
 
+    public function group() : object
+    {
+        return $this->belongsTo(Group::class);
+    }
+
     public function tasks() :  object
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function notes() : object
+    {
+        return $this->morphMany(Note::class, 'noteable');
     }
 }

@@ -15,8 +15,8 @@ class StoreProject
             'owner' => $request->owner,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'group_id' => $request->group_id,
-            'team_id' => $request->team_id,
+            'projectable_id' => $request->projectable_id,
+            'projectable_type' => $request->projectable_type
         ]);
     }
 }

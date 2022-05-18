@@ -49,7 +49,7 @@
                                         <p class="font-regular text-we4vGrey-600 text-xs">{{ member.task_member_username }}</p>
                                     </div>
                                 </td>
-                                <td v-if="task.assignee && !task.selected_task_members">
+                                <td v-if="task.assignee">
                                     <p class="font-regular text-we4vGrey-600 text-xs">{{ task.assignee }} (team)</p>
                                 </td>
                                 <td class="font-regular text-we4vBlue flex justify-end">

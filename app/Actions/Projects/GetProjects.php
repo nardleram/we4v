@@ -25,13 +25,13 @@ class GetProjects
             $join->on('Me1.membershipable_id', '=', 'Ta1.id');
         })
         ->leftJoin('groups AS Gr1', function ($join) {
-            $join->on('Gr1.id', '=', 'projects.group_id');
+            $join->on('Gr1.id', '=', 'projects.projectable_id');
         })
         ->leftJoin('groups AS Gr2', function ($join) {
             $join->on('Gr2.id', '=', 'Ta1.taskable_id');
         })
         ->leftJoin('teams AS Te1', function ($join) {
-            $join->on('Te1.id', '=', 'projects.team_id');
+            $join->on('Te1.id', '=', 'projects.projectable_id');
         })
         ->leftJoin('teams AS Te2', function ($join) {
             $join->on('Te2.id', '=', 'Ta1.taskable_id');
@@ -58,8 +58,8 @@ class GetProjects
             'projects.start_date AS project_start_date',
             'projects.end_date AS project_end_date',
             'projects.completed AS project_completed',
-            'projects.group_id AS project_group_id',
-            'projects.team_id AS project_team_id',
+            'projects.projectable_id AS projectable_id',
+            'projects.projectable_type AS projectable_type',
             'projects.updated_at AS project_updated_at',
             'Ta1.id AS task_id',
             'Ta1.name AS task_name',

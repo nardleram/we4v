@@ -20,4 +20,9 @@ class Note extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function noteable() : object
+    {
+        return $this->morphTo();
+    }
 }

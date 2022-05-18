@@ -51,6 +51,11 @@ class Membership extends Model
         return $this->belongsTo(Group::class, 'group_id');
     }
 
+    public function tasks() : object
+    {
+        return $this->hasMany(Task::class, 'id', 'membershipable_id');
+    }
+
     public static function getPendingMemberships() : object
     {
         return (new static())
@@ -110,8 +115,8 @@ class Membership extends Model
             }
 
             $tasks = Task::whereIn('taskable_id', $teamIds)
-            ->where('completed', false)
-            ->get('id');
+                ->where('completed', false)
+                ->get('id');
 
             foreach($tasks as $task) {
                 array_push($taskIds, $task->id);
@@ -174,8 +179,33 @@ class Membership extends Model
                     'No2.body AS project_note_body',
                     'No2.created_at AS project_note_created_at',
                     'Us1.username AS task_note_author',
-                    'Us2.username AS project_note_author'
+                    'Us2.username AS project_note_author',
+                    'Us3.username AS task_owner'
                 ])
+                ->groupBy([
+                    'Ta.id',
+                    'Gr.name',
+                    'Te.name',
+                    'No1.created_at',
+                    'No2.created_at',
+                    'No1.id',
+                    'No1.body',
+                    'No2.id',
+                    'No2.body',
+                    'Pr.id',
+                    'Us1.username',
+                    'Us1.id',
+                    'Us2.username',
+                    'Us2.id',
+                    'Us3.id',
+                    'Us3.username',
+                    'memberships.created_at',
+                    'memberships.membershipable_id'
+                ])
+                ->orderBy('Pr.end_date')
+                ->orderBy('Ta.end_date')
+                ->orderBy('No1.created_at', 'ASC')
+                ->orderBy('No2.created_at', 'ASC')
                 ->get();
         }
         return new stdClass();

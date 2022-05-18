@@ -33,9 +33,14 @@ class Team extends Model
         return $this->belongsTo(Group::class);
     }
     
-    public function projects()
+    public function projects() : object
     {
-        return $this->hasMany(Project::class);
+        return $this->morphMany(Project::class, 'projectable');
+    }
+
+    public function tasks() : object
+    {
+        return $this->morphMany(Task::class, 'taskable');
     }
 
     public static function getTeams()

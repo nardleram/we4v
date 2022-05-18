@@ -28,14 +28,19 @@ class Group extends Model
         return $this->morphMany(Membership::class, 'membershipable');
     }
 
+    public function projects() : object
+    {
+        return $this->morphMany(Project::class, 'projectable');
+    }
+
+    public function tasks() : object
+    {
+        return $this->morphMany(Task::class, 'taskable');
+    }
+
     public function user() : object
     {
         return $this->belongsTo(User::class, 'owner');
-    }
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class);
     }
 
     public static function getMyNetworkReqs() : object

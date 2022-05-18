@@ -32,6 +32,21 @@ class Task extends Model
     {
         return $this->belongsTo(Project::class);
     }
+    
+    public function taskable() : object
+    {
+        return $this->morphTo();
+    }
+
+    public function notes() : object
+    {
+        return $this->morphMany(Note::class, 'noteable');
+    }
+
+    public function user() : object
+    {
+        return $this->belongsTo(User::class, 'owner');
+    }
 
     public static function getTaskUsers($taskMembershipDetails) : object
     {
@@ -45,14 +60,15 @@ class Task extends Model
             }
 
             return Task::whereIn('tasks.id', $taskIds)
-            ->leftJoin('memberships AS Me', function($join) {
-                $join->on('Me.membershipable_id', '=', 'tasks.id');
+            ->join('memberships AS Me', function($join) {
+                $join->on('Me.membershipable_id', '=', 'tasks.id')
+                ->orOn('Me.membershipable_id', '=', 'tasks.taskable_id');
             })
-            ->leftJoin('users AS Us', function($join) {
+            ->join('users AS Us', function($join) {
                 $join->on('Us.id', '=', 'Me.user_id')
                 ->where('Us.id', '!=', auth()->id());
             })
-            ->select(['Us.username AS username', 'Me.membershipable_id as task_id'])
+            ->select(['Us.username AS username', 'tasks.id as task_id'])
             ->get();
         }
 

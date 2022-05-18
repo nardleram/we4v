@@ -23,8 +23,8 @@ class StoreProjectRequest extends FormRequest
             'description' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'group_id' => 'nullable|uuid',
-            'team_id' => 'nullable|uuid',
+            'projectable_id' => 'uuid',
+            'projectable_type' => 'required|string|max:25',
         ];
     }
 }
