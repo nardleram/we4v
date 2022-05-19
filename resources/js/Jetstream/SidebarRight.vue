@@ -94,7 +94,7 @@
             </div>
 
             <div>
-                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
+                <h4 class="text-we4vBlue font-semibold mb-4 -mt-8 w-10/12">{{ taskName }}
                 <p class="text-we4vGrey-500 text-sm">Deadline: <span class="italic font-medium">{{ taskEndDate }}</span></p></h4>
                 <p class="text-we4vGrey-500 text-sm">Description: <span class="italic font-medium">{{ taskDescription }}</span></p>
                 <p class="text-we4vGrey-500 text-sm">In project: <span class="italic font-medium">{{ taskProjectName }}</span></p>

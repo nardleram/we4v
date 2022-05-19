@@ -72,7 +72,7 @@
                                         </div>
                                     </div>
 
-                                    <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
+                                    <h4 class="text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
                                     <p class="text-red-600 text-xs font-medium -mt-1 mb-4">(A project may only be deleted if it has no notes and no tasks. A project may only be reassigned to a different group or team if that project has no tasks. A task may only be deleted if that task has no notes, i.e., is not active.)</p>
 
                                     <div>
@@ -135,7 +135,7 @@
                                             </div>   
                                         </div>
                                     </div>
-                                    <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Create task for <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
+                                    <h4 class="text-we4vBlue font-semibold mb-4 -mt-8">Create task for <span class="italic text-we4vGrey-600">{{ projectName }}</span></h4>
 
                                     <div>
                                         <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: My Splendid Task'" :type="'text'" required @update-model-value="taskName = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
@@ -177,7 +177,7 @@
                                     </div>
                                 </div>
 
-                                <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
+                                <h4 class="text-we4vBlue font-semibold -mt-8">Edit <span class="italic text-we4vGrey-600">{{ taskName }}</span></h4>
 
                                 <div>
                                     <Input :name="taskName" :modelValue="taskName" :id="'taskName'" :label="'task name'" :placeholder="'E.g.: Design anti-grav casing'" :type="'text'" required @update-model-value="taskName = $event" @input-blur-fired="checkIfUserMaySubmit('task')"/>
@@ -265,7 +265,7 @@
                                     </div>
                                 </div>
 
-                                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">{{ projectName }} <span class="text-we4vGrey-700 normal-case">– report</span></h4>
+                                <h4 class="text-we4vBlue font-semibold mb-4 -mt-8">{{ projectName }} <span class="text-we4vGrey-700 normal-case">– report</span></h4>
 
                                 <p class="text-xs">Assigned to: <span class="font-medium">{{ projectGroupName ? projectGroupName : projectTeamName }}</span></p>
                                 <p class="text-xs">Description: <span class="font-medium">{{ projectDescription }}</span></p>

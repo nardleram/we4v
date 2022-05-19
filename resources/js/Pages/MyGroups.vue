@@ -19,7 +19,7 @@
                                     </div>
                                 </div>
                                 <h4 v-if="!edit" class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Add a group</h4>
-                                <h4 v-if="edit" class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit group <span class="italic text-we4vGrey-600">{{ groupName }}</span></h4>
+                                <h4 v-if="edit" class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit group <span class="italic normal-case text-we4vGrey-600">{{ groupName }}</span></h4>
 
                                 <div>
                                     <Input :name="groupName" :modelValue="groupName" :id="'groupName'" :label="'group name'" :placeholder="'Enter group name (required)'" :type="'text'" required @update-model-value="groupName = $event" @input-blur-fired="checkIfUserMaySubmit('group')" />
@@ -102,7 +102,7 @@
                                         </div>   
                                     </div>
                                 </div>
-                                <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Transfer group ownership – <span class="text-we4vGrey-600">{{ groupName }}</span></h4>
+                                <h4 class="uppercase text-we4vBlue font-semibold -mt-8">Transfer group ownership – <span class="text-we4vGrey-600 normal-case">{{ groupName }}</span></h4>
                                 <p class="text-red-600 text-xs font-medium -mt-1 mb-4">(Transfering ownership of a group entails tranfering ownership of its teams, all projects assigned to it, as well as all tasks – <span class="italic">not</span> including those tasks set up by team administrators – belonging to those projects, and all associated votes.)</p>
 
                                 <h4 class="text-we4vBlue font-semibold text-sm mt-4">Select the associate who will assume ownership of {{ groupName }}</h4>
@@ -187,7 +187,7 @@
                                         </div>  
                                     </div>
                                 </div>
-                                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic text-we4vGrey-600">{{ teamName }}</span></h4>
+                                <h4 class="uppercase text-we4vBlue font-semibold mb-4 -mt-8">Edit <span class="italic normal-case text-we4vGrey-600">{{ teamName }}</span></h4>
 
                                 <div>
                                     <Input :id="'teamName'" :name="teamName" :modelValue="teamName" :label="'team name'" :placeholder="'Enter team name (required)'" :type="'text'" required @update-model-value="teamName = $event" @input-blur-fired="checkIfUserMaySubmit('team')" />
