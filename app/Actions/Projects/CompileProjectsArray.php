@@ -214,7 +214,7 @@ class CompileProjectsArray
             $currentTaskId = $rawProject->task_id;
             ++$loop;
         }
-        // dd($projects);
+        dd($projects);
         return $projects;
     }
 }

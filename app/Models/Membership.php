@@ -157,7 +157,9 @@ class Membership extends Model
                     $join->on('Us3.id', '=', 'Ta.owner');
                 })
                 ->select([
-                    'membershipable_id',
+                    'memberships.membershipable_id',
+                    'memberships.id AS membership_id',
+                    'memberships.user_id AS membership_user_id',
                     'Ta.id AS task_id',
                     'Ta.taskable_id as taskable_id',
                     'Ta.taskable_type as taskable_type',
@@ -199,6 +201,8 @@ class Membership extends Model
                     'Us2.id',
                     'Us3.id',
                     'Us3.username',
+                    'memberships.id',
+                    'memberships.user_id',
                     'memberships.created_at',
                     'memberships.membershipable_id'
                 ])
