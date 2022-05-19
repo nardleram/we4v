@@ -45,6 +45,7 @@ class StoreNote
                 $memberships = $initialMemberships;
             }
 
+            //Don't notify note author
             $filteredMemberships = $memberships->filter(function ($item) {
                 return $item->user_id !== auth()->id();
             });
@@ -67,8 +68,7 @@ class StoreNote
             $memberships = Membership::where('membershipable_id', $note->noteable->id)->get();
 
             foreach($memberships as $membership) {
-                if (!$membership->user_id) { // Assigned to whole team
-                    // Get all team memberships
+                if (!$membership->user_id) { // Assigned to whole team; get all team memberships
                     $members = Membership::where('membershipable_id', $note->noteable->taskable_id)
                         ->where('user_id', '!=', auth()->id()) // Note author needs no notification
                         ->get();
@@ -78,18 +78,20 @@ class StoreNote
                         ThrottleMail::dispatch(new TaskNoteLogged($member, $note->user, $note, $type, false), $member->member);
                     }
 
-                    if ($note->noteable->owner !== auth()->id()) {
-                        // Email team owner as implicit member of team.
+                    // Email team owner as implicit member of team if owner did not log note.
+                    if ($note->noteable->owner !== auth()->id()) { 
                         ThrottleMail::dispatch(new TaskNoteLogged(Membership::where('user_id', $note->noteable->owner)->first(), $note->user, $note, $type), $note->noteable->user);
                     }
                 } 
                 
-                if ($membership->user_id) { // Assigned to individual user(s), whether in group or team
+                // Assigned to individual user(s), whether in group or team
+                if ($membership->user_id) { 
                     foreach ($note->noteable->taskable->memberships as $adminMembership) {
                         $adminMembership->is_admin ?
                         $adminId = $adminMembership->user_id
                         : null;
                     }
+                    
                     // Dispatch emails to members, tho not to note author
                     if ($membership->user_id !== auth()->id()) {
                         ThrottleMail::dispatch(new TaskNoteLogged($membership, $note->user, $note, $type, false), $membership->member);

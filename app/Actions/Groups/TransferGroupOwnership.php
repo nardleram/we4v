@@ -30,10 +30,10 @@ class TransferGroupOwnership
                 ->forceDelete();
         }
 
-        Vote::where('group_id', $request->group_id)->update(['owner' => $request->user_id]);
+        Vote::where('voteable_id', $request->group_id)->update(['owner' => $request->user_id]);
 
         // Need project_ids to furnish relevant tasks with their new and sparkly owner_id
-        $projects = Project::where('group_id', $request->group_id)
+        $projects = Project::where('projectable_id', $request->group_id)
             ->where('owner', auth()->id())
             ->get(['id']);
 
@@ -41,7 +41,7 @@ class TransferGroupOwnership
             Task::where('project_id', $project->id)->update(['owner' => $request->user_id]);
         }
 
-        Project::where('group_id', $request->group_id)
+        Project::where('projectable_id', $request->group_id)
             ->where('owner', auth()->id())
             ->update(['owner' => $request->user_id]);
     }

@@ -39,10 +39,10 @@ class StoreMemberships
                 $task = $membership->tasks->first();
 
                 // Email assigned members
-                if (!$membership->user_id) { // Assigned to whole team
-                    // Get team members, tho not author
+                if (!$membership->user_id) { // Assigned to whole team; get all team members
+                    // Get team members, tho not admin
                     $members = Membership::where('membershipable_id', $task->id)
-                        ->where('user_id', '!=', auth()->id()) // Note author needs no notification
+                        ->where('user_id', '!=', auth()->id()) // If admin created task, needs no notification
                         ->get();
                     
                     foreach ($members as $member) {
