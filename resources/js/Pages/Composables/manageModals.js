@@ -156,8 +156,8 @@ const activateUserTaskModal = (task) => {
     taskInputEndDate.value = task.input_end_date
     taskOwner.value = task.owner
     taskMembers.value = task.task_members
-    taskNotes.value = task.task_notes
-    projectNotes.value = task.project_notes
+    taskNotes.value = task.task_notes ? task.task_notes : []
+    projectNotes.value = task.project_notes ? task.project_notes : []
     taskTeamName.value = task.team_name
     taskProjectName.value = task.project_name
 

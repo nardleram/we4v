@@ -21,7 +21,7 @@
 <p>Role: {{ $membership->role }}</p>
 
 @if ($membership->is_admin)
-    <p>{{ $membership->user->username }} is now an administrator of this {{ $type }}</p>
+    <p>{{ $membership->member->username }} is now an administrator of this {{ $type }}</p>
 @endif
 
 <br>

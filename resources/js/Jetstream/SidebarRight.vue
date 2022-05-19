@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <div v-if="taskNotes">
+            <div v-if="taskNotes || projectNotes">
                 <Notes :taskNotes="taskNotes" :projectNotes="projectNotes" />
             </div>
 
