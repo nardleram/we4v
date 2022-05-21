@@ -21,7 +21,12 @@ class Vote extends Model
 
     public function voteElements()
     {
-        $this->hasMany(VoteElement::class);
+        return $this->hasMany(VoteElement::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'owner');
     }
 
     public function castVotes()

@@ -32,6 +32,74 @@
     </teleport>
 
     <teleport to="#membRequestModals">
+        <div v-if="showMembModal" @mouseleave="nowOutside" @mouseenter="nowInside" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6 max-h-550 overflow-y-scroll">
+            <div class="flex justify-end">
+                <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
+                    <div @click="showInviteModal = false; clearModal()">
+                        <i class="fas fa-skull-crossbones animate-pulse z-50 cursor-pointer text-lg text-we4vDarkBlue"></i>
+                    </div>   
+                </div>
+            </div>
+
+            <h4 class="text-we4vBlue text-lg mb-1 -mt-8 pr-10">{{ groupName }} <span class="lowercase text-sm text-we4vGrey-500 font-light">– {{ type }}</span> <span class="text-sm text-we4vGrey-500 font-light">(owner: {{ groupOwner ? groupOwner : teamOwner }})</span></h4>
+            <p v-if="groupDescription" class="text-sm">Description:  <span class="font-light text-we4vGrey-500">{{ groupDescription }}</span></p>
+            <p v-if="teamFunction" class="text-sm">Function:  <span class="font-light text-we4vGrey-500">{{ teamFunction }}</span></p>
+            <p class="text-sm">Your role in this <span class="lowercase">{{ type }}</span>: <span class="font-light text-we4vGrey-500">{{ role }}</span></p>
+            <p v-if="teamGroupName" class="text-xs">(This team belongs to the group <span class="text-we4vBlue font-semibold">{{ teamGroupName }}</span>)</p>
+
+            <p class="font-medium mt-3 -mb-1">Fellow <span class="lowercase">{{ type }}</span> members</p>
+            <div class="flex flex-row flex-wrap w-full">
+                <div v-for="(member, memberKey) in fellowMembers" :key="memberKey">
+                    <div class="mr-4">
+                        <inertia-link :href="route('user-show', member.slug)" as="button">
+                            <small @click="clearModal" class="text-xs text-we4vBlue font-medium cursor-pointer hover:text-we4vDarkBlue">{{ member.username }}<span v-if="member.admin" class="text-we4vOrange font-bold">*</span> <span class="text-we4vGrey-500 font-light hover:text-we4vGrey-500">({{ member.role }})</span></small>
+                        </inertia-link>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="groupTeams.length > 0">
+                <p class="font-medium mt-3 -mb-1">Teams belonging to <span class="text-we4vBlue font-semibold">{{ groupName }}</span></p>
+                <div v-for="(team, teamKey) in groupTeams" :key="teamKey">
+                    <p class="text-xs ml-3 text-we4vBlue font-semibold -mb-1 mt-2">{{ team.name }} <span class="text-we4vGrey-500 font-medium ml-2">Description:</span> <span class="font-light text-we4vGrey-500">{{ team.function }}</span></p>
+                    
+                    <div class="flex flex-row flex-wrap w-full ml-6 justify-start">
+                        <!-- <div class="text-xs font-semibold mr-1 w-16 p-0">Members:</div> -->
+                        <div v-for="(teamMember, teamMemberKey) in team.members" :key="teamMemberKey">
+                            <div class="mr-2 p-0 h-5">
+                                <inertia-link :href="route('user-show', teamMember.slug)" as="button">
+                                    <p @click="clearModal" class="p-0 text-xs text-we4vBlue font-medium cursor-pointer hover:text-we4vDarkBlue">{{ teamMember.username }}<span v-if="teamMember.admin" class="text-we4vOrange font-bold">*</span> <span class="text-we4vGrey-500 font-light hover:text-we4vGrey-500">({{ teamMember.role }})</span></p>
+                                </inertia-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="groupTeamProjects.length > 0">
+                <p class="font-medium mt-3">Projects assigned to <span class="text-we4vBlue font-semibold">{{ groupName }}</span></p>
+                <div v-for="(project, projectKey) in groupTeamProjects" :key="projectKey">
+                    <p class="-mb-1 text-sm text-we4vBlue font-semibold">{{ project.project_name }}</p>
+                    <p class="-mb-1 text-xs text-we4vGrey-600 font-medium">Description: <span class="font-light text-we4vGrey-500">{{ project.project_description }}</span></p>
+                    <p class="-mb-1 text-xs text-we4vGrey-600 font-medium">Deadline: <span class="font-light text-we4vGrey-500">{{ project.project_end_date }}</span></p>
+                    <p v-if="project.project_completed" class="-mb-1 text-xs text-we4vGrey-600 font-medium">Status: <span class="font-light text-we4vGreen-500">Closed</span></p>
+                    <p v-if="!project.project_completed" class="-mb-1 text-xs text-we4vGrey-600 font-medium">Status: <span class="font-light text-red-600">Open</span></p>
+
+                    <p class="text-sm text-we4vGrey-600 font-medium mt-2 ml-3">Tasks assigned to <span class="text-we4vBlue">{{ project.project_name }}</span></p>
+                    <div class="ml-3 mb-3" v-for="(task, taskKey) in project.tasks" :key="taskKey">
+                        <p class="-mb-1 text-xs text-we4vBlue font-semibold">{{ task.task_name }}</p>
+                        <p class="-mb-1 text-xs text-we4vGrey-600 font-medium">Description: <span class="font-light text-we4vGrey-500">{{ task.task_description }}</span></p>
+                        <p class="-mb-1 text-xs text-we4vGrey-600 font-medium">Deadline: <span  class="font-light text-we4vGrey-500">{{ task.task_end_date }}</span></p>
+                        <p v-if="task.task_completed" class="-mb-1 text-xs text-we4vGrey-600 font-medium">Status: <span class="font-light text-we4vGreen-500">Completed</span></p>
+                    <p v-if="!task.task_completed" class="-mb-1 text-xs text-we4vGrey-500 font-medium">Status: <span class="font-light text-red-600">Open</span></p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </teleport>
+
+    <teleport to="#membRequestModals">
         <div v-if="showNetworkInviteModal" @mouseleave="nowOutside(); mode = type" @mouseenter="nowInside()" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
             <div class="flex justify-end">
                 <div class="w-8 h-8 relative -top-2 -mr-2 rounded-full cursor-pointer">
@@ -259,7 +327,7 @@
             </template>
         </sidebar-right-element>
         <div v-if="showMembs && Object.keys($page.props.myMemberships).length" class="-mt-2 ml-3 -mr-2 mb-2 bg-we4vGrey-900 rounded-bl-xl max-h-48 overflow-y-scroll">
-            <Memberships />
+            <Memberships @activate-memb-modal="onActivateMembModal" @mouseover="nowOutside" />
         </div>
         <div v-if="showMembs && !Object.keys($page.props.myMemberships).length" class="tracking-tight text-right -mt-2 mb-1">
             <small class="text-we4vGrey-200 text-xs">You are not yet a member of any group or team</small>
@@ -393,6 +461,7 @@ export default {
             amOutside, 
             amInside,
             clearModal,
+            fellowMembers,
             gAdmin,
             geogArea,
             groupDescription,
@@ -401,6 +470,8 @@ export default {
             groupOwner,
             groupRequester,
             groupRole,
+            groupTeamProjects,
+            groupTeams,
             hydrateInviteModal,
             hydrateNetworkInviteModal,
             inviteData,
@@ -411,11 +482,15 @@ export default {
             networkName,
             networkOwner,
             nowInside, 
-            nowOutside, 
+            nowOutside,
+            onActivateMembModal,
             onActivatePendingVoteModal,
             onClickOutside,
+            projectCompleted,
             projectNotes,
+            role,
             showInviteModal,
+            showMembModal,
             showNetworkInviteModal,
             showPendingVoteModal,
             showUserTaskModal,
@@ -437,6 +512,7 @@ export default {
             taskProjectName,
             taskTeamName,
             teamFunction,
+            teamGroupName,
             teamName,
             teamOwner,
             teamId,
@@ -585,6 +661,7 @@ export default {
             amOutside, 
             amInside,
             clearModal,
+            fellowMembers,
             gAdmin,
             geogArea,
             groupId,
@@ -593,6 +670,8 @@ export default {
             groupDescription,
             groupRequester,
             groupRole,
+            groupTeamProjects,
+            groupTeams,
             hydrateInviteModal,
             hydrateNetworkInviteModal,
             inviteData,
@@ -604,12 +683,16 @@ export default {
             networkOwner,
             nowInside, 
             nowOutside,
+            onActivateMembModal,
             onActivatePendingVoteModal,
             onClickOutside,
+            projectCompleted,
             projectNoteBody,
             projectNotes,
+            role,
             showAssocReqs,
             showInviteModal,
+            showMembModal,
             showNetworkInviteModal,
             showMembReqs,
             showNetworkReqs,
@@ -638,6 +721,7 @@ export default {
             taskTeamName,
             tAdmin,
             teamFunction,
+            teamGroupName,
             teamId,
             teamName,
             teamOwner,

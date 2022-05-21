@@ -61,7 +61,7 @@ class Task extends Model
                     if (!in_array($taskMember->task_id, $userTaskIds)) {
                         array_push($userTaskIds, $taskMember->task_id);
                     }
-                } else { // Get team members
+                } else { // Get team task members
                     if (!in_array($taskMember->task_id, $teamTaskIds)) {
                         array_push($teamTaskIds, $taskMember->task_id);
                     }

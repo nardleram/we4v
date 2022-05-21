@@ -8,12 +8,13 @@ use App\Models\User;
 use App\Models\Vote;
 use App\Models\Group;
 use App\Models\Image;
+use App\Models\Network;
 use Inertia\Middleware;
 use App\Models\Membership;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
-use App\Models\Network;
+use App\Http\Resources\UserMembershipCollection;
 
 class HandleInertiaRequests extends Middleware
 {

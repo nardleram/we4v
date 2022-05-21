@@ -67,6 +67,7 @@ module.exports = {
             },
             maxHeight: {
                 '600': '600px',
+                '550': '550px',
             },
             minHeight: {
                 'menu-button': '30px',

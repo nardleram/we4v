@@ -310,62 +310,285 @@ class Membership extends Model
     {
         $rawMemberships = Membership::where('memberships.user_id', $userId)
             ->where('memberships.confirmed', true)
-            ->leftJoin('groups', function ($join) {
+            ->leftJoin('groups', function($join) {
                 $join->on('groups.id', '=', 'memberships.membershipable_id');
             })
-            ->leftJoin('teams', function ($join) {
+            ->leftJoin('teams', function($join) {
                 $join->on('teams.id', '=', 'memberships.membershipable_id');
             })
-            ->leftJoin('users AS Us1', function ($join) {
+            ->leftJoin('teams AS Te1', function($join) {
+                $join->on('Te1.group_id', '=', 'groups.id');
+            })
+            ->leftJoin('projects', function($join) {
+                $join->on('projects.projectable_id', '=', 'groups.id')
+                ->orOn('projects.projectable_id', '=', 'teams.id');
+            })
+            ->leftJoin('tasks', function($join) {
+                $join->on('tasks.project_id', '=', 'projects.id');
+            })
+            ->leftJoin('memberships AS Me1', function($join) {
+                $join->on('Me1.membershipable_id', '=', 'memberships.membershipable_id');
+            })
+            ->leftJoin('memberships AS Me2', function($join) {
+                $join->on('Me2.membershipable_id', '=', 'Te1.id');
+            })
+            ->leftJoin('users AS Us1', function($join) {
                 $join->on('Us1.id', '=', 'groups.owner');
             })
-            ->leftJoin('users AS Us2', function ($join) {
+            ->leftJoin('users AS Us2', function($join) {
                 $join->on('Us2.id', '=', 'teams.owner');
+            })
+            ->leftJoin('users AS Us3', function($join) {
+                $join->on('Us3.id', '=', 'Me1.user_id');
+            })
+            ->leftJoin('users AS Us4', function($join) {
+                $join->on('Us4.id', '=', 'Me2.user_id');
+            })
+            ->leftJoin('groups AS Gr1', function($join) {
+                $join->on('Gr1.id', '=', 'teams.group_id');
             })
             ->select([
                 'memberships.id as membership_id',
                 'memberships.membershipable_type as membership_type',
                 'memberships.role as membership_role',
                 'memberships.is_admin as is_admin',
+                'memberships.user_id as user_id',
+                'memberships.membershipable_id as membershipable_id',
                 'groups.id as group_id',
                 'groups.name as group_name',
+                'groups.description as group_description',
+                'Gr1.name as team_group_name',
+                'Te1.id as group_team_id',
+                'Te1.name as group_team_name',
+                'Te1.function as group_team_function',
+                'Me2.user_id as group_team_user_id',
+                'Me2.membershipable_id as membership_group_team_id',
+                'Me2.role as group_team_user_role',
+                'Me2.is_admin as group_team_admin',
+                'Us4.username as group_team_member',
+                'Us4.slug as group_team_member_slug',
                 'teams.name as team_name',
+                'teams.function as team_function',
                 'teams.id as team_id',
+                'projects.id as project_id',
+                'projects.name as project_name',
+                'projects.description as project_description',
+                'projects.end_date as project_end_date',
+                'projects.completed as project_completed',
+                'projects.projectable_id as projectable_id',
+                'tasks.id as task_id',
+                'tasks.name as task_name',
+                'tasks.description as task_description',
+                'tasks.end_date as task_end_date',
+                'tasks.completed as task_completed',
+                'tasks.project_id as task_project_id',
                 'Us1.username as group_owner',
                 'Us1.slug as group_slug',
                 'Us2.username as team_owner',
-                'Us2.slug as team_slug'
-            ])->get();
+                'Us2.slug as team_slug',
+                'Me1.user_id as fellow_membership_user_id',
+                'Me1.membershipable_id as fellow_membership_group_team_id',
+                'Me1.role as fellow_membership_role',
+                'Me1.is_admin as fellow_membership_admin',
+                'Us3.username as fellow_member',
+                'Us3.slug as fellow_member_slug',
+            ])
+            ->groupBy([
+                'memberships.id',
+                'memberships.membershipable_id',
+                'groups.name',
+                'groups.id',
+                'Us3.username',
+                'Us3.slug',
+                'teams.name',
+                'teams.id',
+                'Te1.name',
+                'Te1.id',
+                'projects.id',
+                'tasks.project_id',
+                'tasks.id',
+                'Us1.username',
+                'Us2.username',
+                'Us4.username',
+                'Us1.slug',
+                'Us2.slug',
+                'Us4.slug',
+                'Us3.id',
+                'Us4.id',
+                'Me1.user_id',
+                'Me1.membershipable_id',
+                'Me1.is_admin',
+                'Me1.role',
+                'Me2.user_id',
+                'Me2.membershipable_id',
+                'Me2.is_admin',
+                'Me2.role',
+                'Te1.function',
+                'Gr1.name'
+            ])
+            ->orderBy('groups.name')
+            ->orderBy('Te1.name')
+            ->orderBy('teams.name')
+            ->orderBy('Us3.username')
+            ->orderBy('Us4.username')
+            ->get();
 
         $memberships = [];
-        $currentMembershipId = 0;
+        $fellowMembers = [];
+        $groupTeamIds = [];
+        $groupTeamUserIds = [];
+        $taskIds = [];
+        $loop = 0;
+        $currentGroupTeamId = 0;
+        $currentProjectId = 0;
+        $currentTaskId = 0;
+        $currentMembershipableId = 0;
+        $currentGroupTeamUserId = 0;
         $membershipCount = 0;
+        $fellowMemberCount = 0;
+        $groupTeamCount = 0;
+        $groupTeamMemberCount = 0;
+        $projectCount = 0;
+        $taskCount = 0;
 
         foreach($rawMemberships as $rawMembership) {
-            if ($rawMembership->membership_id !== $currentMembershipId) {
-                if( $rawMembership->membership_type === 'App\\Models\\Group') {
+            if ($rawMembership->project_id !== $currentProjectId && $loop > 0) {
+                ++$projectCount;
+                $taskCount = 0;
+            }
+
+            if ($rawMembership->task_id !== $currentTaskId && $loop > 0) {
+                ++$taskCount;
+            }
+
+            if ($rawMembership->group_team_id !== $currentGroupTeamId && $loop > 0) {
+                ++$groupTeamCount;
+                $groupTeamMemberCount = 0;
+                $groupTeamUserIds = [];
+            }
+
+            if ($rawMembership->group_team_user_id !== $currentGroupTeamUserId && $rawMembership->group_team_id === $currentGroupTeamId) {
+                ++$groupTeamMemberCount;
+            }
+
+            if ($rawMembership->membershipable_id !== $currentMembershipableId && $loop > 0) {
+                ++$membershipCount;
+                $fellowMemberCount = 0;
+                $projectCount = 0;
+                $taskCount = 0;
+                $fellowMembers = [];
+                $groupTeamIds = [];
+                $taskIds = [];
+
+                if ( ($rawMembership->fellow_membership_user_id !== auth()->id()) 
+                    && (!in_array($rawMembership->fellow_membership_user_id, $fellowMembers)) ) { // Fellow members
+                    array_push($fellowMembers, $rawMembership->fellow_membership_user_id);
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['username'] = $rawMembership->fellow_member;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['slug'] = $rawMembership->fellow_member_slug;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['role'] = $rawMembership->fellow_membership_role;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['admin'] = $rawMembership->fellow_membership_admin;
+                    ++$fellowMemberCount;
+                }
+
+                // Projects
+                if ( $rawMembership->project_id && ($rawMembership->project_id !== $currentProjectId || $loop === 0) ) {
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_name'] = $rawMembership->project_name;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_description'] = $rawMembership->project_description;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_completed'] = $rawMembership->project_completed;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_end_date'] = Carbon::parse($rawMembership->project_end_date)->format('d M y');
+                }
+
+                // Project's tasks
+                if ($rawMembership->task_id && ( $rawMembership->task_id !== $currentTaskId || $loop === 0) ) {
+                    if (!in_array($rawMembership->task_id, $taskIds)) {
+                        array_push($taskIds, $rawMembership->task_id);
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_name'] = $rawMembership->task_name;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_description'] = $rawMembership->task_description;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_completed'] = $rawMembership->task_completed;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawMembership->task_end_date)->format('d M y');
+                    }
+                }
+            }
+
+            if ($currentMembershipableId !== $rawMembership->membershipable_id) {
+                if ($rawMembership->membership_type === 'App\\Models\\Group') {
+                    $memberships[$membershipCount]['description'] = $rawMembership->group_description;
                     $memberships[$membershipCount]['name'] = $rawMembership->group_name;
                     $memberships[$membershipCount]['owner'] = $rawMembership->group_owner;
                     $memberships[$membershipCount]['slug'] = $rawMembership->group_slug;
-                    $memberships[$membershipCount]['membership_role'] = $rawMembership->membership_role;
+                    $memberships[$membershipCount]['role'] = $rawMembership->membership_role;
                     $memberships[$membershipCount]['admin'] = $rawMembership->is_admin;
                     $memberships[$membershipCount]['type'] = 'Group';
                 }
-
-                if( $rawMembership->membership_type === 'App\\Models\\Team') {
+    
+                if ($rawMembership->membership_type === 'App\\Models\\Team') {
                     $memberships[$membershipCount]['name'] = $rawMembership->team_name;
                     $memberships[$membershipCount]['owner'] = $rawMembership->team_owner;
+                    $memberships[$membershipCount]['function'] = $rawMembership->team_function;
                     $memberships[$membershipCount]['slug'] = $rawMembership->team_slug;
-                    $memberships[$membershipCount]['membership_role'] = $rawMembership->membership_role;
+                    $memberships[$membershipCount]['role'] = $rawMembership->membership_role;
                     $memberships[$membershipCount]['admin'] = $rawMembership->is_admin;
+                    $memberships[$membershipCount]['team_group_name'] = $rawMembership->team_group_name;
                     $memberships[$membershipCount]['type'] = 'Team';
                 }
             }
 
-            ++$membershipCount;
-            $currentMembershipId = $rawMembership->membership_id;
+            if ($loop === 0 || $currentMembershipableId === $rawMembership->membershipable_id) {
+                if ($rawMembership->membership_type === 'App\\Models\\Group') { 
+
+                    if (!in_array($rawMembership->group_team_id, $groupTeamIds)) { // Group's teams
+                        array_push($groupTeamIds, $rawMembership->group_team_id);
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['name'] = $rawMembership->group_team_name;
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['function'] = $rawMembership->group_team_function;
+                    }
+
+                    if (!in_array($rawMembership->group_team_user_id, $groupTeamUserIds)) { // Group's teams' members
+                        array_push($groupTeamUserIds, $rawMembership->group_team_user_id);
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['members'][$groupTeamMemberCount]['username'] = $rawMembership->group_team_member;
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['members'][$groupTeamMemberCount]['slug'] = $rawMembership->group_team_member_slug;
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['members'][$groupTeamMemberCount]['role'] = $rawMembership->group_team_user_role;
+                        $memberships[$membershipCount]['group_teams'][$groupTeamCount]['members'][$groupTeamMemberCount]['admin'] = $rawMembership->group_team_admin;
+                    }
+                }
+
+                if ( ($rawMembership->fellow_membership_user_id !== auth()->id()) 
+                    && (!in_array($rawMembership->fellow_membership_user_id, $fellowMembers)) ) { // Fellow members
+                    array_push($fellowMembers, $rawMembership->fellow_membership_user_id);
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['username'] = $rawMembership->fellow_member;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['slug'] = $rawMembership->fellow_member_slug;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['role'] = $rawMembership->fellow_membership_role;
+                    $memberships[$membershipCount]['fellow_members'][$fellowMemberCount]['admin'] = $rawMembership->fellow_membership_admin;
+                    ++$fellowMemberCount;
+                }
+
+                // Projects
+                if ( $rawMembership->project_id && ($rawMembership->project_id !== $currentProjectId || $loop === 0) ) {
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_name'] = $rawMembership->project_name;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_description'] = $rawMembership->project_description;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_completed'] = $rawMembership->project_completed;
+                    $memberships[$membershipCount]['projects'][$projectCount]['project_end_date'] = Carbon::parse($rawMembership->project_end_date)->format('d M y');
+                }
+
+                // Project's tasks
+                if ($rawMembership->task_id && ( $rawMembership->task_id !== $currentTaskId || $loop === 0) ) {
+                    if (!in_array($rawMembership->task_id, $taskIds)) {
+                        array_push($taskIds, $rawMembership->task_id);
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_name'] = $rawMembership->task_name;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_description'] = $rawMembership->task_description;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_completed'] = $rawMembership->task_completed;
+                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawMembership->task_end_date)->format('d M y');
+                    }
+                }
+            }
+
+            ++$loop;
+            $currentGroupTeamId = $rawMembership->group_team_id;
+            $currentProjectId = $rawMembership->project_id;
+            $currentTaskId = $rawMembership->task_id;
+            $currentMembershipableId = $rawMembership->membershipable_id;
+            $currentGroupTeamUserId = $rawMembership->group_team_user_id;
         }
-        
+        // dd($memberships);
         return $memberships;
     }
 }

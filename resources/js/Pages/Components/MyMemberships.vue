@@ -10,14 +10,14 @@
         </thead>
         <tbody class="border border-we4vGrey-800">
             <tr v-for="(memb, membKey) in $page.props.myMemberships" :key="membKey">
-                <td class="text-xs leading-tight p-1 border border-we4vGrey-800">
+                <td @click="$emit('activateMembModal', memb)" class="text-xs leading-tight p-1 border border-we4vGrey-800 hover:bg-we4vBlue cursor-pointer">
                     {{ memb.name }}
                 </td>
                 <td class="text-xs leading-tight p-1 border border-we4vGrey-800">
                     {{ memb.type }}
                 </td>
                 <td class="text-xs leading-tight p-1 border border-we4vGrey-800">
-                    {{ memb.membership_role }}<span v-if="memb.admin" class="font-bold text-sm text-we4vOrange">*</span>
+                    {{ memb.role }}<span v-if="memb.admin" class="font-bold text-sm text-we4vOrange">*</span>
                 </td>
                 <td class="text-left leading-tight p-1 border border-we4vGrey-800">
                     <inertia-link :href="route('user-show', memb.slug)" as="button">
@@ -32,5 +32,9 @@
 <script>
 export default {
     name: 'MyAssociates',
+
+    emits: [
+        'activateMembModal',
+    ],
 }
 </script>

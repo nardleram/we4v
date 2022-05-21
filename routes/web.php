@@ -10,7 +10,6 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\GroupController;
-use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\ProjectController;

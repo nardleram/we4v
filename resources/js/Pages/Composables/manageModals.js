@@ -5,6 +5,7 @@ const amInside = ref(false)
 const amOutside = ref(false)
 const assocCheckboxesAccountedFor = ref(false)
 const edit = ref(false)
+const fellowMembers = ref([])
 const geogArea = ref(null)
 const greyButtonEnabled = ref(false)
 const gAdmin = ref(false)
@@ -19,6 +20,8 @@ const groupOwner = ref(null)
 const groupRole = ref(null)
 const groupRequester = ref(null)
 const groupsNotInNetwork = ref([])
+const groupTeamProjects = ref([])
+const groupTeams = ref([])
 const inviteData = ref([])
 const membershipId = ref(null)
 const mode = ref(null)
@@ -44,6 +47,7 @@ const projectTeamName = ref(null)
 const projectStartDate = ref(null)
 const projectEndDate = ref(null)
 const projectInputEndDate = ref(null)
+const role = ref(null)
 const roleFieldsAccountedFor = ref(false)
 const selectedAssoc = ref(false)
 const selectedGroupAssociates = ref([])
@@ -60,6 +64,7 @@ const showEditTaskModal = ref(false)
 const showEditTeamModal = ref(false)
 const showEditVoteModal = ref(false)
 const showGroup = ref(false)
+const showMembModal = ref(false)
 const showNetworkInviteModal = ref(false)
 const showNetworkModal = ref(false)
 const showPendingVoteModal = ref(false)
@@ -95,6 +100,7 @@ const taskMembers = ref([])
 const taskProjectName = ref(null)
 const teamAdmins = ref([])
 const teamFunction = ref(null)
+const teamGroupName = ref(null)
 const teamId = ref(null)
 const teamMemberRoles = ref([])
 const teamMembers = ref([])
@@ -392,6 +398,7 @@ const clearModal = () => {
     amOutside.value = false
     assocCheckboxesAccountedFor.value = false
     edit.value = false
+    fellowMembers.value = []
     gAdmin.value = false
     greyButtonEnabled.value = false
     geogArea.value = null
@@ -404,6 +411,8 @@ const clearModal = () => {
     groupName.value = null
     groupRequester.value = null
     groupRole.value = null
+    groupTeamProjects.value = []
+    groupTeams.value = []
     inviteData.value = []
     membershipId.value = null
     mode.value = null
@@ -424,6 +433,7 @@ const clearModal = () => {
     projectName.value = null
     projectStartDate.value = null
     projectTeamData.value = []
+    role.value = null
     roleFieldsAccountedFor.value = false
     selectedGroupAssociates.value = []
     selectedTeamAssociates.value = []
@@ -449,6 +459,7 @@ const clearModal = () => {
     taskMembers.value = []
     teamAdmins.value = []
     teamFunction.value = null
+    teamGroupName.value = null
     teamId.value = null
     teamMemberRoles.value = []
     teamName.value = null
@@ -464,6 +475,7 @@ const clearModal = () => {
     showEditVoteModal.value = false
     showGroup.value = false
     showGroupModal.value = false
+    showMembModal.value = false
     showNetworkModal.value = false
     showNetworkInviteModal.value = false
     showEditNetworkModal.value = false
@@ -617,31 +629,6 @@ const onActivateEditProjectModal = (project) => {
     showEditProjectModal.value = true
 }
 
-// const onActivateEditAdminTaskModal = (task) => {
-//     edit.value = true
-//     mode.value = 'task'
-
-//     checkIfUserMaySubmit('task')
-
-//     taskCompleted.value = task.task_completed
-//     taskId.value = task.task_id
-//     taskProjectId.value = task.project_id
-//     taskName.value = task.task_name
-//     projectNotes.value = task.project_notes ? task.project_notes : null
-//     taskNotes.value = task.task_notes ? task.task_notes : null
-//     taskDescription.value = task.task_description
-//     taskRecipientType.value = 'team'
-//     taskEndDate.value = task.task_end_date
-//     taskStartDate.value = task.task_start_date
-//     taskInputEndDate.value = task.task_input_end_date
-//     taskableId.value = task.team_id
-//     taskableType.value = 'App\\Models\\Team'
-//     taskMembers.value = task.selected_team_members
-
-//     showBackdrop.value = true
-//     showEditAdminTaskModal.value = true
-// }
-
 const onActivateEditTaskModal = (task) => {
     edit.value = true
     mode.value = 'task'
@@ -724,6 +711,26 @@ const onActivateEditVoteModal = (vote) => {
 
     showBackdrop.value = true
     showEditVoteModal.value = true
+}
+
+const onActivateMembModal = (memb) => {
+    groupName.value = memb.name
+    type.value = memb.type
+    groupOwner.value = memb.owner
+    teamOwner.value = memb.owner
+    role.value = memb.role
+    groupDescription.value = memb.description
+    teamFunction.value = memb.function
+    teamGroupName.value = memb.team_group_name ? memb.team_group_name : null
+    fellowMembers.value = memb.fellow_members
+    groupTeamProjects.value = memb.projects ? memb.projects : []
+
+    if (type.value === 'Group') {
+        groupTeams.value = memb.group_teams ? memb.group_teams : []
+    }
+    
+    showBackdrop.value = true
+    showMembModal.value = true
 }
 
 const onActivatePendingVoteModal = (vote) => {
@@ -823,6 +830,7 @@ const manageModals = () => {
         checkIfUserMaySubmit,
         clearModal,
         edit,
+        fellowMembers,
         gAdmin,
         geogArea,
         greyButtonEnabled,
@@ -837,6 +845,8 @@ const manageModals = () => {
         groupRequester,
         groupRole,
         groupsNotInNetwork,
+        groupTeamProjects,
+        groupTeams,
         hydrateInviteModal,
         hydrateNetworkInviteModal,
         inviteData,
@@ -855,6 +865,7 @@ const manageModals = () => {
         onActivateEditTaskModal,
         onActivateEditTeamModal,
         onActivateEditVoteModal,
+        onActivateMembModal,
         onActivatePendingVoteModal,
         onActivateShowCompletedProjectModal,
         onActivateTaskModal, 
@@ -878,6 +889,7 @@ const manageModals = () => {
         projectTasks,
         projectTeamData,
         projectTeamName,
+        role,
         selectedAssoc,
         selectedGroupAssociates,
         selectedTeamAssociates,
@@ -893,6 +905,7 @@ const manageModals = () => {
         showGroup,
         showGroupModal,
         showInviteModal,
+        showMembModal,
         showNetworkInviteModal,
         showNetworkModal,
         showPendingVoteModal,
@@ -927,6 +940,7 @@ const manageModals = () => {
         taskMembers,
         teamAdmins,
         teamFunction,
+        teamGroupName,
         teamId,
         teamMemberRoles,
         teamMembers,
