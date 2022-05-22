@@ -524,21 +524,19 @@ class Membership extends Model
 
             // Project has task(s)
             if ( $rawMembership->task_id 
-                && ($rawMembership->project_id === $currentProjectId) 
+                // && ($rawMembership->project_id === $currentProjectId) 
                 && ($rawMembership->taskId !== $currentTaskId)
                 && ($rawMembership->task_project_id === $currentProjectId) 
             ) {
-                if ($rawMembership->task_id && ( $rawMembership->task_id !== $currentTaskId || $loop === 0) ) {
-                    if (!in_array($rawMembership->task_id, $taskIds)) {
-                        array_push($taskIds, $rawMembership->task_id);
+                if (!in_array($rawMembership->task_id, $taskIds)) {
+                    array_push($taskIds, $rawMembership->task_id);
 
-                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_name'] = $rawMembership->task_name;
-                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_description'] = $rawMembership->task_description;
-                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_completed'] = $rawMembership->task_completed;
-                        $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawMembership->task_end_date)->format('d M Y');
+                    $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_name'] = $rawMembership->task_name;
+                    $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_description'] = $rawMembership->task_description;
+                    $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_completed'] = $rawMembership->task_completed;
+                    $memberships[$membershipCount]['projects'][$projectCount]['tasks'][$taskCount]['task_end_date'] = Carbon::parse($rawMembership->task_end_date)->format('d M Y');
 
-                        ++$taskCount;
-                    }
+                    ++$taskCount;
                 }
             }
 
