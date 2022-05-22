@@ -45,6 +45,7 @@
             <p v-if="groupDescription" class="text-sm">Description:  <span class="font-light text-we4vGrey-500">{{ groupDescription }}</span></p>
             <p v-if="teamFunction" class="text-sm">Function:  <span class="font-light text-we4vGrey-500">{{ teamFunction }}</span></p>
             <p class="text-sm">Your role in this <span class="lowercase">{{ type }}</span>: <span class="font-light text-we4vGrey-500">{{ role }}</span></p>
+            <p v-if="admin" class="text-sm"><span class="text-we4vOrange font-bold">*</span>You are this <span class="lowercase">{{ type }}</span>'s administrator.</p>
             <p v-if="teamGroupName" class="text-xs">(This team belongs to the group <span class="text-we4vBlue font-semibold">{{ teamGroupName }}</span>)</p>
 
             <p class="font-medium mt-3 -mb-1">Fellow <span class="lowercase">{{ type }}</span> members</p>
@@ -85,7 +86,8 @@
                     <p v-if="project.project_completed" class="-mb-1 text-xs text-we4vGrey-600 font-medium">Status: <span class="font-light text-we4vGreen-500">Closed</span></p>
                     <p v-if="!project.project_completed" class="-mb-1 text-xs text-we4vGrey-600 font-medium">Status: <span class="font-light text-red-600">Open</span></p>
 
-                    <p class="text-sm text-we4vGrey-600 font-medium mt-2 ml-3">Tasks assigned to <span class="text-we4vBlue">{{ project.project_name }}</span></p>
+                    <p v-if="project.tasks" class="text-sm text-we4vGrey-600 font-medium mt-2 ml-3">Tasks assigned to <span class="text-we4vBlue">{{ project.project_name }}</span></p>
+                    <p v-else class="text-xs text-we4vGrey-500 font-medium mt-2 ml-3">No tasks currently assigned to <span class="text-we4vBlue">{{ project.project_name }}</span></p>
                     <div class="ml-3 mb-3" v-for="(task, taskKey) in project.tasks" :key="taskKey">
                         <p class="-mb-1 text-xs text-we4vBlue font-semibold">{{ task.task_name }}</p>
                         <p class="-mb-1 text-xs text-we4vGrey-600 font-medium">Description: <span class="font-light text-we4vGrey-500">{{ task.task_description }}</span></p>
@@ -458,6 +460,7 @@ export default {
         const {
             activateShowClosedVoteModal,
             activateUserTaskModal,
+            admin,
             amOutside, 
             amInside,
             clearModal,
@@ -658,6 +661,7 @@ export default {
         return {
             activateShowClosedVoteModal,
             activateUserTaskModal,
+            admin,
             amOutside, 
             amInside,
             clearModal,

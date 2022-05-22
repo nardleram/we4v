@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { usePage } from '@inertiajs/inertia-vue3'
 
+const admin = ref(false)
 const amInside = ref(false)
 const amOutside = ref(false)
 const assocCheckboxesAccountedFor = ref(false)
@@ -394,6 +395,7 @@ const checkIfUserMaySubmit = (mode) => {
 }
 
 const clearModal = () => {
+    admin.value = false
     amInside.value = false
     amOutside.value = false
     assocCheckboxesAccountedFor.value = false
@@ -719,6 +721,7 @@ const onActivateMembModal = (memb) => {
     groupOwner.value = memb.owner
     teamOwner.value = memb.owner
     role.value = memb.role
+    admin.value = memb.admin
     groupDescription.value = memb.description
     teamFunction.value = memb.function
     teamGroupName.value = memb.team_group_name ? memb.team_group_name : null
@@ -822,6 +825,7 @@ const manageModals = () => {
         activateShowClosedVoteModal,
         activateShowGroupModal,
         activateUserTaskModal,
+        admin,
         amOutside, 
         amInside,
         checkIfProjectGroupSelected,
