@@ -50,7 +50,7 @@
 
             <p v-if="fellowMembers" class="font-medium mt-3 -mb-1">Fellow <span class="lowercase">{{ type }}</span> members</p>
             <p v-else-if="type === 'Group' && !fellowMembers" class="text-xs mt-3 -mb-1">Other than the owner, you are this group’s only (direct) member. <span v-if="groupTeams.length > 0">Its other members are housed in its teams.</span></p>
-            <p v-else-if="type === 'Team' && !fellowMembers.length" class="text-xs mt-3 -mb-1">Other than the owner, you are this team’s only member.</p>
+            <p v-else-if="type === 'Team' && !fellowMembers" class="text-xs mt-3 -mb-1">Other than the owner, you are this team’s only member.</p>
             <div class="flex flex-row flex-wrap w-full">
                 <div v-for="(member, memberKey) in fellowMembers" :key="memberKey">
                     <div class="mr-4">
