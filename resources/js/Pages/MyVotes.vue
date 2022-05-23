@@ -7,7 +7,7 @@
         <template #centre>
             <div class="w-1/2 p-3 ml-1/4 tracking-tight">
                 <teleport to="#voteModals">
-                    <div @mouseleave="nowOutside(); mode = 'vote'" @mouseenter="nowInside(); mode = 'vote'" v-if="showVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 m-auto rounded-md p-6">
+                    <div @mouseleave="nowOutside(); mode = 'vote'" @mouseenter="nowInside(); mode = 'vote'" v-if="showVoteModal" class="z-50 fixed bg-white opacity-100 text-we4vGrey-700 top-32 left-1/4 w-1/2 max-h-600 overflow-y-scroll m-auto rounded-md p-6">
                         <Form>
                             <template #form>
                                 <div class="flex justify-end">
@@ -25,7 +25,7 @@
                                 </div>
 
                                 <div class="w-justUnderHalf">
-                                    <Input :name="voteClosingDate" :modelValue="voteClosingDate" :id="'voteClosingDate'" :label="'vote closing date'" :placeholder="'select closing date'" :type="'date'" required @update-model-value="voteClosingDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit()"/>
+                                    <Input :name="closingDate" :modelValue="closingDate" :id="'voteClosingDate'" :label="'vote closing date'" :placeholder="'select closing date'" :type="'date'" required @update-model-value="closingDate = $event" @check-if-user-may-submit="checkIfUserMaySubmit()"/>
                                 </div>
 
                                 <div id="voteElements" class="my-3">
@@ -59,7 +59,7 @@
                                     </div>
                                 </div>
 
-                                <button-grey :enabled="voteEnabled" @click="voteEnabled ? submitVoteData() : null">Save vote</button-grey>
+                                <button-grey :enabled="voteEnabled" @click="voteEnabled ? submitVoteData() : null" :type="'submit'" >Save vote</button-grey>
                             </template>
                         </Form>
                     </div>
@@ -211,6 +211,7 @@ export default {
         const showClosedVotes = ref(false)
         const teams = ref([])
         const voteEnabled = ref(false)
+        const closingDate = ref(null)
         const groupTeamSelected = ref(false)
 
         onMounted(() => {
@@ -277,13 +278,13 @@ export default {
             let payload = {
                 'owner': usePage().props.value.authUser.id,
                 'title': voteTitle.value,
-                'closing_date': voteClosingDate.value,
+                'closing_date': closingDate.value,
                 'voteable_id': selectedGroup ? selectedGroup : voteableId.value,
                 'voteable_type': voteable_type.value ? voteable_type.value : voteableType.value,
                 'vote_elements': voteEls.value
             }
 
-            if (showEditVoteModal) {
+            if (showEditVoteModal.value) {
                 payload.id = voteId.value
                 payload.closing_date = voteInputClosingDate.value
             }
@@ -291,16 +292,21 @@ export default {
             try {
                 showVoteModal.value
                 ? await Inertia.post('/myvotes/store', payload) : null
-                showEditVoteModal
+
+                showEditVoteModal.value
                 ? await Inertia.patch('/myvotes/update', payload) : null
+
                 flashMessage.value = true
                 props.errors = null
+                error.value = false
 
-                usePage().props.value.myvotes.elements.forEach(element => {
-                    usePage().props.value.myvotes.num_votes_cast += element.numElVotes
-                })
+                addTeamMembersToGroupVoters()
 
+                // usePage().props.value.myvotes.elements.forEach(element => {
+                //     usePage().props.value.myvotes.num_votes_cast += element.numElVotes
+                // })
             } catch (err) {
+                console.log(err)
                 error.value = true
                 props.errors = err
             }
@@ -363,7 +369,7 @@ export default {
             setTimeout(() => { 
                 usePage().props.value.errors = {} 
                 error.value = false 
-            }, 2500)
+            }, 7500)
         })
 
         watch(flashMessage, () => {
@@ -382,6 +388,7 @@ export default {
             amOutside,
             checkIfUserMaySubmit,
             clearModal,
+            closingDate,
             deleteEl,
             groupTeamSelectionClicked,
             nowInside, 

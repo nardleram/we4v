@@ -84,19 +84,18 @@ class Membership extends Model
             foreach($memberships as $membership) {
                 array_push($ids, $membership->membershipable_id);
 
-                // Votes assigned to groups must also generate invites for associates in that group's teams.
+                // Votes assigned to groups must ALSO generate invites for associates that are memebers of that group's teams.
+                // So also get those groups that house my team memberships
                 if ($membership->membershipable_type === 'App\Models\Team') {
-                    $team = Team::findOrFail($membership->membershipable_id);
+                    $group = $membership->membershipable->group;
 
-                    foreach($team->group()->get('id') as $groupId) {
-                        !in_array($groupId->id, $ids) 
-                        ? array_push($ids, $groupId->id)
-                        : null;
-                    }
+                    !in_array($group->id, $ids) 
+                    ? array_push($ids, $group->id)
+                    : null;
                 } 
             }
         }
-        
+
         return $ids;
     }
 

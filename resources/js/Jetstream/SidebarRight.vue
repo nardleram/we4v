@@ -42,13 +42,15 @@
             </div>
 
             <h4 class="text-we4vBlue text-lg mb-1 -mt-8 pr-10">{{ groupName }} <span class="lowercase text-sm text-we4vGrey-500 font-light">– {{ type }}</span> <span class="text-sm text-we4vGrey-500 font-light">(owner: {{ groupOwner ? groupOwner : teamOwner }})</span></h4>
+            <p v-if="teamGroupName" class="text-xs -mt-1 mb-2">(This team belongs to the group <span class="text-we4vBlue font-semibold">{{ teamGroupName }}</span>)</p>
             <p v-if="groupDescription" class="text-sm">Description:  <span class="font-light text-we4vGrey-500">{{ groupDescription }}</span></p>
             <p v-if="teamFunction" class="text-sm">Function:  <span class="font-light text-we4vGrey-500">{{ teamFunction }}</span></p>
             <p class="text-sm">Your role in this <span class="lowercase">{{ type }}</span>: <span class="font-light text-we4vGrey-500">{{ role }}</span></p>
-            <p v-if="admin" class="text-sm"><span class="text-we4vOrange font-bold">*</span>You are this <span class="lowercase">{{ type }}</span>'s administrator.</p>
-            <p v-if="teamGroupName" class="text-xs">(This team belongs to the group <span class="text-we4vBlue font-semibold">{{ teamGroupName }}</span>)</p>
+            <p v-if="admin" class="text-sm"><span class="text-we4vOrange font-bold">*</span>You are this <span class="lowercase">{{ type }}</span>’s administrator.</p>
 
-            <p class="font-medium mt-3 -mb-1">Fellow <span class="lowercase">{{ type }}</span> members</p>
+            <p v-if="fellowMembers" class="font-medium mt-3 -mb-1">Fellow <span class="lowercase">{{ type }}</span> members</p>
+            <p v-else-if="type === 'Group' && !fellowMembers" class="text-xs mt-3 -mb-1">Other than the owner, you are this group’s only (direct) member. <span v-if="groupTeams.length > 0">Its other members are housed in its teams.</span></p>
+            <p v-else-if="type === 'Team' && !fellowMembers.length" class="text-xs mt-3 -mb-1">Other than the owner, you are this team’s only member.</p>
             <div class="flex flex-row flex-wrap w-full">
                 <div v-for="(member, memberKey) in fellowMembers" :key="memberKey">
                     <div class="mr-4">
@@ -65,7 +67,6 @@
                     <p class="text-xs ml-3 text-we4vBlue font-semibold -mb-1 mt-2">{{ team.name }} <span class="text-we4vGrey-500 font-medium ml-2">Description:</span> <span class="font-light text-we4vGrey-500">{{ team.function }}</span></p>
                     
                     <div class="flex flex-row flex-wrap w-full ml-6 justify-start">
-                        <!-- <div class="text-xs font-semibold mr-1 w-16 p-0">Members:</div> -->
                         <div v-for="(teamMember, teamMemberKey) in team.members" :key="teamMemberKey">
                             <div class="mr-2 p-0 h-5">
                                 <inertia-link :href="route('user-show', teamMember.slug)" as="button">

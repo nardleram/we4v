@@ -41,7 +41,9 @@ class VoteController extends Controller
     {
         $vote = $this->storeVote->handle($request);
 
-        $this->storeVoteElements->handle($request, $vote->id);
+        $vote
+        ? $this->storeVoteElements->handle($request, $vote->id)
+        : null;
 
         return redirect()->back()->with([
             'myvotes' => $this->getVotes->handle(auth()->id(), '>='),

@@ -50,16 +50,16 @@ class Vote extends Model
                 $q->whereIn('votes.voteable_id', $ids)
                 ->orWhere('votes.owner', auth()->id());
             })
-            ->join('cast_votes', function ($join) {
+            ->leftJoin('cast_votes', function($join) {
                 $join->on('votes.id', '=', 'cast_votes.vote_id');
             })
-            ->join('vote_elements', function ($join) {
+            ->join('vote_elements', function($join) {
                 $join->on('votes.id', '=', 'vote_elements.vote_id');
             })
-            ->join('users', function ($join) {
+            ->join('users', function($join) {
                 $join->on('users.id', '=', 'votes.owner');
             })
-            ->join('memberships', function ($join) {
+            ->join('memberships', function($join) {
                 $join->on('memberships.user_id', '=', 'users.id');
             })
             ->select([
