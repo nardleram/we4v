@@ -17,6 +17,7 @@ use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\CastVoteController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\ArticleImageController;
 use App\Http\Controllers\ProfileImageController;
 use App\Http\Controllers\ArticleCommentController;
 use App\Http\Controllers\BackgroundImageController;
@@ -69,6 +70,9 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::post('/images/background/store', [BackgroundImageController::class, 'store'])
         ->name('storeBackgroundImage');
+
+    Route::post('/images/article/store', [ArticleImageController::class, 'store'])
+        ->name('storeArticleImage');
 
     Route::get('myarticles', [ArticleController::class, 'index'])
         ->name('myarticles');

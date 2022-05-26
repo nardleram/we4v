@@ -54,6 +54,10 @@ class HandleInertiaRequests extends Middleware
             'searchResults' => [
                 'searchData' => fn () => $request->session()->get('searchData')
             ],
+
+            'articleImageData' => [
+                'articleImagePath' => fn () => $request->session()->get('articleImagePath')
+            ],
             
             'authUser' => fn () => $request->user()
                 ? $request->user()->only('id', 'email', 'name', 'surname', 'username', 'slug')

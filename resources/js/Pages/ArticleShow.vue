@@ -32,7 +32,7 @@
                 <div v-html="article[0].body" class="mb-2"></div>
                 <hr />
 
-                <button :class="[article[0].user_approves ? 'text-we4vBlue bg-we4vGrey-900 border-we4vBlue' : 'text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300']" class="font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 mt-4 mb-6" @click="storeApproval(article[0].id, 'article')">
+                <button :class="[article[0].user_approves ? 'text-we4vBlue bg-we4vGrey-900 border-we4vBlue' : 'text-we4vGrey-600 hover:bg-we4vGrey-100 border-we4vGrey-300']" class="font-bold text-sm tracking-tight flex justify-center rounded-lg w-full border focus:outline-none mr-1 mt-4 mb-10" @click="storeApproval(article[0].id, 'article')">
                     <span v-if="article[0].user_approves">Approved</span>
                     <span v-else>Approve</span>
                 </button>

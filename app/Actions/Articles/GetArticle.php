@@ -29,7 +29,7 @@ class GetArticle
         ->join('users AS Us1', function ($join) {
             $join->on('Us1.id', '=', 'articles.user_id');
         })
-        ->join('images AS Im1', function ($join) {
+        ->leftJoin('images AS Im1', function ($join) {
             $join->on('Us1.id', '=', 'Im1.imageable_id')
             ->where('Im1.format', 'profile');
         })

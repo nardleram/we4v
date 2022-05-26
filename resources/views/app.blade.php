@@ -28,6 +28,7 @@
         <div id="voteModals"></div>
         <div id="membRequestModals"></div>
         <div id="pendingVoteModals"></div>
+        <div id="articleModal"></div>
         <div id="pendingNetworkModals"></div>
     </body>
 </html>

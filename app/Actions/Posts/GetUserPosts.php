@@ -3,7 +3,6 @@
 namespace App\Actions\Posts;
 
 use App\Models\User;
-use App\Models\Image;
 use App\Actions\Users\GetUsers;
 use App\Actions\Posts\GetTalkboardPosts;
 

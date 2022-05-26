@@ -41,6 +41,7 @@
         "@tiptap/extension-bullet-list": "^2.0.0-beta.26",
         "@tiptap/extension-document": "^2.0.0-beta.15",
         "@tiptap/extension-heading": "^2.0.0-beta.26",
+        "@tiptap/extension-image": "^2.0.0-beta.27",
         "@tiptap/extension-italic": "^2.0.0-beta.26",
         "@tiptap/extension-list-item": "^2.0.0-beta.20",
         "@tiptap/extension-ordered-list": "^2.0.0-beta.27",
@@ -52,6 +53,7 @@
         "@vueup/vue-quill": "^1.0.0-beta.8",
         "click-outside-vue3": "^4.0.1",
         "dropzone": "^5.9.3",
+        "form-data": "^4.0.0",
         "prosemirror-example-setup": "^1.1.2",
         "prosemirror-schema-basic": "^1.1.2",
         "vuex": "^4.0.2"

@@ -404,7 +404,7 @@
 
                 <Subtitle v-if="myGroups.length > 0">
                     <template #title>
-                        Groups and teams I manage
+                        Groups and teams I created
                     </template>
                     <template #description>
                         Click a group name to add a team to that group. Click the edit icon to the right of a group’s name to make changes to that group. Teams can be edited by clicking their edit icon, or, if it is a team you administrate, also by clicking the team’s name.

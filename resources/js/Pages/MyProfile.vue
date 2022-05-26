@@ -170,28 +170,6 @@
                 let res = await this.$inertia.patch('/users/'+this.$page.props.user.id+'/updatePassword', this.passwordData)
             },
 
-            async submitImages() {
-                if (!(profile.files[0] || bkgrnd.files[0])) {
-                    this.selectedImagesError.error = true;
-                    return
-                } 
-                
-                let selectedImages = {}
-                let imageFormat = 'none'
-                let model = 'User'
-                profile.files[0] ? selectedImages.profile = profile.files[0] : null
-                bkgrnd.files[0] ? selectedImages.bkgrnd = bkgrnd.files[0] : null
-                if (Object.keys(selectedImages).length === 1) {
-                    profile.files[0] ? imageFormat = 'profile' : imageFormat = 'bkgrnd'
-                }
-                let res = await this.$inertia.post('/images/store', {
-                    selectedImages, imageFormat, model
-                })
-                this.$inertia.props.userProfileImages.profile = res.userProfileImages.profile
-                this.$inertia.props.userProfileImages.bkgrnd = res.userProfileImages.bkgrnd
-
-            },
-
             async submitProfile() {
                 if (!(profile.files[0])) {
                     this.profileError.error = true;
@@ -206,6 +184,9 @@
                     'image': selectedImage.profile
                 })
                 .then(() => this.$inertia.props.userProfileImages.profile = res.userProfileImages.profile)
+                .catch((err) => {
+                    console.log(err)
+                })
             },
 
             async submitBkgrnd() {
@@ -222,6 +203,9 @@
                     'image': selectedImage.bkgrnd
                 })
                 .then(() => this.$inertia.props.userProfileImages.bkgrnd = res.userProfileImages.bkgrnd)
+                .catch((err) => {
+                    console.log(err)
+                })
             }
         }
     }
