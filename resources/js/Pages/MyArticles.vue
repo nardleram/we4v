@@ -181,7 +181,8 @@ export default {
             if (!(articleImage.files[0])) {
                 isLoading.value = false
                 showUploadImageModal.value = false
-                props.errors = 'No image file selected'
+                error.value = true
+                props.errors = { message: 'No image file selected' }
                 clearModal()
                 return
             }
@@ -194,7 +195,7 @@ export default {
             .then(() => {
                 isLoading.value = false
                 showUploadImageModal.value = false
-                editor.value.chain().focus().setImage({ src: 'https://www.we4v.com'+usePage().props.value.articleImageData.articleImagePath }).run()
+                editor.value.chain().focus().setImage({ src: usePage().props.value.articleImageData.articleImagePath }).run()
                 usePage().props.value.articleImageData.articleImagePath = ''
             })
             .catch((err) => {

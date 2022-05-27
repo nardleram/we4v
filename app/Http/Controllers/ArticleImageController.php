@@ -17,7 +17,7 @@ class ArticleImageController extends Controller
         $image = $this->storeArticleImage->handle($request);
 
         return redirect()->back()->with([
-            'articleImageData' => [session(['articleImagePath' => '/storage/'.$image->path])]
+            'articleImageData' => [session(['articleImagePath' => env("APP_URL", "https://www.we4v.com").'/storage/'.$image->path])]
         ]);
     }
 }
