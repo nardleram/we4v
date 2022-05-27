@@ -194,7 +194,7 @@ export default {
             .then(() => {
                 isLoading.value = false
                 showUploadImageModal.value = false
-                editor.value.chain().focus().setImage({ src: 'https://we4v.test'+usePage().props.value.articleImageData.articleImagePath }).run()
+                editor.value.chain().focus().setImage({ src: 'https://www.we4v.com'+usePage().props.value.articleImageData.articleImagePath }).run()
                 usePage().props.value.articleImageData.articleImagePath = ''
             })
             .catch((err) => {
