@@ -9,7 +9,11 @@ class StoreArticleImage
 {
     public function handle(Request $request)
     {
-        $imagePath = $request['image']->store('images/articles', 'public');
+        try {
+            $imagePath = $request['image']->store('images/articles', 'public');
+        } catch (\Exception $exception) {
+            dd($exception->getMessage());
+        }
 
         // Temporary uuid: will be replaced by actual article ID
         // when article is saved
