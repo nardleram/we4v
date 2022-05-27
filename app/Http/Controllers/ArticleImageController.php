@@ -14,7 +14,6 @@ class ArticleImageController extends Controller
 
     public function store(ArticleImageRequest $request)
     {
-        dd($request);
         $image = $this->storeArticleImage->handle($request);
 
         return redirect()->back()->with([
