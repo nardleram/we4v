@@ -9,6 +9,7 @@ class StoreArticleImage
 {
     public function handle(Request $request)
     {
+        dd($request[0]);
         try {
             $imagePath = $request['image']->store('images/articles', 'public');
         } catch (\Exception $exception) {
