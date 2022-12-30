@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'we4v') }}</title>
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Elsie&display=swap&family=Quicksand:wght@300;400;500;600;700&display=swap" nonce="lKj8/6tGf$32_#hG+0hG=gByYwQ0&%">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Elsie&display=swap&family=Quicksand:wght@300;400;500;600;700&display=swap" nonce="lKj8/6tGf$32_#hG+0hG=gByYwQ0&$">
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}" nonce="lKj8/6tGf$32_#hG+0hG=gByYwQ0&$">
