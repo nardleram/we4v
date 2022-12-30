@@ -7,12 +7,8 @@ use App\Http\Requests\AssociateRequestResponseRequest;
 
 class AssociateRequestResponseController extends Controller
 {
-    private $updateAssociation;
-
-    public function __construct(UpdateAssociation $updateAssociation)
-    {
-        $this->updateAssociation = $updateAssociation;
-    }
+    public function __construct(private UpdateAssociation $updateAssociation)
+    {}
     
     public function update(AssociateRequestResponseRequest $request)
     {

@@ -15,26 +15,13 @@ use App\Actions\Memberships\UpdateMemberships;
 
 class TeamController extends Controller
 {
-    private $storeTeam;
-    private $getGroups;
-    private $storeMemberships;
-    private $updateTeam;
-    private $updateMemberships;
-
     public function __construct(
-        StoreTeam $storeTeam,
-        GetGroups $getGroups,
-        StoreMemberships $storeMemberships,
-        UpdateTeam $updateTeam,
-        UpdateMemberships $updateMemberships
-        )
-    {
-        $this->storeTeam = $storeTeam;
-        $this->getGroups = $getGroups;
-        $this->storeMemberships = $storeMemberships;
-        $this->updateTeam = $updateTeam;
-        $this->updateMemberships = $updateMemberships;
-    }
+        private StoreTeam $storeTeam,
+        private GetGroups $getGroups,
+        private StoreMemberships $storeMemberships,
+        private UpdateTeam $updateTeam,
+        private UpdateMemberships $updateMemberships
+    ) {}
 
     public function store(StoreTeamRequest $request) : object
     {

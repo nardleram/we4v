@@ -24,6 +24,7 @@ use App\Http\Controllers\BackgroundImageController;
 use App\Http\Controllers\AssociateRequestController;
 use App\Http\Controllers\AssociateRequestResponseController;
 use App\Http\Controllers\MembershipRequestResponseController;
+use App\Http\Controllers\PidgenMailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -181,4 +182,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::post('/cast-vote/store', [CastVoteController::class, 'store'])
         ->name('castVote');
+
+    Route::get('/pidgenmail', [PidgenMailController::class, 'index'])
+    ->name('pidgenmail');
 });

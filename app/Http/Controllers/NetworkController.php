@@ -11,24 +11,14 @@ use App\Http\Requests\TransferNetworkOwnershipRequest;
 
 class NetworkController extends Controller
 {
-    private $storeNetwork;
-    private $updateNetwork;
-    private $updateNetworkMemberships;
-    private $transferNetworkMemberships;
-
     public function __construct(
-        StoreNetwork $storeNetwork,
-        UpdateNetwork $updateNetwork,
-        UpdateNetworkMemberships $updateNetworkMemberships,
-        TransferNetworkOwnership $transferNetworkOwnership)
-    {
-        $this->storeNetwork = $storeNetwork;
-        $this->updateNetwork = $updateNetwork;
-        $this->updateNetworkMemberships = $updateNetworkMemberships;
-        $this->transferNetworkOwnership = $transferNetworkOwnership;
-    }
+        private StoreNetwork $storeNetwork,
+        private UpdateNetwork $updateNetwork,
+        private UpdateNetworkMemberships $updateNetworkMemberships,
+        private TransferNetworkOwnership $transferNetworkOwnership
+    ) {}
 
-    public function store(NetworkRequest $request) 
+    public function store(NetworkRequest $request)
     {
         $this->storeNetwork->handle($request);
 

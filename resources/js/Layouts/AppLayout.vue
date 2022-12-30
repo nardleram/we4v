@@ -24,22 +24,22 @@
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('mygroups', $page.props.authUser.id)" :active="route().current('mygroups')">
+                            <jet-nav-link :href="route('mygroups')" :active="route().current('mygroups')">
                                 Groups
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('myprojects', $page.props.authUser.id)" :active="route().current('myprojects')">
+                            <jet-nav-link :href="route('myprojects')" :active="route().current('myprojects')">
                                 Projects
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('myarticles', $page.props.authUser.id)" :active="route().current('myarticles')">
+                            <jet-nav-link :href="route('myarticles')" :active="route().current('myarticles')">
                                 Articles
                             </jet-nav-link>
                         </div>
                         <div>
-                            <jet-nav-link :href="route('myvotes', $page.props.authUser.id)" :active="route().current('myvotes')">
+                            <jet-nav-link :href="route('myvotes')" :active="route().current('myvotes')">
                                 Votes
                             </jet-nav-link>
                         </div>
@@ -54,7 +54,9 @@
                     <div class="ml-3 mt-4 text-we4vGrey-800 relative w-1/4 flex justify-end">
                         <jet-dropdown align="right" width="48">
                             <template #mail>
-                                <img class="h-8 rounded-none pt-1 mr-2 cursor-pointer" :src="'/storage/images/pigeon.svg'" alt="pmail" />
+                                <jet-nav-link :href="route('pidgenmail')">
+                                    <img class="h-8 rounded-none pt-1 mr-2 cursor-pointer" :src="'/storage/images/pigeon.svg'" alt="pmail" />
+                                </jet-nav-link>
                             </template>
 
                             <template #trigger>

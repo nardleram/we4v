@@ -18,37 +18,17 @@ use App\Models\Membership;
 
 class TaskController extends Controller
 {
-    private $getGroups;
-    private $getAdminGroups;
-    private $getAdminTeams;
-    private $getProjects;
-    private $storeTask;
-    private $storeNote;
-    private $storeMemberships;
-    private $updateTaskMemberships;
-    private $updateTask;
-
     public function __construct(
-        GetGroups $getGroups,
-        GetAdminGroups $getAdminGroups,
-        GetAdminTeams $getAdminTeams,
-        GetProjects $getProjects,
-        StoreTask $storeTask,
-        UpdateTask $updateTask,
-        StoreNote $storeNote,
-        StoreMemberships $storeMemberships,
-        UpdateTaskMemberships $updateTaskMemberships)
-    {
-        $this->getGroups = $getGroups;
-        $this->getAdminGroups = $getAdminGroups;
-        $this->getAdminTeams = $getAdminTeams;
-        $this->getProjects = $getProjects;
-        $this->storeTask = $storeTask;
-        $this->updateTask = $updateTask;
-        $this->storeNote = $storeNote;
-        $this->storeMemberships = $storeMemberships;
-        $this->updateTaskMemberships = $updateTaskMemberships;
-    }
+        private GetGroups $getGroups,
+        private GetAdminGroups $getAdminGroups,
+        private GetAdminTeams $getAdminTeams,
+        private GetProjects $getProjects,
+        private StoreTask $storeTask,
+        private UpdateTask $updateTask,
+        private StoreNote $storeNote,
+        private StoreMemberships $storeMemberships,
+        private UpdateTaskMemberships $updateTaskMemberships
+    ) {}
 
     public function store(StoreTaskRequest $request)
     {

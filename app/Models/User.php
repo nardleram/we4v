@@ -124,4 +124,11 @@ class User extends Authenticatable implements MustVerifyEmail
             return $query->where('commentable_id', $article->id);
         });
     }
+
+    public static function getAddresseeUsernames($ids)
+    {
+        return (new static())
+            ->whereIn('id', $ids)
+            ->get(['username', 'id'])->toArray();
+    }
 }

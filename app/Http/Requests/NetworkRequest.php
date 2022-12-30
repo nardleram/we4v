@@ -29,8 +29,8 @@ class NetworkRequest extends FormRequest
     {
         return [
             'id' => 'nullable|uuid',
-            'name' => 'required|string:max 50',
-            'description' => 'required|string:max 255',
+            'name' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
             'groups' => 'nullable|array'
         ];
     }

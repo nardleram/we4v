@@ -584,4 +584,34 @@ class Membership extends Model
         // dd($memberships);
         return $memberships;
     }
+
+    public static function getAddresseeAdminGroups()
+    {
+        return (new static())
+            ->where('membershipable_type', 'App\Models\Group')
+            ->where('user_id', auth()->id())
+            ->where('is_admin', true)
+            ->join('groups', function ($join) {
+                $join->on('membershipable_id', '=', 'groups.id');
+            })
+            ->get([
+                'groups.id AS admin_group_id',
+                'groups.name AS admin_group_name'
+            ])->toArray();
+    }
+
+    public static function getAddresseeAdminTeams()
+    {
+        return (new static())
+            ->where('membershipable_type', 'App\Models\Team')
+            ->where('user_id', auth()->id())
+            ->where('is_admin', true)
+            ->join('teams', function ($join) {
+                $join->on('membershipable_id', '=', 'teams.id');
+            })
+            ->get([
+                'teams.name AS admin_team_name',
+                'teams.id AS admin_team_id'
+            ])->toArray();
+    }
 }

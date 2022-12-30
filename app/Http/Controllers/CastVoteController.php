@@ -7,12 +7,8 @@ use App\Http\Requests\CastVoteRequest;
 
 class CastVoteController extends Controller
 {
-    private $storeCastVote;
-
-    public function __construct(StoreCastVote $storeCastVote)
-    {
-        $this->storeCastVote = $storeCastVote;
-    }
+    public function __construct(private StoreCastVote $storeCastVote)
+    {}
 
     public function store(CastVoteRequest $request) : object
     {

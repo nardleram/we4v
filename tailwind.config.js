@@ -58,6 +58,7 @@ module.exports = {
                 'we4vCommentPic': '5%',
                 'we4vCommentText': '95%',
                 'justUnderHalf': '49%',
+                'pmailWidth': '45%',
                 'searchTabWidth': '23.5%',
             },
             height: {
@@ -106,7 +107,8 @@ module.exports = {
             },
             margin: {
                 '1/4': '25%',
-                'tiny': '2px'
+                'tiny': '2px',
+                '1/20': '5%',
             },
             animation: {
                 'spin': 'spin 2s linear infinite'

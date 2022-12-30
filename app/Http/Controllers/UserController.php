@@ -18,21 +18,12 @@ use App\Http\Requests\UpdatePasswordRequest;
 
 class UserController extends Controller
 {
-    private $getUserPosts;
-    private $searchUsers;
-    private $getArticles;
-    
     public function __construct(
-        GetUserPosts $getUserPosts,
-        GetUserImages $getUserImages,
-        SearchUsers $searchUsers,
-        GetArticles $getArticles)
-    {
-        $this->getUserPosts = $getUserPosts;
-        $this->getArticles = $getArticles;
-        $this->searchUsers = $searchUsers;
-        $this->getUserImages = $getUserImages;
-    }
+        private GetUserPosts $getUserPosts,
+        private GetUserImages $getUserImages,
+        private SearchUsers $searchUsers,
+        private GetArticles $getArticles
+    ) {}
     
     public function showProfile(User $user) : object
     {

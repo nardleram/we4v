@@ -13,20 +13,13 @@ use App\Http\Requests\UpdateVoteRequest;
 
 class VoteController extends Controller
 {
-    private $getVotes;
-    private $storeVote;
-    private $updateVote;
-    private $getGroups;
-    private $storeVoteElements;
-
-    public function __construct(GetVotes $getVotes, StoreVote $storeVote, UpdateVote $updateVote, StoreVoteElements $storeVoteElements, GetGroups $getGroups)
-    {
-        $this->storeVote = $storeVote;
-        $this->updateVote = $updateVote;
-        $this->getVotes = $getVotes;
-        $this->getGroups = $getGroups;
-        $this->storeVoteElements = $storeVoteElements;
-    }
+    public function __construct(
+        private GetVotes $getVotes, 
+        private StoreVote $storeVote, 
+        private UpdateVote $updateVote, 
+        private StoreVoteElements $storeVoteElements, 
+        private GetGroups $getGroups
+    ) {}
     
     public function index() : object
     {

@@ -75,4 +75,11 @@ class Group extends Model
             ])
             ->get();
     }
+
+    public static function getAddresseeGroups()
+    {
+        return (new static())
+            ->where('owner', auth()->id())
+            ->get(['id AS group_id', 'name AS group_name'])->toArray();
+    }
 }

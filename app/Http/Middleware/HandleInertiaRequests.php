@@ -11,6 +11,7 @@ use App\Models\Image;
 use App\Models\Network;
 use Inertia\Middleware;
 use App\Models\Membership;
+use App\Models\PidgenMail;
 use App\Models\Association;
 use Illuminate\Http\Request;
 use App\Actions\Users\GetUsers;
@@ -92,27 +93,27 @@ class HandleInertiaRequests extends Middleware
             },
             
             'myAssociates' => function (GetUsers $getUserData)
-                {
-                    if (!auth()->id()) {
-                        return [];
-                    } 
-                    
-                    $allAssociates = Association::getAssociations();
-                    $myAssociatesIds = array_diff($allAssociates, array(auth()->id()));
+            {
+                if (!auth()->id()) {
+                    return [];
+                } 
+                
+                $allAssociates = Association::getAssociations();
+                $myAssociatesIds = array_diff($allAssociates, array(auth()->id()));
 
-                    $myAssociates = $getUserData->getUsers($myAssociatesIds);
+                $myAssociates = $getUserData->getUsers($myAssociatesIds);
 
-                    $loop = 0;
-                    
-                    foreach($myAssociates as $myAssociate) {
-                        if(!$myAssociate->path) {
-                            $myAssociates[$loop]['path'] = 'images/nobody.png';
-                        }
-                        ++$loop;
+                $loop = 0;
+                
+                foreach($myAssociates as $myAssociate) {
+                    if(!$myAssociate->path) {
+                        $myAssociates[$loop]['path'] = 'images/nobody.png';
                     }
-                    
-                    return $myAssociates;
-                },
+                    ++$loop;
+                }
+                
+                return $myAssociates;
+            },
             
             'myPendingAssocReqs' => function ()
             {
@@ -333,6 +334,15 @@ class HandleInertiaRequests extends Middleware
                     return Membership::getUserMemberships(auth()->id());
                 }
             },
+
+            'myAddressees' => function ()
+            {
+                if (!auth()->id()) {
+                    return [];
+                }
+
+                return PidgenMail::getPidgenMailAddressees();
+            }
 
         ]);
     }

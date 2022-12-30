@@ -7,10 +7,8 @@ use App\Http\Requests\ArticleImageRequest;
 
 class ArticleImageController extends Controller
 {
-    public function __construct(StoreArticleImage $storeArticleImage)
-    {
-        $this->storeArticleImage = $storeArticleImage;
-    }
+    public function __construct(private StoreArticleImage $storeArticleImage)
+    {}
 
     public function store(ArticleImageRequest $request)
     {

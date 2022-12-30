@@ -21,44 +21,19 @@ use App\Http\Requests\TransferGroupOwnershipRequest;
 
 class GroupController extends Controller
 {
-    private $getGroups;
-    private $getNetworkGroupMember;
-    private $getAdminGroups;
-    private $getAdminTeams;
-    private $storeGroup;
-    private $storeMemberships;
-    private $updateGroup;
-    private $updateMemberships;
-    private $destroyGroupCasc;
-    private $searchGroups;
-    private $transferGroupOwnership;
-
     public function __construct(
-        GetGroups $getGroups,
-        GetNetworkGroupMember $getNetworkGroupMember,
-        GetAdminGroups $getAdminGroups,
-        GetAdminTeams $getAdminTeams,
-        StoreGroup $storeGroup,
-        StoreMemberships $storeMemberships,
-        UpdateGroup $updateGroup,
-        UpdateMemberships $updateMemberships,
-        DestroyGroupCascade $destroyGroupCasc,
-        SearchGroups $searchGroups,
-        TransferGroupOwnership $transferGroupOwnership
-    )
-    {
-        $this->getGroups = $getGroups;
-        $this->getNetworkGroupMember = $getNetworkGroupMember;
-        $this->getAdminGroups = $getAdminGroups;
-        $this->getAdminTeams = $getAdminTeams;
-        $this->storeGroup = $storeGroup;
-        $this->storeMemberships = $storeMemberships;
-        $this->updateGroup = $updateGroup;
-        $this->updateMemberships = $updateMemberships;
-        $this->destroyGroupCasc = $destroyGroupCasc;
-        $this->searchGroups = $searchGroups;
-        $this->transferGroupOwnership = $transferGroupOwnership;
-    }
+        private GetGroups $getGroups,
+        private GetNetworkGroupMember $getNetworkGroupMember,
+        private GetAdminGroups $getAdminGroups,
+        private GetAdminTeams $getAdminTeams,
+        private StoreGroup $storeGroup,
+        private StoreMemberships $storeMemberships,
+        private UpdateGroup $updateGroup,
+        private UpdateMemberships $updateMemberships,
+        private DestroyGroupCascade $destroyGroupCasc,
+        private SearchGroups $searchGroups,
+        private TransferGroupOwnership $transferGroupOwnership
+    ) {}
 
     public function index() : object
     {

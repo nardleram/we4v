@@ -31,7 +31,7 @@ class DeleteMembershipRequest extends FormRequest
             'user_id' => 'required|uuid',
             'membershipable_id' => 'required|uuid',
             'role' => 'required|string',
-            'deleted_at' => 'required|string'
+            'deleted_at' => 'required|string|max:100'
         ];
     }
 }

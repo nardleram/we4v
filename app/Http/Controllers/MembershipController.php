@@ -8,14 +8,10 @@ use App\Http\Requests\StoreMembershipRequest;
 
 class MembershipController extends Controller
 {
-    private $storeMembership;
-    private $deleteMembership;
-
-    public function __construct(StoreMembership $storeMembership, DeleteMembership $deleteMembership)
-    {
-        $this->storeMembership = $storeMembership;
-        $this->deleteMembership = $deleteMembership;
-    }
+    public function __construct(
+        private StoreMembership $storeMembership, 
+        private DeleteMembership $deleteMembership
+    ) {}
 
     public function store(StoreMembershipRequest $request)
     {

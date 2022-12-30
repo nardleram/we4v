@@ -638,8 +638,6 @@ export default {
                 'projectNote': projectNote,
                 'members': []
             }
-
-            console.log(payload)
             
             try {
                 await Inertia.patch('/mytasks/update', payload)

@@ -71,4 +71,11 @@ class Network extends Model
         
         return $networks;
     }
+
+    public static function getAddresseeNetworks()
+    {
+        return (new static())
+            ->where('owner', auth()->id())
+            ->get(['id AS network_id', 'name AS network_name'])->toArray();
+    }
 }

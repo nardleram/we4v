@@ -29,9 +29,9 @@ class ProfileRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:50',
-            'surname' => 'required|string|max:50',
+            'surname' => 'required|string|max:70',
             'username' => 'required|string|max:50',
-            'email' => 'required|email'
+            'email' => 'required|email:rfc,dns,spoof'
         ];
     }
 }

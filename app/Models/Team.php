@@ -49,4 +49,11 @@ class Team extends Model
             ->where('owner', auth()->id())
             ->get(['name', 'id', 'owner'])->toArray();
     }
+
+    public static function getAddresseeTeams()
+    {
+        return (new static())
+            ->where('owner', auth()->id())
+            ->get(['id AS team_id', 'name AS team_name'])->toArray();
+    }
 }

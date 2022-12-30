@@ -15,19 +15,12 @@ use App\Http\Requests\SearchArticleRequest;
 class ArticleController extends Controller
 {
     public function __construct(
-        GetArticles $getArticles,
-        GetArticle $getArticle,
-        StoreArticle $storeArticle,
-        StoreTags $storeTags,
-        SearchArticles $searchArticles
-        )
-    {
-        $this->getArticles = $getArticles;
-        $this->getArticle = $getArticle;
-        $this->storeArticle = $storeArticle;
-        $this->searchArticles = $searchArticles;
-        $this->storeTags = $storeTags;
-    }
+        private GetArticles $getArticles,
+        private GetArticle $getArticle,
+        private StoreArticle $storeArticle,
+        private StoreTags $storeTags,
+        private SearchArticles $searchArticles
+    ) {}
 
     public function index()
     {

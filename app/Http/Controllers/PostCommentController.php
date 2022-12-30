@@ -10,10 +10,8 @@ use App\Actions\Comments\StoreComment;
 
 class PostCommentController extends Controller
 {
-    public function __construct(StoreComment $storeComment)
-    {
-        $this->storeComment = $storeComment;
-    }
+    public function __construct(private StoreComment $storeComment)
+    {}
 
     public function store(CommentRequest $request)
     {

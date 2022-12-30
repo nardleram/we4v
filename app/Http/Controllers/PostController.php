@@ -9,12 +9,8 @@ use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
-    private $getPosts;
-    
-    public function __construct(GetTalkboardPosts $getPosts)
-    {
-        $this->getPosts = $getPosts;
-    }
+    public function __construct(private GetTalkboardPosts $getPosts)
+    {}
 
     public function index() : object
     {

@@ -7,12 +7,8 @@ use App\Http\Requests\UpdateMembershipRequestResponseRequest;
 
 class MembershipRequestResponseController extends Controller 
 {
-    private $updateMembershipRequestResponse;
-
-    public function __construct(UpdateMembershipRequestResponse $updateMembershipRequestResponse)
-    {
-        $this->updateMembershipRequestResponse = $updateMembershipRequestResponse;
-    }
+    public function __construct(private UpdateMembershipRequestResponse $updateMembershipRequestResponse)
+    {}
 
     public function update(UpdateMembershipRequestResponseRequest $request) : object
     {

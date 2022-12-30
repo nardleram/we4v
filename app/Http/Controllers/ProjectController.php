@@ -18,32 +18,16 @@ use App\Http\Requests\UpdateProjectRequest;
 
 class ProjectController extends Controller
 {
-    private $getProjects;
-    private $getGroups;
-    private $storeProject;
-    private $updateProject;
-    private $storeNote;
-    private $getAdminTeams;
-
     public function __construct(
-        GetProjects $getProjects, 
-        GetAdminTasks $getAdminTasks,
-        GetAdminTeams $getAdminTeams,
-        GetGroups $getGroups, 
-        GetAdminGroups $getAdminGroups,
-        StoreProject $storeProject,
-        UpdateProject $updateProject, 
-        StoreNote $storeNote)
-    {
-        $this->getProjects = $getProjects;
-        $this->getAdminTasks = $getAdminTasks;
-        $this->getAdminTeams = $getAdminTeams;
-        $this->getGroups = $getGroups;
-        $this->getAdminGroups = $getAdminGroups;
-        $this->storeProject = $storeProject;
-        $this->updateProject = $updateProject;
-        $this->storeNote = $storeNote;
-    }
+        private GetProjects $getProjects, 
+        private GetAdminTasks $getAdminTasks,
+        private GetAdminTeams $getAdminTeams,
+        private GetGroups $getGroups, 
+        private GetAdminGroups $getAdminGroups,
+        private StoreProject $storeProject,
+        private UpdateProject $updateProject, 
+        private StoreNote $storeNote
+    ) {}
     
     public function index() : object
     {

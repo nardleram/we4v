@@ -57,7 +57,9 @@ export default {
                 'status': 1
             }
             this.$inertia.post('/associate-request-response', payload)
+            flashMessage.value = true
         },
+
         rejectAssocRequest(req) {
             let payload = {
                 'id': req.id,
@@ -66,6 +68,7 @@ export default {
                 'status': 0
             }
             this.$inertia.post('/associate-request-response', payload)
+            flashMessage.value = true
         }
     }
 
